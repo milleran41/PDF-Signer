@@ -120,6 +120,11 @@ body {
 }
 .empty { text-align: center; margin-top: 12vh; }
 .empty h2 { margin-bottom: 6px; }
+.home-screen {
+  max-width: 520px;
+  padding: 34px 24px;
+}
+.home-screen .btn { margin: 14px 0 8px; }
 
 .stage {
   position: relative;

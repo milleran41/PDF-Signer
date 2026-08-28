@@ -64,7 +64,7 @@ $("verify").onclick = () => {
   auth.login({ provider: "email", email: $("emailEcho").textContent, at: Date.now() });
 };
 
-$("logout").onclick = () => auth.logout();
+if ($("logout")) $("logout").onclick = () => auth.logout();
 
 /* ================= 1. Загрузка и отображение документа ================= */
 if (window.pdfjsLib) {
@@ -171,8 +171,28 @@ function afterRender() {
   renderAnnots();
 }
 
+function showHome(reset = false) {
+  if (reset) {
+    state.kind = null;
+    state.pdf = null;
+    state.page = 1;
+    state.pages = 1;
+    state.image = null;
+    state.annots = {};
+    overlay.innerHTML = "";
+    docCanvas.getContext("2d").clearRect(0, 0, docCanvas.width, docCanvas.height);
+    $("fileInput").value = "";
+    $("fileInput2").value = "";
+  }
+  $("empty").hidden = false;
+  $("stageWrap").hidden = true;
+  $("pageNav").hidden = true;
+  $("sigModal").hidden = true;
+}
+
 $("fileInput").onchange = (e) => openFile(e.target.files[0]);
 $("fileInput2").onchange = (e) => openFile(e.target.files[0]);
+$("homeBtn").onclick = () => showHome(true);
 $("prevPage").onclick = async () => {
   if (state.page > 1) {
     state.page--;
@@ -434,7 +454,7 @@ $("signBtn").onclick = () => {
   renderSigStrips();
 };
 $("sigClose").onclick = () => ($("sigModal").hidden = true);
-$("sigBack").onclick = () => ($("sigModal").hidden = true);
+$("sigBack").onclick = () => showHome(true);
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.onclick = () => {
@@ -841,6 +861,7 @@ $("saveBtn").onclick = async () => {
 };
 
 /* ================= bootstrap ================= */
-if (auth.user) showApp();
+showApp();
+showHome(false);
 const srcParam = new URLSearchParams(location.search).get("src");
-if (srcParam && auth.user) openUrl(srcParam).catch((e) => alert("Не удалось открыть файл: " + e.message));
+if (srcParam) openUrl(srcParam).catch((e) => alert("Не удалось открыть файл: " + e.message));

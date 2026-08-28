@@ -7,7 +7,7 @@
   </head>
   <body>
     <!-- ======== 3a. Экран авторизации (заглушка) ======== -->
-    <section id="authScreen" class="auth">
+    <section id="authScreen" class="auth" hidden>
       <div class="auth-card">
         <div class="logo">✍</div>
         <h1>Вход в PDF Signer</h1>
@@ -44,7 +44,7 @@
 
         <label class="btn ghost">
           Открыть файл
-          <input type="file" id="fileInput" accept="application/pdf,image/png,image/jpeg" hidden />
+          <input type="file" id="fileInput" accept="application/pdf,image/*" hidden />
         </label>
 
         <div class="group" id="pageNav" hidden>
@@ -76,7 +76,7 @@
           <option value="png">PNG</option>
         </select>
         <button class="btn primary" id="saveBtn">Сохранить документ</button>
-        <button class="btn link" id="logout">Выйти</button>
+        <button class="btn ghost" id="homeBtn">Главная</button>
       </header>
 
       <!-- 2. Панель настроек текста -->
@@ -102,13 +102,14 @@
       </div>
 
       <main class="canvas-area" id="canvasArea">
-        <div id="empty" class="empty">
-          <h2>Откройте PDF или изображение</h2>
-          <p class="muted">Поддерживаются PDF, PNG и JPG. Файл обрабатывается локально.</p>
+        <div id="empty" class="empty home-screen">
+          <h2>Главная страница</h2>
+          <p class="muted">Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.</p>
           <label class="btn primary">
-            Выбрать файл
-            <input type="file" id="fileInput2" accept="application/pdf,image/png,image/jpeg" hidden />
+            Выбрать документ
+            <input type="file" id="fileInput2" accept="application/pdf,image/*" hidden />
           </label>
+          <p class="muted small">Поддерживаются PDF и изображения. Всё обрабатывается локально в браузере.</p>
         </div>
 
         <div id="stageWrap" hidden>
