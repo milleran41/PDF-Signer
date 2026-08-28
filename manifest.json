@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "PDF Signer — заполнение и подпись бланков",
+  "version": "1.0.0",
+  "description": "Открывайте PDF и изображения, печатайте текст по сетке, ставьте подпись и сохраняйте готовый файл.",
+  "permissions": ["storage", "activeTab", "downloads"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "background": { "service_worker": "background.js" },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["editor.html"], "matches": ["<all_urls>"] }
+  ],
+  "icons": { "48": "icon.png", "128": "icon.png" }
+}

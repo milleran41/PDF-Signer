@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        width: 260px;
+        margin: 0;
+        padding: 16px;
+        font: 13px/1.45 system-ui, sans-serif;
+        background: #0f1720;
+        color: #e8eef5;
+      }
+      h1 { font-size: 14px; margin: 0 0 4px; }
+      p { margin: 0 0 12px; color: #9db0c3; font-size: 12px; }
+      button {
+        width: 100%;
+        padding: 9px 12px;
+        margin-bottom: 8px;
+        border: 0;
+        border-radius: 8px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: #2f7cf6;
+        color: #fff;
+      }
+      button.ghost { background: #1d2836; color: #cfe0f2; }
+      button:hover { filter: brightness(1.1); }
+    </style>
+  </head>
+  <body>
+    <h1>PDF Signer</h1>
+    <p>Заполните бланк текстом и подписью прямо в браузере.</p>
+    <button id="open">Открыть редактор</button>
+    <button id="signatures" class="ghost">Мои подписи</button>
+    <script src="popup.js"></script>
+  </body>
+</html>

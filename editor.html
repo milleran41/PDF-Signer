@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>PDF Signer — редактор бланка</title>
+    <link rel="stylesheet" href="editor.css" />
+  </head>
+  <body>
+    <!-- ======== 3a. Экран авторизации (заглушка) ======== -->
+    <section id="authScreen" class="auth">
+      <div class="auth-card">
+        <div class="logo">✍</div>
+        <h1>Вход в PDF Signer</h1>
+        <p class="muted">Демо-авторизация: данные не отправляются на сервер.</p>
+
+        <button class="btn google" id="googleBtn">
+          <span class="g">G</span> Войти через Google Account
+        </button>
+
+        <div class="divider"><span>или по почте</span></div>
+
+        <div id="emailStep">
+          <input type="email" id="email" class="input" placeholder="you@example.com" />
+          <button class="btn primary" id="sendCode">Получить код подтверждения</button>
+        </div>
+
+        <div id="codeStep" hidden>
+          <p class="muted small">
+            Код отправлен на <b id="emailEcho"></b>. Демо-код: <code id="demoCode">000000</code>
+          </p>
+          <input type="text" id="code" class="input" placeholder="6-значный код" maxlength="6" />
+          <button class="btn primary" id="verify">Подтвердить и войти</button>
+          <button class="btn link" id="backToEmail">Изменить почту</button>
+        </div>
+
+        <p class="err" id="authErr" hidden></p>
+      </div>
+    </section>
+
+    <!-- ======== Редактор ======== -->
+    <div id="app" hidden>
+      <header class="topbar">
+        <div class="brand">✍ PDF Signer</div>
+
+        <label class="btn ghost">
+          Открыть файл
+          <input type="file" id="fileInput" accept="application/pdf,image/png,image/jpeg" hidden />
+        </label>
+
+        <div class="group" id="pageNav" hidden>
+          <button class="btn icon" id="prevPage" title="Предыдущая страница">‹</button>
+          <span class="pageLabel"><b id="pageNum">1</b>/<span id="pageCount">1</span></span>
+          <button class="btn icon" id="nextPage" title="Следующая страница">›</button>
+        </div>
+
+        <div class="group">
+          <label class="check"><input type="checkbox" id="gridToggle" checked /> Сетка</label>
+          <select id="gridMode" class="select small">
+            <option value="grid">В клеточку</option>
+            <option value="lines">В линейку</option>
+          </select>
+          <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" />
+        </div>
+
+        <div class="group">
+          <button class="btn ghost" id="zoomOut">−</button>
+          <span id="zoomLabel" class="pageLabel">100%</span>
+          <button class="btn ghost" id="zoomIn">+</button>
+        </div>
+
+        <div class="spacer"></div>
+
+        <button class="btn ghost" id="signBtn">Подпись</button>
+        <select id="exportFormat" class="select small">
+          <option value="pdf">PDF</option>
+          <option value="png">PNG</option>
+        </select>
+        <button class="btn primary" id="saveBtn">Сохранить документ</button>
+        <button class="btn link" id="logout">Выйти</button>
+      </header>
+
+      <!-- 2. Панель настроек текста -->
+      <div class="toolbar">
+        <span class="label">Текст:</span>
+        <select id="fontFamily" class="select">
+          <option value="sans-serif">Sans-serif</option>
+          <option value="serif">Serif</option>
+          <option value="monospace">Monospace</option>
+        </select>
+        <select id="fontSize" class="select small">
+          <option>10</option><option>12</option><option selected>16</option>
+          <option>20</option><option>24</option><option>32</option><option>48</option>
+        </select>
+        <button class="btn toggle" id="boldBtn" title="Жирный"><b>B</b></button>
+        <button class="btn toggle" id="italicBtn" title="Курсив"><i>I</i></button>
+        <input type="color" id="textColor" value="#111111" class="color" title="Цвет текста" />
+        <span class="divider-v"></span>
+        <span class="label">Подписи:</span>
+        <div id="sigStrip" class="sig-strip"><span class="muted small">нет сохранённых</span></div>
+        <div class="spacer"></div>
+        <span class="hint">Клик по документу — новое текстовое поле. Перетаскивайте за ⠿, удаляйте через ×.</span>
+      </div>
+
+      <main class="canvas-area" id="canvasArea">
+        <div id="empty" class="empty">
+          <h2>Откройте PDF или изображение</h2>
+          <p class="muted">Поддерживаются PDF, PNG и JPG. Файл обрабатывается локально.</p>
+          <label class="btn primary">
+            Выбрать файл
+            <input type="file" id="fileInput2" accept="application/pdf,image/png,image/jpeg" hidden />
+          </label>
+        </div>
+
+        <div id="stageWrap" hidden>
+          <div id="stage" class="stage">
+            <canvas id="docCanvas"></canvas>
+            <div id="grid" class="grid"></div>
+            <div id="overlay" class="overlay"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ======== 3b. Модуль подписи ======== -->
+    <div id="sigModal" class="modal" hidden>
+      <div class="modal-card">
+        <header class="modal-head">
+          <h2>Цифровая подпись</h2>
+          <button class="btn icon" id="sigClose">×</button>
+        </header>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="draw">Нарисовать</button>
+          <button class="tab" data-tab="upload">Загрузить картинку</button>
+        </div>
+
+        <section class="tab-panel" data-panel="draw">
+          <canvas id="padCanvas" width="640" height="240" class="pad"></canvas>
+          <div class="row">
+            <label class="label">Толщина</label>
+            <input type="range" id="penWidth" min="1" max="10" value="3" />
+            <input type="color" id="penColor" value="#0b1b3a" class="color" />
+            <button class="btn ghost" id="padClear">Очистить</button>
+            <div class="spacer"></div>
+            <button class="btn primary" id="padSave">Сохранить подпись</button>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="upload" hidden>
+          <label class="btn ghost">
+            Выбрать изображение
+            <input type="file" id="sigFile" accept="image/*" hidden />
+          </label>
+          <div class="crop-wrap">
+            <canvas id="cropCanvas" class="pad"></canvas>
+            <div id="cropBox" class="crop-box" hidden></div>
+          </div>
+          <div class="row">
+            <label class="label">Порог удаления фона</label>
+            <input type="range" id="threshold" min="120" max="250" value="200" />
+            <label class="check"><input type="checkbox" id="removeBg" checked /> Прозрачный фон</label>
+            <div class="spacer"></div>
+            <button class="btn primary" id="cropSave">Обрезать и сохранить</button>
+          </div>
+          <p class="muted small">
+            Выделите росчерк рамкой мышью, светлый фон внутри выделения будет удалён (PNG с прозрачностью).
+          </p>
+          <div class="preview-wrap">
+            <span class="label">Результат:</span>
+            <canvas id="sigPreview" class="preview"></canvas>
+          </div>
+        </section>
+
+        <footer class="modal-foot">
+          <span class="label">Сохранённые:</span>
+          <div id="sigStripModal" class="sig-strip"></div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="vendor/pdf.min.js"></script>
+    <script src="vendor/jspdf.umd.min.js"></script>
+    <script src="editor.js"></script>
+  </body>
+</html>
