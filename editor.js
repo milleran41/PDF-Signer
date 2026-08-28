@@ -434,6 +434,7 @@ $("signBtn").onclick = () => {
   renderSigStrips();
 };
 $("sigClose").onclick = () => ($("sigModal").hidden = true);
+$("sigBack").onclick = () => ($("sigModal").hidden = true);
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.onclick = () => {
@@ -536,7 +537,10 @@ function resetSignatureImport() {
   const ctx = cropCanvas.getContext("2d");
   ctx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
   const prev = $("sigPreview");
+  prev.width = 320;
+  prev.height = 120;
   prev.getContext("2d").clearRect(0, 0, prev.width, prev.height);
+  $("sigPreviewHint").textContent = "После выбора файла здесь появится подпись с удалённым фоном.";
 }
 
 function setCropImageSource(src) {
@@ -625,7 +629,7 @@ async function pasteSignatureFromClipboard() {
         }
       }
     }
-    alert("В буфере обмена не найдено изображение. Можно нажать Ctrl+V прямо в этом окне.");
+    alert("В буфере обмена не найдено изображение. Скопируйте скриншот или картинку и нажмите Ctrl+V прямо в этом окне.");
   } catch (err) {
     console.error(err);
     alert("Браузер не дал прочитать буфер. Нажмите Ctrl+V в окне подписи или загрузите файл.");
@@ -634,14 +638,30 @@ async function pasteSignatureFromClipboard() {
 
 $("pasteSig").onclick = pasteSignatureFromClipboard;
 
-window.addEventListener("paste", async (e) => {
+async function loadSignatureFromPasteEvent(e) {
   if ($("sigModal").hidden) return;
-  const file = [...(e.clipboardData?.files || [])].find((f) => f.type.startsWith("image/") || f.type === "application/pdf");
+  const files = [...(e.clipboardData?.files || [])];
+  let file = files.find((f) => f.type.startsWith("image/") || f.type === "application/pdf");
+  if (!file) {
+    const items = [...(e.clipboardData?.items || [])];
+    const item = items.find((x) => x.kind === "file" && (x.type.startsWith("image/") || x.type === "application/pdf"));
+    file = item?.getAsFile();
+  }
   if (file) {
     e.preventDefault();
     await loadSignatureFile(file);
+    return;
   }
-});
+  const html = e.clipboardData?.getData("text/html") || "";
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (match?.[1]?.startsWith("data:image/")) {
+    e.preventDefault();
+    setCropImageSource(match[1]);
+  }
+}
+
+window.addEventListener("paste", loadSignatureFromPasteEvent);
+document.addEventListener("paste", loadSignatureFromPasteEvent);
 
 cropCanvas.addEventListener("pointerdown", (e) => {
   if (!cropImg) return;
@@ -709,9 +729,19 @@ function previewCrop() {
   const sig = buildSignatureFromCrop();
   if (!sig) return;
   const prev = $("sigPreview");
-  prev.width = sig.width;
-  prev.height = sig.height;
-  prev.getContext("2d").drawImage(sig, 0, 0);
+  const maxW = 320;
+  const maxH = 120;
+  const scale = Math.min(maxW / sig.width, maxH / sig.height, 1);
+  const w = Math.max(1, Math.round(sig.width * scale));
+  const h = Math.max(1, Math.round(sig.height * scale));
+  prev.width = maxW;
+  prev.height = maxH;
+  const ctx = prev.getContext("2d");
+  ctx.clearRect(0, 0, prev.width, prev.height);
+  ctx.drawImage(sig, Math.round((maxW - w) / 2), Math.round((maxH - h) / 2), w, h);
+  $("sigPreviewHint").textContent = crop && crop.w > 8 && crop.h > 8
+    ? "Так подпись будет сохранена в шаблоны."
+    : "Сейчас показан весь файл. Выделите рамкой только подпись, если нужно обрезать точнее.";
 }
 
 $("cropSave").onclick = () => {

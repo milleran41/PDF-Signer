@@ -126,7 +126,10 @@
       <div class="modal-card">
         <header class="modal-head">
           <h2>Цифровая подпись</h2>
-          <button class="btn icon" id="sigClose">×</button>
+          <div class="group">
+            <button class="btn ghost" id="sigBack">К редактору</button>
+            <button class="btn icon" id="sigClose">×</button>
+          </div>
         </header>
 
         <div class="tabs">
@@ -168,14 +171,17 @@
             <input type="range" id="threshold" min="120" max="250" value="200" />
             <label class="check"><input type="checkbox" id="removeBg" checked /> Прозрачный фон</label>
             <div class="spacer"></div>
-            <button class="btn primary" id="cropSave">Обрезать и сохранить</button>
+            <button class="btn primary" id="cropSave">Сохранить этот вариант</button>
           </div>
           <p class="muted small">
             Загрузите PDF, PNG, JPG или вставьте скриншот из буфера. Выделите подпись рамкой, светлый фон внутри выделения будет удалён.
           </p>
-          <div class="preview-wrap">
-            <span class="label">Результат:</span>
-            <canvas id="sigPreview" class="preview"></canvas>
+          <div class="preview-panel">
+            <div>
+              <div class="label">Предпросмотр перед сохранением</div>
+              <p class="muted small" id="sigPreviewHint">После выбора файла здесь появится подпись с удалённым фоном.</p>
+            </div>
+            <canvas id="sigPreview" class="preview" width="320" height="120"></canvas>
           </div>
         </section>
 
