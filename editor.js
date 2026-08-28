@@ -518,15 +518,30 @@ function trimTransparent(canvas) {
   return out;
 }
 
-/* ---------- b) Загрузка картинки + рамка + удаление фона ---------- */
+/* ---------- b) Файл/буфер + рамка + удаление фона ---------- */
 const cropCanvas = $("cropCanvas");
 const cropBox = $("cropBox");
 let cropImg = null;
+let cropSourceUrl = null;
 let crop = null; // в координатах cropCanvas
+let sigPdf = null;
+let sigPdfPage = 1;
+let sigPdfScale = 2;
 
-$("sigFile").onchange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+function resetSignatureImport() {
+  cropImg = null;
+  crop = null;
+  cropBox.hidden = true;
+  $("sigPageNav").hidden = true;
+  const ctx = cropCanvas.getContext("2d");
+  ctx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+  const prev = $("sigPreview");
+  prev.getContext("2d").clearRect(0, 0, prev.width, prev.height);
+}
+
+function setCropImageSource(src) {
+  if (cropSourceUrl) URL.revokeObjectURL(cropSourceUrl);
+  cropSourceUrl = src.startsWith("blob:") ? src : null;
   const img = new Image();
   img.onload = () => {
     cropImg = img;
@@ -537,9 +552,96 @@ $("sigFile").onchange = (e) => {
     cropCanvas.getContext("2d").drawImage(img, 0, 0, cropCanvas.width, cropCanvas.height);
     crop = null;
     cropBox.hidden = true;
+    previewCrop();
   };
-  img.src = URL.createObjectURL(file);
+  img.onerror = () => alert("Не удалось загрузить изображение из этого файла");
+  img.src = src;
+}
+
+async function setCropPdf(file) {
+  resetSignatureImport();
+  if (!window.pdfjsLib) return alert("PDF-модуль не загружен");
+  sigPdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+  sigPdfPage = 1;
+  $("sigPageNav").hidden = sigPdf.numPages < 2;
+  $("sigPageCount").textContent = String(sigPdf.numPages);
+  await renderSignaturePdfPage();
+}
+
+async function renderSignaturePdfPage() {
+  if (!sigPdf) return;
+  const page = await sigPdf.getPage(sigPdfPage);
+  const viewport = page.getViewport({ scale: sigPdfScale });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.floor(viewport.width);
+  canvas.height = Math.floor(viewport.height);
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  $("sigPageNum").textContent = String(sigPdfPage);
+  setCropImageSource(canvas.toDataURL("image/png"));
+}
+
+async function loadSignatureFile(file) {
+  if (!file) return;
+  try {
+    sigPdf = null;
+    if (file.type === "application/pdf" || /\.pdf$/i.test(file.name || "")) {
+      await setCropPdf(file);
+      return;
+    }
+    setCropImageSource(URL.createObjectURL(file));
+  } catch (err) {
+    console.error(err);
+    alert("Не удалось открыть файл для поиска подписи: " + err.message);
+  }
+}
+
+$("sigFile").onchange = (e) => loadSignatureFile(e.target.files[0]);
+
+$("sigPrevPage").onclick = async () => {
+  if (!sigPdf || sigPdfPage <= 1) return;
+  sigPdfPage--;
+  await renderSignaturePdfPage();
 };
+
+$("sigNextPage").onclick = async () => {
+  if (!sigPdf || sigPdfPage >= sigPdf.numPages) return;
+  sigPdfPage++;
+  await renderSignaturePdfPage();
+};
+
+async function pasteSignatureFromClipboard() {
+  try {
+    if (navigator.clipboard?.read) {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        const type = item.types.find((t) => t.startsWith("image/") || t === "application/pdf");
+        if (type) {
+          const blob = await item.getType(type);
+          await loadSignatureFile(new File([blob], `clipboard.${type.includes("pdf") ? "pdf" : "png"}`, { type }));
+          return;
+        }
+      }
+    }
+    alert("В буфере обмена не найдено изображение. Можно нажать Ctrl+V прямо в этом окне.");
+  } catch (err) {
+    console.error(err);
+    alert("Браузер не дал прочитать буфер. Нажмите Ctrl+V в окне подписи или загрузите файл.");
+  }
+}
+
+$("pasteSig").onclick = pasteSignatureFromClipboard;
+
+window.addEventListener("paste", async (e) => {
+  if ($("sigModal").hidden) return;
+  const file = [...(e.clipboardData?.files || [])].find((f) => f.type.startsWith("image/") || f.type === "application/pdf");
+  if (file) {
+    e.preventDefault();
+    await loadSignatureFile(file);
+  }
+});
 
 cropCanvas.addEventListener("pointerdown", (e) => {
   if (!cropImg) return;
@@ -614,7 +716,7 @@ function previewCrop() {
 
 $("cropSave").onclick = () => {
   const sig = buildSignatureFromCrop();
-  if (!sig) return alert("Сначала выберите изображение");
+  if (!sig) return alert("Сначала выберите файл или вставьте изображение из буфера");
   sigStore.add(sig.toDataURL("image/png"));
 };
 

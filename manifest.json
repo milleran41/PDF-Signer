@@ -3,7 +3,7 @@
   "name": "PDF Signer — заполнение и подпись бланков",
   "version": "1.0.0",
   "description": "Открывайте PDF и изображения, печатайте текст по сетке, ставьте подпись и сохраняйте готовый файл.",
-  "permissions": ["storage", "activeTab", "downloads"],
+  "permissions": ["storage", "activeTab", "downloads", "clipboardRead"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"

@@ -131,7 +131,7 @@
 
         <div class="tabs">
           <button class="tab active" data-tab="draw">Нарисовать</button>
-          <button class="tab" data-tab="upload">Загрузить картинку</button>
+          <button class="tab" data-tab="upload">Из файла или буфера</button>
         </div>
 
         <section class="tab-panel" data-panel="draw">
@@ -147,10 +147,18 @@
         </section>
 
         <section class="tab-panel" data-panel="upload" hidden>
-          <label class="btn ghost">
-            Выбрать изображение
-            <input type="file" id="sigFile" accept="image/*" hidden />
-          </label>
+          <div class="row import-row">
+            <label class="btn ghost">
+              Выбрать файл
+              <input type="file" id="sigFile" hidden />
+            </label>
+            <button class="btn ghost" id="pasteSig">Вставить из буфера</button>
+            <div class="group sig-page-nav" id="sigPageNav" hidden>
+              <button class="btn icon" id="sigPrevPage" title="Предыдущая страница">‹</button>
+              <span class="pageLabel"><b id="sigPageNum">1</b>/<span id="sigPageCount">1</span></span>
+              <button class="btn icon" id="sigNextPage" title="Следующая страница">›</button>
+            </div>
+          </div>
           <div class="crop-wrap">
             <canvas id="cropCanvas" class="pad"></canvas>
             <div id="cropBox" class="crop-box" hidden></div>
@@ -163,7 +171,7 @@
             <button class="btn primary" id="cropSave">Обрезать и сохранить</button>
           </div>
           <p class="muted small">
-            Выделите росчерк рамкой мышью, светлый фон внутри выделения будет удалён (PNG с прозрачностью).
+            Загрузите PDF, PNG, JPG или вставьте скриншот из буфера. Выделите подпись рамкой, светлый фон внутри выделения будет удалён.
           </p>
           <div class="preview-wrap">
             <span class="label">Результат:</span>

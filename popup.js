@@ -1,5 +1,6 @@
 document.getElementById("open").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "OPEN_EDITOR" }, () => window.close());
+  chrome.tabs.create({ url: chrome.runtime.getURL("editor.html") });
+  window.close();
 });
 
 document.getElementById("signatures").addEventListener("click", () => {
