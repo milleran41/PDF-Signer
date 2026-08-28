@@ -161,6 +161,7 @@ async function renderPage() {
 }
 
 function afterRender() {
+  closeSignatureModal();
   $("empty").hidden = true;
   $("stageWrap").hidden = false;
   const stage = $("stage");
@@ -172,6 +173,7 @@ function afterRender() {
 }
 
 function showHome(reset = false) {
+  closeSignatureModal();
   if (reset) {
     state.kind = null;
     state.pdf = null;
@@ -187,14 +189,13 @@ function showHome(reset = false) {
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
   $("pageNav").hidden = true;
-  $("sigModal").hidden = true;
 }
 
 $("fileInput").onchange = (e) => openFile(e.target.files[0]);
 $("fileInput2").onchange = (e) => openFile(e.target.files[0]);
 $("homeBtn").onclick = () => showHome(true);
 $("savedSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
-$("homeSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
+$("homeCreateSignatureBtn").onclick = () => openSignatureModal();
 $("prevPage").onclick = async () => {
   if (state.page > 1) {
     state.page--;
@@ -424,7 +425,7 @@ function renderSigStrips() {
     list.forEach((s) => {
       const img = new Image();
       img.src = s.dataUrl;
-      img.title = "Вставить в документ";
+      img.title = state.kind ? "Вставить сохранённую подпись в документ" : "Сначала выберите документ";
       img.onclick = () => insertSignature(s.dataUrl);
       strip.appendChild(img);
     });
@@ -451,12 +452,24 @@ function insertSignature(dataUrl) {
   probe.src = dataUrl;
 }
 
-$("signBtn").onclick = () => {
+function openSignatureModal() {
   $("sigModal").hidden = false;
   renderSigStrips();
-};
-$("sigClose").onclick = () => ($("sigModal").hidden = true);
-$("sigBack").onclick = () => showHome(true);
+}
+
+function closeSignatureModal() {
+  $("sigModal").hidden = true;
+}
+
+$("signBtn").onclick = () => openSignatureModal();
+$("sigClose").onclick = closeSignatureModal;
+$("sigBack").onclick = closeSignatureModal;
+$("sigModal").addEventListener("pointerdown", (e) => {
+  if (e.target === $("sigModal")) closeSignatureModal();
+});
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !$("sigModal").hidden) closeSignatureModal();
+});
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.onclick = () => {
@@ -863,6 +876,7 @@ $("saveBtn").onclick = async () => {
 };
 
 /* ================= bootstrap ================= */
+closeSignatureModal();
 showApp();
 showHome(false);
 const srcParam = new URLSearchParams(location.search).get("src");
