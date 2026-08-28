@@ -88,8 +88,11 @@ const state = {
   pages: 1,
   image: null,
   zoom: 1,
+  rotation: 0,
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
+
+let activeAnnotId = null;
 
 function annotsForPage() {
   return (state.annots[state.page] ||= []);
@@ -97,6 +100,7 @@ function annotsForPage() {
 
 async function openFile(file) {
   if (!file) return;
+  resetDocumentAdjustments();
   const buf = await file.arrayBuffer();
   if (file.type === "application/pdf" || /\.pdf$/i.test(file.name)) {
     await loadPdf(buf);
@@ -106,6 +110,7 @@ async function openFile(file) {
 }
 
 async function openUrl(url) {
+  resetDocumentAdjustments();
   const res = await fetch(url);
   const buf = await res.arrayBuffer();
   const type = res.headers.get("content-type") || "";
@@ -136,9 +141,7 @@ function loadImage(src) {
       state.page = 1;
       state.annots = {};
       $("pageNav").hidden = true;
-      docCanvas.width = img.naturalWidth;
-      docCanvas.height = img.naturalHeight;
-      docCanvas.getContext("2d").drawImage(img, 0, 0);
+      renderImageDocument();
       afterRender();
       resolve();
     };
@@ -150,14 +153,34 @@ function loadImage(src) {
 async function renderPage() {
   const page = await state.pdf.getPage(state.page);
   const viewport = page.getViewport({ scale: RENDER_SCALE });
-  docCanvas.width = Math.floor(viewport.width);
-  docCanvas.height = Math.floor(viewport.height);
-  const ctx = docCanvas.getContext("2d");
+  const source = document.createElement("canvas");
+  source.width = Math.floor(viewport.width);
+  source.height = Math.floor(viewport.height);
+  const ctx = source.getContext("2d");
   ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, docCanvas.width, docCanvas.height);
+  ctx.fillRect(0, 0, source.width, source.height);
   await page.render({ canvasContext: ctx, viewport }).promise;
+  drawRotatedDocument(source);
   $("pageNum").textContent = String(state.page);
   afterRender();
+}
+
+function resetDocumentAdjustments() {
+  state.rotation = 0;
+  $("rotateAngle").value = "0";
+  updateRotationLabel();
+}
+
+function renderImageDocument() {
+  const source = document.createElement("canvas");
+  source.width = state.image.naturalWidth;
+  source.height = state.image.naturalHeight;
+  source.getContext("2d").drawImage(state.image, 0, 0);
+  drawRotatedDocument(source);
+}
+
+function drawRotatedDocument(source) {
+  drawCanvasInto(docCanvas, source, state.rotation);
 }
 
 function afterRender() {
@@ -180,11 +203,15 @@ function showHome(reset = false) {
     state.page = 1;
     state.pages = 1;
     state.image = null;
+    state.rotation = 0;
     state.annots = {};
+    activeAnnotId = null;
     overlay.innerHTML = "";
     docCanvas.getContext("2d").clearRect(0, 0, docCanvas.width, docCanvas.height);
     $("fileInput").value = "";
     $("fileInput2").value = "";
+    $("rotateAngle").value = "0";
+    updateRotationLabel();
   }
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
@@ -207,6 +234,32 @@ $("nextPage").onclick = async () => {
     state.page++;
     await renderPage();
   }
+};
+
+function updateRotationLabel() {
+  $("rotateLabel").textContent = `${Number(state.rotation).toFixed(1).replace(".0", "")}°`;
+}
+
+async function rerenderCurrentDocument() {
+  if (state.kind === "pdf") await renderPage();
+  else if (state.kind === "image") {
+    renderImageDocument();
+    afterRender();
+  } else {
+    updateRotationLabel();
+  }
+}
+
+$("rotateAngle").oninput = async (e) => {
+  state.rotation = Number(e.target.value);
+  updateRotationLabel();
+  await rerenderCurrentDocument();
+};
+$("rotateReset").onclick = async () => {
+  state.rotation = 0;
+  $("rotateAngle").value = "0";
+  updateRotationLabel();
+  await rerenderCurrentDocument();
 };
 
 /* ---------- зум ---------- */
@@ -238,16 +291,59 @@ function applyGrid() {
 /* ================= 2. Текстовый слой ================= */
 const textStyle = { family: "sans-serif", size: 16, bold: false, italic: false, color: "#111111" };
 
-$("fontFamily").onchange = (e) => (textStyle.family = e.target.value);
-$("fontSize").onchange = (e) => (textStyle.size = Number(e.target.value));
-$("textColor").oninput = (e) => (textStyle.color = e.target.value);
+function activeAnnot() {
+  return annotsForPage().find((a) => a.id === activeAnnotId) || null;
+}
+
+function selectAnnot(a) {
+  activeAnnotId = a?.id || null;
+  if (a?.type === "text") {
+    textStyle.family = a.family;
+    textStyle.size = Math.round(a.size / RENDER_SCALE);
+    textStyle.color = a.color;
+    textStyle.bold = a.bold;
+    textStyle.italic = a.italic;
+    $("fontFamily").value = a.family;
+    $("fontSize").value = String(textStyle.size);
+    $("textColor").value = a.color;
+    $("boldBtn").classList.toggle("active", a.bold);
+    $("italicBtn").classList.toggle("active", a.italic);
+  }
+  updateSelectedItems();
+}
+
+function updateSelectedItems() {
+  overlay.querySelectorAll(".item").forEach((el) => {
+    el.classList.toggle("selected", el.dataset.id === activeAnnotId);
+  });
+}
+
+function applyTextStyleToActive(change) {
+  const a = activeAnnot();
+  Object.assign(textStyle, change);
+  if (a?.type !== "text") return;
+  if (change.family) a.family = change.family;
+  if (change.size) a.size = change.size * RENDER_SCALE;
+  if (Object.prototype.hasOwnProperty.call(change, "bold")) a.bold = change.bold;
+  if (Object.prototype.hasOwnProperty.call(change, "italic")) a.italic = change.italic;
+  if (change.color) a.color = change.color;
+  renderAnnots();
+}
+
+$("fontFamily").onchange = (e) => applyTextStyleToActive({ family: e.target.value });
+$("fontSize").onchange = (e) => applyTextStyleToActive({ size: Number(e.target.value) });
+$("textColor").oninput = (e) => applyTextStyleToActive({ color: e.target.value });
 $("boldBtn").onclick = (e) => {
-  textStyle.bold = !textStyle.bold;
-  e.currentTarget.classList.toggle("active", textStyle.bold);
+  const a = activeAnnot();
+  const next = a?.type === "text" ? !a.bold : !textStyle.bold;
+  e.currentTarget.classList.toggle("active", next);
+  applyTextStyleToActive({ bold: next });
 };
 $("italicBtn").onclick = (e) => {
-  textStyle.italic = !textStyle.italic;
-  e.currentTarget.classList.toggle("active", textStyle.italic);
+  const a = activeAnnot();
+  const next = a?.type === "text" ? !a.italic : !textStyle.italic;
+  e.currentTarget.classList.toggle("active", next);
+  applyTextStyleToActive({ italic: next });
 };
 
 // клик по документу -> новое текстовое поле в координатах документа
@@ -270,6 +366,7 @@ overlay.addEventListener("mousedown", (e) => {
     color: textStyle.color,
   };
   annotsForPage().push(a);
+  activeAnnotId = a.id;
   renderAnnots();
   const node = overlay.querySelector(`[data-id="${a.id}"] textarea`);
   node?.focus();
@@ -292,6 +389,8 @@ function baseNode(a, cls) {
   el.dataset.id = a.id;
   el.style.left = a.x + "px";
   el.style.top = a.y + "px";
+  el.classList.toggle("selected", a.id === activeAnnotId);
+  el.addEventListener("mousedown", () => selectAnnot(a));
 
   const handle = document.createElement("button");
   handle.className = "handle";
@@ -305,6 +404,7 @@ function baseNode(a, cls) {
   del.title = "Удалить";
   del.onclick = () => {
     state.annots[state.page] = annotsForPage().filter((x) => x !== a);
+    if (activeAnnotId === a.id) activeAnnotId = null;
     renderAnnots();
   };
 
@@ -330,8 +430,7 @@ function textNode(a) {
     a.text = ta.value;
     autosize();
   });
-  ta.addEventListener("focus", () => el.classList.add("selected"));
-  ta.addEventListener("blur", () => el.classList.remove("selected"));
+  ta.addEventListener("focus", () => selectAnnot(a));
   el.appendChild(ta);
   requestAnimationFrame(autosize);
   return el;
@@ -792,13 +891,15 @@ async function flattenPage(pageNumber) {
   if (state.kind === "pdf" && pageNumber !== state.page) {
     const page = await state.pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale: RENDER_SCALE });
-    base = document.createElement("canvas");
-    base.width = Math.floor(viewport.width);
-    base.height = Math.floor(viewport.height);
-    const c = base.getContext("2d");
+    const source = document.createElement("canvas");
+    source.width = Math.floor(viewport.width);
+    source.height = Math.floor(viewport.height);
+    const c = source.getContext("2d");
     c.fillStyle = "#fff";
-    c.fillRect(0, 0, base.width, base.height);
+    c.fillRect(0, 0, source.width, source.height);
     await page.render({ canvasContext: c, viewport }).promise;
+    base = document.createElement("canvas");
+    drawCanvasInto(base, source, state.rotation);
   }
 
   const out = document.createElement("canvas");
@@ -824,6 +925,23 @@ async function flattenPage(pageNumber) {
     }
   }
   return out;
+}
+
+function drawCanvasInto(target, source, degrees) {
+  const angle = (degrees * Math.PI) / 180;
+  const sin = Math.abs(Math.sin(angle));
+  const cos = Math.abs(Math.cos(angle));
+  const w = source.width;
+  const h = source.height;
+  target.width = Math.ceil(w * cos + h * sin);
+  target.height = Math.ceil(w * sin + h * cos);
+  const ctx = target.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, target.width, target.height);
+  ctx.translate(target.width / 2, target.height / 2);
+  ctx.rotate(angle);
+  ctx.drawImage(source, -w / 2, -h / 2);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function loadImg(src) {
