@@ -12,6 +12,10 @@ chrome.runtime.onInstalled.addListener(() => {
   console.log("[PDF Signer] installed");
 });
 
+chrome.action.onClicked.addListener(() => {
+  openEditor();
+});
+
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type === "OPEN_EDITOR") {
     openEditor(msg.params || {}).then((tab) => sendResponse({ ok: true, tabId: tab.id }));

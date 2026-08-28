@@ -193,6 +193,8 @@ function showHome(reset = false) {
 $("fileInput").onchange = (e) => openFile(e.target.files[0]);
 $("fileInput2").onchange = (e) => openFile(e.target.files[0]);
 $("homeBtn").onclick = () => showHome(true);
+$("savedSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
+$("homeSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
 $("prevPage").onclick = async () => {
   if (state.page > 1) {
     state.page--;
