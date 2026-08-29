@@ -348,23 +348,66 @@ async function renderThumbnails() {
   $("canvasArea").classList.toggle("with-thumbs", !pane.hidden);
   if (pane.hidden) return;
   for (let i = 0; i < state.pageSources.length; i++) {
-    const button = document.createElement("button");
-    button.className = "thumb-card";
-    button.type = "button";
-    button.dataset.page = String(i + 1);
+    const card = document.createElement("div");
+    card.className = "thumb-card";
+    card.dataset.page = String(i + 1);
+    card.tabIndex = 0;
     const canvas = document.createElement("canvas");
     const title = document.createElement("span");
     title.className = "thumb-title";
     title.textContent = `${i + 1}. ${state.pageSources[i].label || "Страница"}`;
-    button.append(canvas, title);
-    button.onclick = async () => {
+    const remove = document.createElement("button");
+    remove.className = "thumb-remove";
+    remove.type = "button";
+    remove.title = "Удалить лист";
+    remove.textContent = "×";
+    const openPage = async () => {
       state.page = i + 1;
       await renderPage();
     };
-    pane.append(button);
+    card.onclick = openPage;
+    card.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openPage();
+      }
+    };
+    remove.onclick = async (e) => {
+      e.stopPropagation();
+      await removeDocumentPage(i);
+    };
+    card.append(canvas, title, remove);
+    pane.append(card);
     renderThumbnailCanvas(state.pageSources[i], canvas).catch(console.error);
   }
   updateThumbSelection();
+}
+
+async function removeDocumentPage(index) {
+  if (index < 0 || index >= state.pageSources.length) return;
+  const removedPage = index + 1;
+  state.pageSources.splice(index, 1);
+  const nextAnnots = {};
+  Object.entries(state.annots).forEach(([page, items]) => {
+    const pageNumber = Number(page);
+    if (pageNumber === removedPage) return;
+    nextAnnots[pageNumber > removedPage ? pageNumber - 1 : pageNumber] = items;
+  });
+  state.annots = nextAnnots;
+  activeAnnotId = null;
+
+  if (!state.pageSources.length) {
+    showHome(true);
+    return;
+  }
+
+  state.pages = state.pageSources.length;
+  if (state.page > removedPage) state.page--;
+  state.page = Math.max(1, Math.min(state.page, state.pages));
+  $("pageNav").hidden = state.pages < 2;
+  $("pageCount").textContent = String(state.pages);
+  await renderPage();
+  await renderThumbnails();
 }
 
 async function renderThumbnailCanvas(source, target) {
@@ -475,6 +518,7 @@ $("fileInput2").onchange = async (e) => {
   await openFiles(e.target.files, { append: false });
   e.target.value = "";
 };
+$("clearDocsBtn").onclick = () => showHome(true);
 ["dragenter", "dragover"].forEach((eventName) => {
   $("canvasArea").addEventListener(eventName, (e) => {
     e.preventDefault();
