@@ -90,6 +90,7 @@ const state = {
   zoom: 1,
   rotation: 0,
   layerOffsetY: 0,
+  gridStepY: 24,
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
 
@@ -169,10 +170,13 @@ async function renderPage() {
 function resetDocumentAdjustments() {
   state.rotation = 0;
   state.layerOffsetY = 0;
+  state.gridStepY = Number($("gridSize").value);
   $("rotateAngle").value = "0";
   $("layerOffsetY").value = "0";
+  $("gridStepY").value = String(state.gridStepY);
   updateRotationLabel();
   updateLayerOffsetLabel();
+  updateGridStepYLabel();
 }
 
 function renderImageDocument() {
@@ -210,6 +214,7 @@ function showHome(reset = false) {
     state.image = null;
     state.rotation = 0;
     state.layerOffsetY = 0;
+    state.gridStepY = Number($("gridSize").value);
     state.annots = {};
     activeAnnotId = null;
     overlay.innerHTML = "";
@@ -218,8 +223,10 @@ function showHome(reset = false) {
     $("fileInput2").value = "";
     $("rotateAngle").value = "0";
     $("layerOffsetY").value = "0";
+    $("gridStepY").value = String(state.gridStepY);
     updateRotationLabel();
     updateLayerOffsetLabel();
+    updateGridStepYLabel();
   }
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
@@ -310,15 +317,22 @@ $("zoomOut").onclick = () => {
 /* ---------- сетка ---------- */
 function applyGrid() {
   const on = $("gridToggle").checked;
-  const size = Number($("gridSize").value);
+  const sizeX = Number($("gridSize").value);
+  state.gridStepY = Number($("gridStepY").value);
   const mode = $("gridMode").value;
   gridEl.className = "grid" + (on ? (mode === "grid" ? " grid-cells" : " grid-lines") : "");
-  gridEl.style.backgroundSize = `${size}px ${size}px`;
+  gridEl.style.backgroundSize = `${sizeX}px ${state.gridStepY}px`;
+  updateGridStepYLabel();
 }
-["gridToggle", "gridMode", "gridSize"].forEach((id) => ($(id).oninput = applyGrid));
+
+function updateGridStepYLabel() {
+  $("gridStepYLabel").textContent = `${state.gridStepY} px`;
+}
+
+["gridToggle", "gridMode", "gridSize", "gridStepY"].forEach((id) => ($(id).oninput = applyGrid));
 
 /* ================= 2. Текстовый слой ================= */
-const textStyle = { family: "sans-serif", size: 16, bold: false, italic: false, color: "#111111" };
+const textStyle = { family: "sans-serif", size: 16, bold: false, italic: false, color: "#111111", lineHeight: 1.15 };
 
 function activeAnnot() {
   return annotsForPage().find((a) => a.id === activeAnnotId) || null;
@@ -332,9 +346,12 @@ function selectAnnot(a) {
     textStyle.color = a.color;
     textStyle.bold = a.bold;
     textStyle.italic = a.italic;
+    textStyle.lineHeight = a.lineHeight || 1.15;
     $("fontFamily").value = a.family;
     $("fontSize").value = String(textStyle.size);
     $("textColor").value = a.color;
+    $("lineHeight").value = String(textStyle.lineHeight);
+    updateLineHeightLabel();
     $("boldBtn").classList.toggle("active", a.bold);
     $("italicBtn").classList.toggle("active", a.italic);
   }
@@ -356,12 +373,18 @@ function applyTextStyleToActive(change) {
   if (Object.prototype.hasOwnProperty.call(change, "bold")) a.bold = change.bold;
   if (Object.prototype.hasOwnProperty.call(change, "italic")) a.italic = change.italic;
   if (change.color) a.color = change.color;
+  if (change.lineHeight) a.lineHeight = change.lineHeight;
   renderAnnots();
 }
 
 $("fontFamily").onchange = (e) => applyTextStyleToActive({ family: e.target.value });
 $("fontSize").onchange = (e) => applyTextStyleToActive({ size: Number(e.target.value) });
 $("textColor").oninput = (e) => applyTextStyleToActive({ color: e.target.value });
+$("lineHeight").oninput = (e) => {
+  const value = Number(e.target.value);
+  updateLineHeightLabel(value);
+  applyTextStyleToActive({ lineHeight: value });
+};
 $("boldBtn").onclick = (e) => {
   const a = activeAnnot();
   const next = a?.type === "text" ? !a.bold : !textStyle.bold;
@@ -375,6 +398,10 @@ $("italicBtn").onclick = (e) => {
   applyTextStyleToActive({ italic: next });
 };
 
+function updateLineHeightLabel(value = Number($("lineHeight").value)) {
+  $("lineHeightLabel").textContent = value.toFixed(2).replace(/0$/, "");
+}
+
 // клик по документу -> новое текстовое поле в координатах документа
 overlay.addEventListener("mousedown", (e) => {
   if (e.target !== overlay) return;
@@ -386,13 +413,14 @@ overlay.addEventListener("mousedown", (e) => {
     id: crypto.randomUUID(),
     type: "text",
     x: snap(x),
-    y: snap(y),
+    y: snapY(y),
     text: "",
     family: textStyle.family,
     size,
     bold: textStyle.bold,
     italic: textStyle.italic,
     color: textStyle.color,
+    lineHeight: textStyle.lineHeight,
   };
   annotsForPage().push(a);
   activeAnnotId = a.id;
@@ -405,6 +433,11 @@ function snap(v) {
   if (!$("gridToggle").checked) return v;
   const step = Number($("gridSize").value);
   return Math.round(v / step) * step;
+}
+
+function snapY(v) {
+  if (!$("gridToggle").checked) return v;
+  return Math.round(v / state.gridStepY) * state.gridStepY;
 }
 
 function renderAnnots() {
@@ -448,6 +481,7 @@ function textNode(a) {
   ta.value = a.text;
   ta.spellcheck = false;
   ta.style.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
+  ta.style.lineHeight = String(a.lineHeight || 1.15);
   ta.style.color = a.color;
   const autosize = () => {
     ta.style.width = "10px";
@@ -511,7 +545,7 @@ function startDrag(ev, a, el) {
   el.classList.add("selected");
   const move = (m) => {
     a.x = snap(x0 + (m.clientX - sx) / state.zoom);
-    a.y = snap(y0 + (m.clientY - sy) / state.zoom);
+    a.y = snapY(y0 + (m.clientY - sy) / state.zoom);
     el.style.left = a.x + "px";
     el.style.top = a.y + "px";
   };
@@ -999,7 +1033,7 @@ async function flattenPage(pageNumber) {
       ctx.fillStyle = a.color;
       ctx.textBaseline = "top";
       ctx.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
-      const lineH = a.size * 1.15;
+      const lineH = a.size * (a.lineHeight || 1.15);
       a.text.split("\n").forEach((line, i) => ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + i * lineH));
     } else {
       const img = await loadImg(a.dataUrl);
@@ -1079,5 +1113,7 @@ $("saveBtn").onclick = async () => {
 closeSignatureModal();
 showApp();
 showHome(false);
+updateGridStepYLabel();
+updateLineHeightLabel();
 const srcParam = new URLSearchParams(location.search).get("src");
 if (srcParam) openUrl(srcParam).catch((e) => alert("Не удалось открыть файл: " + e.message));

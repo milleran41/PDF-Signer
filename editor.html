@@ -60,6 +60,9 @@
             <option value="lines">В линейку</option>
           </select>
           <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" />
+          <span class="label">Шаг строк</span>
+          <input type="range" id="gridStepY" min="10" max="80" step="1" value="24" title="Расстояние между строками сетки" />
+          <span id="gridStepYLabel" class="pageLabel">24 px</span>
           <span class="label">Сдвиг слоя</span>
           <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" title="Сдвиг сетки и вводимого текста" />
           <span id="layerOffsetLabel" class="pageLabel">0 px</span>
@@ -106,6 +109,9 @@
         <button class="btn toggle" id="boldBtn" title="Жирный"><b>B</b></button>
         <button class="btn toggle" id="italicBtn" title="Курсив"><i>I</i></button>
         <input type="color" id="textColor" value="#111111" class="color" title="Цвет текста" />
+        <span class="label">Интервал</span>
+        <input type="range" id="lineHeight" min="0.8" max="2" step="0.05" value="1.15" title="Межстрочный интервал текста" />
+        <span id="lineHeightLabel" class="pageLabel">1.15</span>
         <span class="divider-v"></span>
         <span class="label">Подписи:</span>
         <div id="sigStrip" class="sig-strip"><span class="muted small">нет сохранённых</span></div>
