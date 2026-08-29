@@ -196,7 +196,8 @@ async function renderDocxFileToSources(file) {
     await window.docx.renderAsync(buffer, docxRenderHost, null, {
       className: "docx",
       inWrapper: true,
-      breakPages: true,
+      breakPages: false,
+      ignoreLastRenderedPageBreak: true,
       ignoreWidth: false,
       ignoreHeight: false,
       renderHeaders: true,
@@ -208,31 +209,54 @@ async function renderDocxFileToSources(file) {
     if (document.fonts?.ready) await document.fonts.ready;
     await nextFrame();
 
-    const pageEls = Array.from(docxRenderHost.querySelectorAll("section.docx"));
-    const pages = pageEls.length ? pageEls : Array.from(docxRenderHost.children);
-    if (!pages.length) throw new Error(`Не удалось прочитать DOCX: ${file.name}`);
-
-    const sources = [];
-    for (let i = 0; i < pages.length; i++) {
-      const canvas = await window.html2canvas(pages[i], {
-        backgroundColor: "#ffffff",
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-      });
-      const img = await loadImageElement(canvas.toDataURL("image/png"));
-      sources.push({
-        type: "image",
-        image: img,
-        label: `${file.name} · ${i + 1}/${pages.length}`,
-      });
+    const sections = Array.from(docxRenderHost.querySelectorAll("section.docx"));
+    const targets = sections.length ? sections : [docxRenderHost.querySelector(".docx-wrapper") || docxRenderHost];
+    const canvases = [];
+    for (const target of targets) {
+      target.style.height = "auto";
+      target.style.overflow = "visible";
+      canvases.push(await htmlElementToCanvas(target));
     }
-    return sources;
+    const canvas = mergeCanvasesVertically(canvases);
+    const img = await loadImageElement(canvas.toDataURL("image/png"));
+    return [{ type: "image", image: img, label: `${file.name} · PNG` }];
   } finally {
     docxRenderHost.innerHTML = "";
     docxRenderHost.style.display = "none";
   }
+}
+
+async function htmlElementToCanvas(target) {
+  return window.html2canvas(target, {
+    backgroundColor: "#ffffff",
+    scale: 2,
+    logging: false,
+    useCORS: true,
+    allowTaint: true,
+    width: Math.ceil(target.scrollWidth || target.getBoundingClientRect().width),
+    height: Math.ceil(target.scrollHeight || target.getBoundingClientRect().height),
+    windowWidth: Math.ceil(target.scrollWidth || target.getBoundingClientRect().width),
+    windowHeight: Math.ceil(target.scrollHeight || target.getBoundingClientRect().height),
+  });
+}
+
+function mergeCanvasesVertically(canvases) {
+  if (canvases.length === 1) return canvases[0];
+  const gap = 24;
+  const width = Math.max(...canvases.map((canvas) => canvas.width));
+  const height = canvases.reduce((sum, canvas) => sum + canvas.height, 0) + gap * (canvases.length - 1);
+  const merged = document.createElement("canvas");
+  merged.width = width;
+  merged.height = height;
+  const ctx = merged.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, height);
+  let y = 0;
+  for (const canvas of canvases) {
+    ctx.drawImage(canvas, Math.round((width - canvas.width) / 2), y);
+    y += canvas.height + gap;
+  }
+  return merged;
 }
 
 function nextFrame() {
