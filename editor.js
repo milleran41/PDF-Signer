@@ -359,7 +359,15 @@ $("gridStepY").oninput = applyGrid;
 $("gridStepY").onchange = applyGrid;
 
 /* ================= 2. Текстовый слой ================= */
-const textStyle = { family: "sans-serif", size: 16, bold: false, italic: false, color: "#111111", lineHeight: 1.15 };
+const textStyle = {
+  family: "sans-serif",
+  size: 16,
+  bold: false,
+  italic: false,
+  color: "#111111",
+  lineHeight: 1.15,
+  offsetY: -6,
+};
 
 function activeAnnot() {
   return annotsForPage().find((a) => a.id === activeAnnotId) || null;
@@ -374,9 +382,11 @@ function selectAnnot(a) {
     textStyle.bold = a.bold;
     textStyle.italic = a.italic;
     textStyle.lineHeight = a.lineHeight || 1.15;
+    textStyle.offsetY = a.offsetY ?? state.textOffsetY;
     $("fontFamily").value = a.family;
     $("fontSize").value = String(textStyle.size);
     $("textColor").value = a.color;
+    $("textOffsetY").value = String(textStyle.offsetY);
     $("lineHeight").value = String(textStyle.lineHeight);
     updateLineHeightLabel();
     $("boldBtn").classList.toggle("active", a.bold);
@@ -401,6 +411,7 @@ function applyTextStyleToActive(change) {
   if (Object.prototype.hasOwnProperty.call(change, "italic")) a.italic = change.italic;
   if (change.color) a.color = change.color;
   if (change.lineHeight) a.lineHeight = change.lineHeight;
+  if (Object.prototype.hasOwnProperty.call(change, "offsetY")) a.offsetY = change.offsetY;
   renderAnnots();
 }
 
@@ -408,9 +419,14 @@ $("fontFamily").onchange = (e) => applyTextStyleToActive({ family: e.target.valu
 $("fontSize").onchange = (e) => applyTextStyleToActive({ size: Number(e.target.value) });
 $("textColor").oninput = (e) => applyTextStyleToActive({ color: e.target.value });
 $("textOffsetY").oninput = (e) => {
-  state.textOffsetY = Math.max(-40, Math.min(40, Number(e.target.value) || 0));
-  $("textOffsetY").value = String(state.textOffsetY);
-  renderAnnots();
+  const value = Math.max(-40, Math.min(40, Number(e.target.value) || 0));
+  $("textOffsetY").value = String(value);
+  if (activeAnnot()?.type === "text") {
+    applyTextStyleToActive({ offsetY: value });
+  } else {
+    state.textOffsetY = value;
+    textStyle.offsetY = value;
+  }
 };
 $("lineHeight").oninput = (e) => {
   const value = Number(e.target.value);
@@ -453,6 +469,7 @@ overlay.addEventListener("mousedown", (e) => {
     italic: textStyle.italic,
     color: textStyle.color,
     lineHeight: textStyle.lineHeight,
+    offsetY: textStyle.offsetY,
   };
   annotsForPage().push(a);
   activeAnnotId = a.id;
@@ -508,7 +525,7 @@ function baseNode(a, cls) {
 
 function textNode(a) {
   const el = baseNode(a, "item-text");
-  el.style.top = a.y + state.textOffsetY + "px";
+  el.style.top = a.y + (a.offsetY ?? state.textOffsetY) + "px";
   const ta = document.createElement("textarea");
   ta.rows = 1;
   ta.value = a.text;
@@ -1110,7 +1127,7 @@ async function flattenPage(pageNumber) {
       ctx.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
       const lineH = a.size * (a.lineHeight || 1.15);
       a.text.split("\n").forEach((line, i) =>
-        ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + state.textOffsetY + i * lineH)
+        ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + (a.offsetY ?? state.textOffsetY) + i * lineH)
       );
     } else {
       const img = await loadImg(a.dataUrl);
