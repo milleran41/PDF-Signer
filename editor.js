@@ -77,6 +77,7 @@ if (window.pdfjsLib) {
 }
 
 const RENDER_SCALE = 2; // качество рендера PDF (1pt -> 2px)
+const A4_PORTRAIT_RATIO = 297 / 210;
 const docCanvas = $("docCanvas");
 const overlay = $("overlay");
 const gridEl = $("grid");
@@ -218,12 +219,56 @@ async function renderDocxFileToSources(file) {
       canvases.push(await htmlElementToCanvas(target));
     }
     const canvas = mergeCanvasesVertically(canvases);
-    const img = await loadImageElement(canvas.toDataURL("image/png"));
-    return [{ type: "image", image: img, label: `${file.name} · PNG` }];
+    return await canvasToPagedImageSources(canvas, file.name);
   } finally {
     docxRenderHost.innerHTML = "";
     docxRenderHost.style.display = "none";
   }
+}
+
+async function canvasToPagedImageSources(canvas, fileName) {
+  const pageCanvases = splitCanvasIntoA4Pages(canvas);
+  const pageCount = pageCanvases.length;
+  const sources = [];
+  for (let i = 0; i < pageCanvases.length; i++) {
+    const img = await loadImageElement(pageCanvases[i].toDataURL("image/png"));
+    sources.push({
+      type: "image",
+      image: img,
+      label: pageCount > 1 ? `${fileName} · ${i + 1}/${pageCount}` : `${fileName} · PNG`,
+    });
+  }
+  return sources;
+}
+
+function splitCanvasIntoA4Pages(canvas) {
+  const pageHeight = Math.round(canvas.width * A4_PORTRAIT_RATIO);
+  if (canvas.height <= pageHeight * 1.08) return [canvas];
+
+  const pages = [];
+  let y = 0;
+  while (y < canvas.height) {
+    let sliceHeight = Math.min(pageHeight, canvas.height - y);
+    if (sliceHeight < pageHeight * 0.18 && pages.length) {
+      const prev = pages.pop();
+      pages.push(mergeCanvasesVertically([prev, cropDocumentCanvas(canvas, y, sliceHeight)]));
+      break;
+    }
+    pages.push(cropDocumentCanvas(canvas, y, sliceHeight, pageHeight));
+    y += sliceHeight;
+  }
+  return pages;
+}
+
+function cropDocumentCanvas(source, y, sliceHeight, targetHeight = sliceHeight) {
+  const page = document.createElement("canvas");
+  page.width = source.width;
+  page.height = targetHeight;
+  const ctx = page.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, page.width, page.height);
+  ctx.drawImage(source, 0, y, source.width, sliceHeight, 0, 0, source.width, sliceHeight);
+  return page;
 }
 
 async function htmlElementToCanvas(target) {
