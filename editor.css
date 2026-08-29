@@ -130,6 +130,11 @@ body {
   gap: 18px;
 }
 .canvas-area.with-thumbs { justify-content: flex-start; }
+.canvas-area.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: -12px;
+  background: rgba(47, 124, 246, 0.08);
+}
 .empty { text-align: center; margin-top: 12vh; }
 .empty h2 { margin-bottom: 6px; }
 .home-screen {
@@ -229,6 +234,18 @@ body {
 .guide[hidden] { display: none !important; }
 
 .overlay { position: absolute; inset: 0; cursor: crosshair; }
+
+.docx-render-host {
+  position: fixed;
+  left: -12000px;
+  top: 0;
+  width: max-content;
+  min-height: 1px;
+  overflow: visible;
+  background: #fff;
+  color: #111;
+  pointer-events: none;
+}
 
 /* ---------- overlay items ---------- */
 .item { position: absolute; }

@@ -81,6 +81,7 @@ const docCanvas = $("docCanvas");
 const overlay = $("overlay");
 const gridEl = $("grid");
 const guideEl = $("guide");
+const docxRenderHost = $("docxRenderHost");
 
 const state = {
   kind: null, // 'document'
@@ -115,10 +116,20 @@ async function openFiles(files, { append = false } = {}) {
     resetDocumentAdjustments();
   }
   const unsupported = [];
+  const failed = [];
   const added = [];
   for (const file of list) {
     const name = file.name || "document";
-    if (isWordFile(file)) {
+    if (isDocxFile(file)) {
+      try {
+        added.push(...(await renderDocxFileToSources(file)));
+      } catch (err) {
+        console.error(err);
+        failed.push(`${name}: ${err.message}`);
+      }
+      continue;
+    }
+    if (isLegacyDocFile(file)) {
       unsupported.push(name);
       continue;
     }
@@ -151,18 +162,81 @@ async function openFiles(files, { append = false } = {}) {
   if (unsupported.length) {
     alert(
       `Не удалось открыть: ${unsupported.join(", ")}\n\n` +
-        "Форматы Word (.doc/.docx) браузерное расширение не может отрисовать напрямую. " +
-        "Сохраните такой файл как PDF или сделайте изображение/скриншот, затем добавьте его сюда."
+        "Старый формат Word .doc браузерное расширение не может надёжно отрисовать напрямую. " +
+        "Сохраните такой файл как .docx, PDF или сделайте изображение/скриншот, затем добавьте его сюда."
     );
+  }
+  if (failed.length) {
+    alert("Некоторые файлы не удалось обработать:\n\n" + failed.join("\n"));
   }
 }
 
-function isWordFile(file) {
+function isDocxFile(file) {
   return (
-    /\.docx?$/i.test(file.name || "") ||
-    file.type === "application/msword" ||
+    /\.docx$/i.test(file.name || "") ||
     file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   );
+}
+
+function isLegacyDocFile(file) {
+  return (
+    /\.doc$/i.test(file.name || "") ||
+    file.type === "application/msword"
+  );
+}
+
+async function renderDocxFileToSources(file) {
+  if (!window.docx?.renderAsync || !window.html2canvas || !window.JSZip) {
+    throw new Error("Модуль DOCX не загружен. Проверьте файлы vendor/jszip, vendor/docx-preview и vendor/html2canvas.");
+  }
+  try {
+    docxRenderHost.innerHTML = "";
+    docxRenderHost.style.display = "block";
+    const buffer = await file.arrayBuffer();
+    await window.docx.renderAsync(buffer, docxRenderHost, null, {
+      className: "docx",
+      inWrapper: true,
+      breakPages: true,
+      ignoreWidth: false,
+      ignoreHeight: false,
+      renderHeaders: true,
+      renderFooters: true,
+      renderFootnotes: true,
+      renderEndnotes: true,
+      useBase64URL: true,
+    });
+    if (document.fonts?.ready) await document.fonts.ready;
+    await nextFrame();
+
+    const pageEls = Array.from(docxRenderHost.querySelectorAll("section.docx"));
+    const pages = pageEls.length ? pageEls : Array.from(docxRenderHost.children);
+    if (!pages.length) throw new Error(`Не удалось прочитать DOCX: ${file.name}`);
+
+    const sources = [];
+    for (let i = 0; i < pages.length; i++) {
+      const canvas = await window.html2canvas(pages[i], {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+      });
+      const img = await loadImageElement(canvas.toDataURL("image/png"));
+      sources.push({
+        type: "image",
+        image: img,
+        label: `${file.name} · ${i + 1}/${pages.length}`,
+      });
+    }
+    return sources;
+  } finally {
+    docxRenderHost.innerHTML = "";
+    docxRenderHost.style.display = "none";
+  }
+}
+
+function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 }
 
 async function openUrl(url) {
@@ -180,6 +254,13 @@ async function openUrl(url) {
       pageNumber: i + 1,
       label: `${name} · ${i + 1}/${pdf.numPages}`,
     }));
+  } else if (
+    type.includes("wordprocessingml.document") ||
+    /\.docx(\?|$)/i.test(url)
+  ) {
+    state.pageSources = await renderDocxFileToSources(new File([blob], name, { type }));
+  } else if (type.includes("msword") || /\.doc(\?|$)/i.test(url)) {
+    throw new Error("Старый формат Word .doc пока не поддерживается. Сохраните файл как .docx или PDF.");
   } else {
     const img = await loadImageElement(URL.createObjectURL(blob));
     state.pageSources = [{ type: "image", image: img, label: name }];
@@ -364,6 +445,22 @@ $("fileInput2").onchange = async (e) => {
   await openFiles(e.target.files, { append: false });
   e.target.value = "";
 };
+["dragenter", "dragover"].forEach((eventName) => {
+  $("canvasArea").addEventListener(eventName, (e) => {
+    e.preventDefault();
+    $("canvasArea").classList.add("drag-over");
+  });
+});
+["dragleave", "drop"].forEach((eventName) => {
+  $("canvasArea").addEventListener(eventName, (e) => {
+    e.preventDefault();
+    $("canvasArea").classList.remove("drag-over");
+  });
+});
+$("canvasArea").addEventListener("drop", async (e) => {
+  const files = e.dataTransfer?.files;
+  if (files?.length) await openFiles(files, { append: Boolean(state.kind) });
+});
 $("homeBtn").onclick = () => showHome(true);
 $("savedSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
 $("homeCreateSignatureBtn").onclick = () => openSignatureModal();
