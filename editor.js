@@ -93,6 +93,7 @@ const state = {
   layerOffsetY: 0,
   gridStepY: 20,
   guideY: 45,
+  textOffsetY: -6,
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
 
@@ -174,10 +175,12 @@ function resetDocumentAdjustments() {
   state.layerOffsetY = 0;
   state.gridStepY = 20;
   state.guideY = 45;
+  state.textOffsetY = -6;
   $("rotateAngle").value = "0";
   $("layerOffsetY").value = "0";
   $("gridStepY").value = String(state.gridStepY);
   $("guideY").value = String(state.guideY);
+  $("textOffsetY").value = String(state.textOffsetY);
   $("guideToggle").checked = true;
   updateRotationLabel();
   updateLayerOffsetLabel();
@@ -223,6 +226,7 @@ function showHome(reset = false) {
     state.layerOffsetY = 0;
     state.gridStepY = 20;
     state.guideY = 45;
+    state.textOffsetY = -6;
     state.annots = {};
     activeAnnotId = null;
     overlay.innerHTML = "";
@@ -233,6 +237,7 @@ function showHome(reset = false) {
     $("layerOffsetY").value = "0";
     $("gridStepY").value = String(state.gridStepY);
     $("guideY").value = String(state.guideY);
+    $("textOffsetY").value = String(state.textOffsetY);
     $("guideToggle").checked = true;
     updateRotationLabel();
     updateLayerOffsetLabel();
@@ -402,6 +407,11 @@ function applyTextStyleToActive(change) {
 $("fontFamily").onchange = (e) => applyTextStyleToActive({ family: e.target.value });
 $("fontSize").onchange = (e) => applyTextStyleToActive({ size: Number(e.target.value) });
 $("textColor").oninput = (e) => applyTextStyleToActive({ color: e.target.value });
+$("textOffsetY").oninput = (e) => {
+  state.textOffsetY = Math.max(-40, Math.min(40, Number(e.target.value) || 0));
+  $("textOffsetY").value = String(state.textOffsetY);
+  renderAnnots();
+};
 $("lineHeight").oninput = (e) => {
   const value = Number(e.target.value);
   updateLineHeightLabel(value);
@@ -498,6 +508,7 @@ function baseNode(a, cls) {
 
 function textNode(a) {
   const el = baseNode(a, "item-text");
+  el.style.top = a.y + state.textOffsetY + "px";
   const ta = document.createElement("textarea");
   ta.rows = 1;
   ta.value = a.text;
@@ -1098,7 +1109,9 @@ async function flattenPage(pageNumber) {
       ctx.textBaseline = "top";
       ctx.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
       const lineH = a.size * (a.lineHeight || 1.15);
-      a.text.split("\n").forEach((line, i) => ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + i * lineH));
+      a.text.split("\n").forEach((line, i) =>
+        ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + state.textOffsetY + i * lineH)
+      );
     } else {
       const img = await loadImg(a.dataUrl);
       ctx.drawImage(img, a.x, a.y + state.layerOffsetY, a.w, a.h);
