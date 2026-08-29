@@ -83,11 +83,10 @@ const gridEl = $("grid");
 const guideEl = $("guide");
 
 const state = {
-  kind: null, // 'pdf' | 'image'
-  pdf: null,
+  kind: null, // 'document'
+  pageSources: [],
   page: 1,
   pages: 1,
-  image: null,
   zoom: 1,
   rotation: 0,
   layerOffsetY: 0,
@@ -105,69 +104,190 @@ function annotsForPage() {
 
 async function openFile(file) {
   if (!file) return;
-  resetDocumentAdjustments();
-  const buf = await file.arrayBuffer();
-  if (file.type === "application/pdf" || /\.pdf$/i.test(file.name)) {
-    await loadPdf(buf);
-  } else {
-    await loadImage(URL.createObjectURL(new Blob([buf], { type: file.type || "image/png" })));
+  await openFiles([file], { append: false });
+}
+
+async function openFiles(files, { append = false } = {}) {
+  const list = Array.from(files || []);
+  if (!list.length) return;
+  if (!append) {
+    resetDocumentState();
+    resetDocumentAdjustments();
+  }
+  const unsupported = [];
+  const added = [];
+  for (const file of list) {
+    const name = file.name || "document";
+    if (isWordFile(file)) {
+      unsupported.push(name);
+      continue;
+    }
+    const buf = await file.arrayBuffer();
+    if (file.type === "application/pdf" || /\.pdf$/i.test(name)) {
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        added.push({ type: "pdf", pdf, pageNumber, label: `${name} · ${pageNumber}/${pdf.numPages}` });
+      }
+    } else if (file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif|bmp)$/i.test(name)) {
+      const img = await loadImageElement(URL.createObjectURL(new Blob([buf], { type: file.type || "image/png" })));
+      added.push({ type: "image", image: img, label: name });
+    } else {
+      unsupported.push(name);
+    }
+  }
+
+  if (added.length) {
+    const oldPages = state.pageSources.length;
+    state.pageSources.push(...added);
+    state.kind = "document";
+    state.pages = state.pageSources.length;
+    state.page = append && oldPages ? oldPages + 1 : 1;
+    $("pageNav").hidden = state.pages < 2;
+    $("pageCount").textContent = String(state.pages);
+    await renderPage();
+    await renderThumbnails();
+  }
+
+  if (unsupported.length) {
+    alert(
+      `Не удалось открыть: ${unsupported.join(", ")}\n\n` +
+        "Форматы Word (.doc/.docx) браузерное расширение не может отрисовать напрямую. " +
+        "Сохраните такой файл как PDF или сделайте изображение/скриншот, затем добавьте его сюда."
+    );
   }
 }
 
-async function openUrl(url) {
-  resetDocumentAdjustments();
-  const res = await fetch(url);
-  const buf = await res.arrayBuffer();
-  const type = res.headers.get("content-type") || "";
-  if (type.includes("pdf") || /\.pdf(\?|$)/i.test(url)) await loadPdf(buf);
-  else await loadImage(URL.createObjectURL(new Blob([buf], { type: type || "image/png" })));
+function isWordFile(file) {
+  return (
+    /\.docx?$/i.test(file.name || "") ||
+    file.type === "application/msword" ||
+    file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  );
 }
 
-async function loadPdf(buf) {
-  state.pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-  state.kind = "pdf";
-  state.image = null;
-  state.pages = state.pdf.numPages;
+async function openUrl(url) {
+  resetDocumentState();
+  resetDocumentAdjustments();
+  const res = await fetch(url);
+  const type = res.headers.get("content-type") || "";
+  const blob = new Blob([await res.arrayBuffer()], { type: type || "application/octet-stream" });
+  const name = decodeURIComponent(url.split("/").pop()?.split("?")[0] || "document");
+  if (type.includes("pdf") || /\.pdf(\?|$)/i.test(url)) {
+    const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+    state.pageSources = Array.from({ length: pdf.numPages }, (_, i) => ({
+      type: "pdf",
+      pdf,
+      pageNumber: i + 1,
+      label: `${name} · ${i + 1}/${pdf.numPages}`,
+    }));
+  } else {
+    const img = await loadImageElement(URL.createObjectURL(blob));
+    state.pageSources = [{ type: "image", image: img, label: name }];
+  }
+  state.kind = "document";
+  state.pages = state.pageSources.length;
   state.page = 1;
-  state.annots = {};
   $("pageNav").hidden = state.pages < 2;
   $("pageCount").textContent = String(state.pages);
   await renderPage();
+  await renderThumbnails();
 }
 
-function loadImage(src) {
+function loadImageElement(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.onload = () => {
-      state.kind = "image";
-      state.pdf = null;
-      state.image = img;
-      state.pages = 1;
-      state.page = 1;
-      state.annots = {};
-      $("pageNav").hidden = true;
-      renderImageDocument();
-      afterRender();
-      resolve();
-    };
+    img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = src;
   });
 }
 
 async function renderPage() {
-  const page = await state.pdf.getPage(state.page);
-  const viewport = page.getViewport({ scale: RENDER_SCALE });
-  const source = document.createElement("canvas");
-  source.width = Math.floor(viewport.width);
-  source.height = Math.floor(viewport.height);
-  const ctx = source.getContext("2d");
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, source.width, source.height);
-  await page.render({ canvasContext: ctx, viewport }).promise;
-  drawRotatedDocument(source);
+  const source = state.pageSources[state.page - 1];
+  if (!source) return;
+  const pageCanvas = await renderSourceCanvas(source, RENDER_SCALE);
+  drawRotatedDocument(pageCanvas);
   $("pageNum").textContent = String(state.page);
+  $("pageCount").textContent = String(state.pages);
+  updateThumbSelection();
   afterRender();
+}
+
+async function renderSourceCanvas(source, scale = RENDER_SCALE) {
+  if (source.type === "pdf") {
+    const page = await source.pdf.getPage(source.pageNumber);
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    return canvas;
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(source.image.naturalWidth * (scale / RENDER_SCALE)));
+  canvas.height = Math.max(1, Math.round(source.image.naturalHeight * (scale / RENDER_SCALE)));
+  canvas.getContext("2d").drawImage(source.image, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+
+async function renderThumbnails() {
+  const pane = $("thumbPane");
+  pane.innerHTML = "";
+  pane.hidden = !state.kind || state.pages < 1;
+  $("canvasArea").classList.toggle("with-thumbs", !pane.hidden);
+  if (pane.hidden) return;
+  for (let i = 0; i < state.pageSources.length; i++) {
+    const button = document.createElement("button");
+    button.className = "thumb-card";
+    button.type = "button";
+    button.dataset.page = String(i + 1);
+    const canvas = document.createElement("canvas");
+    const title = document.createElement("span");
+    title.className = "thumb-title";
+    title.textContent = `${i + 1}. ${state.pageSources[i].label || "Страница"}`;
+    button.append(canvas, title);
+    button.onclick = async () => {
+      state.page = i + 1;
+      await renderPage();
+    };
+    pane.append(button);
+    renderThumbnailCanvas(state.pageSources[i], canvas).catch(console.error);
+  }
+  updateThumbSelection();
+}
+
+async function renderThumbnailCanvas(source, target) {
+  const canvas = await renderSourceCanvas(source, 0.25);
+  const maxW = 116;
+  const scale = Math.min(maxW / canvas.width, 1);
+  target.width = Math.max(1, Math.round(canvas.width * scale));
+  target.height = Math.max(1, Math.round(canvas.height * scale));
+  const ctx = target.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, target.width, target.height);
+  ctx.drawImage(canvas, 0, 0, target.width, target.height);
+}
+
+function updateThumbSelection() {
+  document.querySelectorAll(".thumb-card").forEach((button) => {
+    button.classList.toggle("active", Number(button.dataset.page) === state.page);
+  });
+}
+
+function resetDocumentState() {
+  state.kind = null;
+  state.pageSources = [];
+  state.page = 1;
+  state.pages = 1;
+  state.annots = {};
+  activeAnnotId = null;
+  overlay.innerHTML = "";
+  $("thumbPane").innerHTML = "";
+  $("thumbPane").hidden = true;
+  $("canvasArea").classList.remove("with-thumbs");
 }
 
 function resetDocumentAdjustments() {
@@ -186,14 +306,6 @@ function resetDocumentAdjustments() {
   updateLayerOffsetLabel();
   updateGridStepYLabel();
   applyGuide();
-}
-
-function renderImageDocument() {
-  const source = document.createElement("canvas");
-  source.width = state.image.naturalWidth;
-  source.height = state.image.naturalHeight;
-  source.getContext("2d").drawImage(state.image, 0, 0);
-  drawRotatedDocument(source);
 }
 
 function drawRotatedDocument(source) {
@@ -217,19 +329,12 @@ function afterRender() {
 function showHome(reset = false) {
   closeSignatureModal();
   if (reset) {
-    state.kind = null;
-    state.pdf = null;
-    state.page = 1;
-    state.pages = 1;
-    state.image = null;
+    resetDocumentState();
     state.rotation = 0;
     state.layerOffsetY = 0;
     state.gridStepY = 20;
     state.guideY = 45;
     state.textOffsetY = -6;
-    state.annots = {};
-    activeAnnotId = null;
-    overlay.innerHTML = "";
     docCanvas.getContext("2d").clearRect(0, 0, docCanvas.width, docCanvas.height);
     $("fileInput").value = "";
     $("fileInput2").value = "";
@@ -247,10 +352,18 @@ function showHome(reset = false) {
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
   $("pageNav").hidden = true;
+  $("thumbPane").hidden = true;
+  $("canvasArea").classList.remove("with-thumbs");
 }
 
-$("fileInput").onchange = (e) => openFile(e.target.files[0]);
-$("fileInput2").onchange = (e) => openFile(e.target.files[0]);
+$("fileInput").onchange = async (e) => {
+  await openFiles(e.target.files, { append: Boolean(state.kind) });
+  e.target.value = "";
+};
+$("fileInput2").onchange = async (e) => {
+  await openFiles(e.target.files, { append: false });
+  e.target.value = "";
+};
 $("homeBtn").onclick = () => showHome(true);
 $("savedSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
 $("homeCreateSignatureBtn").onclick = () => openSignatureModal();
@@ -272,13 +385,8 @@ function updateRotationLabel() {
 }
 
 async function rerenderCurrentDocument() {
-  if (state.kind === "pdf") await renderPage();
-  else if (state.kind === "image") {
-    renderImageDocument();
-    afterRender();
-  } else {
-    updateRotationLabel();
-  }
+  if (state.kind) await renderPage();
+  else updateRotationLabel();
 }
 
 $("rotateAngle").oninput = async (e) => {
@@ -1094,21 +1202,11 @@ $("cropSave").onclick = () => {
 
 /* ================= 4. Экспорт (сплющивание слоёв, без сетки) ================= */
 async function flattenPage(pageNumber) {
-  // документ
-  let base = docCanvas;
-  if (state.kind === "pdf" && pageNumber !== state.page) {
-    const page = await state.pdf.getPage(pageNumber);
-    const viewport = page.getViewport({ scale: RENDER_SCALE });
-    const source = document.createElement("canvas");
-    source.width = Math.floor(viewport.width);
-    source.height = Math.floor(viewport.height);
-    const c = source.getContext("2d");
-    c.fillStyle = "#fff";
-    c.fillRect(0, 0, source.width, source.height);
-    await page.render({ canvasContext: c, viewport }).promise;
-    base = document.createElement("canvas");
-    drawCanvasInto(base, source, state.rotation);
-  }
+  const source = state.pageSources[pageNumber - 1];
+  if (!source) throw new Error(`Страница ${pageNumber} не найдена`);
+  const sourceCanvas = await renderSourceCanvas(source, RENDER_SCALE);
+  const base = document.createElement("canvas");
+  drawCanvasInto(base, sourceCanvas, state.rotation);
 
   const out = document.createElement("canvas");
   out.width = base.width;

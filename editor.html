@@ -43,8 +43,8 @@
         <div class="brand">✍ PDF Signer</div>
 
         <label class="btn ghost">
-          Открыть файл
-          <input type="file" id="fileInput" accept="application/pdf,image/*" hidden />
+          Добавить файлы
+          <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
 
         <div class="group" id="pageNav" hidden>
@@ -128,11 +128,13 @@
           <p class="muted">Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.</p>
           <label class="btn primary">
             Выбрать документ
-            <input type="file" id="fileInput2" accept="application/pdf,image/*" hidden />
+            <input type="file" id="fileInput2" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
           </label>
           <button class="btn ghost" id="homeCreateSignatureBtn">Создать подпись</button>
           <p class="muted small">Поддерживаются PDF и изображения. Всё обрабатывается локально в браузере.</p>
         </div>
+
+        <aside id="thumbPane" class="thumb-pane" hidden></aside>
 
         <div id="stageWrap" hidden>
           <div id="stage" class="stage">

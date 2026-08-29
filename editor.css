@@ -127,7 +127,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  gap: 18px;
 }
+.canvas-area.with-thumbs { justify-content: flex-start; }
 .empty { text-align: center; margin-top: 12vh; }
 .empty h2 { margin-bottom: 6px; }
 .home-screen {
@@ -135,6 +137,50 @@ body {
   padding: 34px 24px;
 }
 .home-screen .btn { margin: 14px 0 8px; }
+
+.thumb-pane {
+  flex: 0 0 148px;
+  max-height: calc(100vh - 164px);
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(20, 29, 43, 0.92);
+  position: sticky;
+  top: 0;
+}
+.thumb-card {
+  width: 100%;
+  display: block;
+  margin: 0 0 10px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.thumb-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.thumb-card canvas {
+  width: 100%;
+  display: block;
+  background: #fff;
+  border-radius: 4px;
+}
+.thumb-title {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .stage {
   position: relative;
