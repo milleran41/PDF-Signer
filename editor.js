@@ -77,7 +77,6 @@ if (window.pdfjsLib) {
 }
 
 const RENDER_SCALE = 2; // качество рендера PDF (1pt -> 2px)
-const A4_PORTRAIT_RATIO = 297 / 210;
 const docCanvas = $("docCanvas");
 const overlay = $("overlay");
 const gridEl = $("grid");
@@ -90,6 +89,7 @@ const state = {
   page: 1,
   pages: 1,
   zoom: 1,
+  docScale: 1,
   rotation: 0,
   layerOffsetY: 0,
   gridStepY: 20,
@@ -99,6 +99,7 @@ const state = {
 };
 
 let activeAnnotId = null;
+let docScaleTimer = null;
 
 function annotsForPage() {
   return (state.annots[state.page] ||= []);
@@ -219,56 +220,12 @@ async function renderDocxFileToSources(file) {
       canvases.push(await htmlElementToCanvas(target));
     }
     const canvas = mergeCanvasesVertically(canvases);
-    return await canvasToPagedImageSources(canvas, file.name);
+    const img = await loadImageElement(canvas.toDataURL("image/png"));
+    return [{ type: "image", image: img, label: `${file.name} · PNG` }];
   } finally {
     docxRenderHost.innerHTML = "";
     docxRenderHost.style.display = "none";
   }
-}
-
-async function canvasToPagedImageSources(canvas, fileName) {
-  const pageCanvases = splitCanvasIntoA4Pages(canvas);
-  const pageCount = pageCanvases.length;
-  const sources = [];
-  for (let i = 0; i < pageCanvases.length; i++) {
-    const img = await loadImageElement(pageCanvases[i].toDataURL("image/png"));
-    sources.push({
-      type: "image",
-      image: img,
-      label: pageCount > 1 ? `${fileName} · ${i + 1}/${pageCount}` : `${fileName} · PNG`,
-    });
-  }
-  return sources;
-}
-
-function splitCanvasIntoA4Pages(canvas) {
-  const pageHeight = Math.round(canvas.width * A4_PORTRAIT_RATIO);
-  if (canvas.height <= pageHeight * 1.08) return [canvas];
-
-  const pages = [];
-  let y = 0;
-  while (y < canvas.height) {
-    let sliceHeight = Math.min(pageHeight, canvas.height - y);
-    if (sliceHeight < pageHeight * 0.18 && pages.length) {
-      const prev = pages.pop();
-      pages.push(mergeCanvasesVertically([prev, cropDocumentCanvas(canvas, y, sliceHeight)]));
-      break;
-    }
-    pages.push(cropDocumentCanvas(canvas, y, sliceHeight, pageHeight));
-    y += sliceHeight;
-  }
-  return pages;
-}
-
-function cropDocumentCanvas(source, y, sliceHeight, targetHeight = sliceHeight) {
-  const page = document.createElement("canvas");
-  page.width = source.width;
-  page.height = targetHeight;
-  const ctx = page.getContext("2d");
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, page.width, page.height);
-  ctx.drawImage(source, 0, y, source.width, sliceHeight, 0, 0, source.width, sliceHeight);
-  return page;
 }
 
 async function htmlElementToCanvas(target) {
@@ -366,7 +323,7 @@ async function renderPage() {
 async function renderSourceCanvas(source, scale = RENDER_SCALE) {
   if (source.type === "pdf") {
     const page = await source.pdf.getPage(source.pageNumber);
-    const viewport = page.getViewport({ scale });
+    const viewport = page.getViewport({ scale: scale * state.docScale });
     const canvas = document.createElement("canvas");
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
@@ -377,8 +334,9 @@ async function renderSourceCanvas(source, scale = RENDER_SCALE) {
     return canvas;
   }
   const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.round(source.image.naturalWidth * (scale / RENDER_SCALE)));
-  canvas.height = Math.max(1, Math.round(source.image.naturalHeight * (scale / RENDER_SCALE)));
+  const imageScale = (scale / RENDER_SCALE) * state.docScale;
+  canvas.width = Math.max(1, Math.round(source.image.naturalWidth * imageScale));
+  canvas.height = Math.max(1, Math.round(source.image.naturalHeight * imageScale));
   canvas.getContext("2d").drawImage(source.image, 0, 0, canvas.width, canvas.height);
   return canvas;
 }
@@ -432,12 +390,15 @@ function resetDocumentState() {
   state.pageSources = [];
   state.page = 1;
   state.pages = 1;
+  state.docScale = 1;
   state.annots = {};
   activeAnnotId = null;
   overlay.innerHTML = "";
   $("thumbPane").innerHTML = "";
   $("thumbPane").hidden = true;
   $("canvasArea").classList.remove("with-thumbs");
+  $("docScale").value = "100";
+  updateDocScaleLabel();
 }
 
 function resetDocumentAdjustments() {
@@ -595,6 +556,49 @@ $("layerOffsetReset").onclick = () => {
   state.layerOffsetY = 0;
   $("layerOffsetY").value = "0";
   applyLayerOffset();
+};
+
+/* ---------- реальный размер документа ---------- */
+function updateDocScaleLabel(value = state.docScale * 100) {
+  $("docScaleLabel").textContent = `${Math.round(value)}%`;
+}
+
+function scaleAllAnnotations(factor) {
+  if (!Number.isFinite(factor) || factor <= 0 || Math.abs(factor - 1) < 0.001) return;
+  Object.values(state.annots).forEach((items) => {
+    items.forEach((a) => {
+      a.x *= factor;
+      a.y *= factor;
+      if (a.type === "text") {
+        a.size *= factor;
+        if (typeof a.offsetY === "number") a.offsetY *= factor;
+      } else {
+        a.w *= factor;
+        a.h *= factor;
+      }
+    });
+  });
+}
+
+async function applyDocumentScale(percent) {
+  const nextScale = Math.max(0.5, Math.min(2, Number(percent) / 100 || 1));
+  const factor = nextScale / state.docScale;
+  scaleAllAnnotations(factor);
+  state.docScale = nextScale;
+  updateDocScaleLabel();
+  if (!state.kind) return;
+  await renderPage();
+  await renderThumbnails();
+}
+
+$("docScale").oninput = (e) => {
+  updateDocScaleLabel(Number(e.target.value));
+  clearTimeout(docScaleTimer);
+  docScaleTimer = setTimeout(() => applyDocumentScale(e.target.value), 160);
+};
+$("docScale").onchange = (e) => {
+  clearTimeout(docScaleTimer);
+  applyDocumentScale(e.target.value);
 };
 
 /* ---------- зум ---------- */
@@ -1472,6 +1476,7 @@ closeSignatureModal();
 showApp();
 showHome(false);
 updateGridStepYLabel();
+updateDocScaleLabel();
 updateLineHeightLabel();
 updateSignatureEnhancementLabels();
 const srcParam = new URLSearchParams(location.search).get("src");
