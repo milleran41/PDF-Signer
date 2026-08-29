@@ -888,7 +888,18 @@ cropCanvas.addEventListener("pointerdown", (e) => {
   window.addEventListener("pointerup", up);
 });
 
-["threshold", "removeBg", "sigDarkness", "sigThickness"].forEach((id) => ($(id).oninput = () => cropImg && previewCrop()));
+["threshold", "removeBg", "sigDarkness", "sigSharpness", "sigThickness"].forEach((id) => {
+  $(id).oninput = () => {
+    updateSignatureEnhancementLabels();
+    if (cropImg) previewCrop();
+  };
+});
+
+function updateSignatureEnhancementLabels() {
+  $("sigDarknessLabel").textContent = `${$("sigDarkness").value}%`;
+  $("sigSharpnessLabel").textContent = `${$("sigSharpness").value}%`;
+  $("sigThicknessLabel").textContent = Number($("sigThickness").value).toFixed(2).replace(/0$/, "").replace(/\.$/, "");
+}
 
 function buildSignatureFromCrop() {
   if (!cropImg) return null;
@@ -903,58 +914,65 @@ function buildSignatureFromCrop() {
   const ctx = out.getContext("2d");
   ctx.drawImage(cropImg, area.x * k, area.y * k, area.w * k, area.h * k, 0, 0, out.width, out.height);
 
-  if ($("removeBg").checked) {
-    const t = Number($("threshold").value);
-    const data = ctx.getImageData(0, 0, out.width, out.height);
-    const p = data.data;
-    for (let i = 0; i < p.length; i += 4) {
-      const lum = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
-      if (lum >= t) {
-        p[i + 3] = 0; // светлый фон -> прозрачный
-      } else {
-        // мягкое сглаживание края
-        p[i + 3] = Math.min(255, Math.round(255 * (1 - lum / t) + 40));
-      }
-    }
-    ctx.putImageData(data, 0, 0);
-    strengthenSignature(out);
-    return trimTransparent(out);
-  }
   strengthenSignature(out);
-  return out;
+  return $("removeBg").checked ? trimTransparent(out) : out;
 }
 
 function strengthenSignature(canvas) {
   const ctx = canvas.getContext("2d");
   const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const p = data.data;
+  const removeBg = $("removeBg").checked;
+  const threshold = Number($("threshold").value);
   const darkness = Number($("sigDarkness").value) / 100;
-  const factor = 1 - darkness * 0.82;
+  const sharpness = Number($("sigSharpness").value) / 100;
+  const thickness = Number($("sigThickness").value);
+  const alphaBoost = 0.55 + darkness * 0.65 + sharpness * 0.35;
+  const colorFactor = Math.max(0.03, 1 - darkness * 0.94);
+
   for (let i = 0; i < p.length; i += 4) {
-    if (p[i + 3] < 8) continue;
     const lum = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
-    if (lum > 245) continue;
-    p[i] = Math.round(p[i] * factor);
-    p[i + 1] = Math.round(p[i + 1] * factor);
-    p[i + 2] = Math.round(p[i + 2] * factor);
-    p[i + 3] = Math.min(255, Math.round(p[i + 3] * (1 + darkness * 0.35)));
+    if (removeBg && lum >= threshold) {
+      p[i + 3] = 0;
+      continue;
+    }
+
+    if (!removeBg && lum > 245) continue;
+
+    const ink = removeBg
+      ? Math.max(0, Math.min(1, (threshold - lum) / Math.max(1, threshold)))
+      : Math.max(0, Math.min(1, (245 - lum) / 245));
+    const sharpenedInk = Math.pow(ink, Math.max(0.35, 1 - sharpness * 0.65));
+    const alpha = removeBg
+      ? Math.min(255, Math.round(255 * sharpenedInk * alphaBoost))
+      : Math.min(255, Math.round(p[i + 3] * (1 + darkness * 0.35)));
+
+    p[i] = Math.round(p[i] * colorFactor);
+    p[i + 1] = Math.round(p[i + 1] * colorFactor);
+    p[i + 2] = Math.round(p[i + 2] * colorFactor);
+    p[i + 3] = Math.max(p[i + 3], alpha);
   }
-  const radius = Number($("sigThickness").value);
-  if (radius > 0) thickenAlpha(p, canvas.width, canvas.height, radius);
+
+  if (sharpness > 0) sharpenInkEdges(p, new Uint8ClampedArray(p), canvas.width, canvas.height, sharpness);
+  if (thickness > 0) thickenAlpha(p, canvas.width, canvas.height, thickness);
   ctx.putImageData(data, 0, 0);
 }
 
 function thickenAlpha(pixels, width, height, radius) {
   const original = new Uint8ClampedArray(pixels);
+  const full = Math.floor(radius);
+  const fractional = radius - full;
+  const limit = Math.ceil(radius);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = (y * width + x) * 4;
-      if (original[idx + 3] > 24) continue;
+      if (original[idx + 3] > 180) continue;
       let best = 0;
       let src = -1;
-      for (let dy = -radius; dy <= radius; dy++) {
-        for (let dx = -radius; dx <= radius; dx++) {
-          if (dx * dx + dy * dy > radius * radius) continue;
+      for (let dy = -limit; dy <= limit; dy++) {
+        for (let dx = -limit; dx <= limit; dx++) {
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > radius) continue;
           const nx = x + dx;
           const ny = y + dy;
           if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
@@ -966,11 +984,32 @@ function thickenAlpha(pixels, width, height, radius) {
         }
       }
       if (best > 64 && src >= 0) {
+        const mix = full > 0 ? 0.82 : Math.max(0.25, fractional);
         pixels[idx] = original[src];
         pixels[idx + 1] = original[src + 1];
         pixels[idx + 2] = original[src + 2];
-        pixels[idx + 3] = Math.round(best * 0.72);
+        pixels[idx + 3] = Math.max(pixels[idx + 3], Math.round(best * mix));
       }
+    }
+  }
+}
+
+function sharpenInkEdges(pixels, original, width, height, amount) {
+  const strength = amount * 0.75;
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = (y * width + x) * 4;
+      if (pixels[idx + 3] < 16) continue;
+      const left = original[idx - 4 + 3];
+      const right = original[idx + 4 + 3];
+      const top = original[((y - 1) * width + x) * 4 + 3];
+      const bottom = original[((y + 1) * width + x) * 4 + 3];
+      const edge = Math.abs(original[idx + 3] * 4 - left - right - top - bottom);
+      if (edge < 24) continue;
+      pixels[idx + 3] = Math.min(255, Math.round(pixels[idx + 3] + edge * strength));
+      pixels[idx] = Math.round(pixels[idx] * (1 - strength * 0.35));
+      pixels[idx + 1] = Math.round(pixels[idx + 1] * (1 - strength * 0.35));
+      pixels[idx + 2] = Math.round(pixels[idx + 2] * (1 - strength * 0.35));
     }
   }
 }
@@ -1115,5 +1154,6 @@ showApp();
 showHome(false);
 updateGridStepYLabel();
 updateLineHeightLabel();
+updateSignatureEnhancementLabels();
 const srcParam = new URLSearchParams(location.search).get("src");
 if (srcParam) openUrl(srcParam).catch((e) => alert("Не удалось открыть файл: " + e.message));

@@ -108,7 +108,7 @@ body {
 .brand { font-weight: 700; margin-right: 6px; }
 .group { display: flex; align-items: center; gap: 6px; }
 .pageLabel { font-size: 12px; color: var(--muted); min-width: 44px; text-align: center; }
-#gridStepY, #lineHeight { width: 100px; }
+#gridStepY, #lineHeight, #sigDarkness, #sigSharpness, #sigThickness { width: 100px; }
 #layerOffsetY { width: 110px; }
 #rotateAngle { width: 110px; }
 .divider-v { width: 1px; height: 22px; background: var(--line); }

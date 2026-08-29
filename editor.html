@@ -190,9 +190,14 @@
             <label class="label">Порог удаления фона</label>
             <input type="range" id="threshold" min="120" max="250" value="200" />
             <label class="label">Темнее</label>
-            <input type="range" id="sigDarkness" min="0" max="100" value="65" />
+            <input type="range" id="sigDarkness" min="0" max="100" value="80" />
+            <span id="sigDarknessLabel" class="pageLabel">80%</span>
+            <label class="label">Резче</label>
+            <input type="range" id="sigSharpness" min="0" max="100" value="45" />
+            <span id="sigSharpnessLabel" class="pageLabel">45%</span>
             <label class="label">Толще</label>
-            <input type="range" id="sigThickness" min="0" max="3" step="1" value="1" />
+            <input type="range" id="sigThickness" min="0" max="4" step="0.25" value="1.25" />
+            <span id="sigThicknessLabel" class="pageLabel">1.25</span>
             <label class="check"><input type="checkbox" id="removeBg" checked /> Прозрачный фон</label>
             <div class="spacer"></div>
             <button class="btn primary" id="cropSave">Сохранить этот вариант</button>
