@@ -80,6 +80,7 @@ const RENDER_SCALE = 2; // качество рендера PDF (1pt -> 2px)
 const docCanvas = $("docCanvas");
 const overlay = $("overlay");
 const gridEl = $("grid");
+const guideEl = $("guide");
 
 const state = {
   kind: null, // 'pdf' | 'image'
@@ -90,7 +91,8 @@ const state = {
   zoom: 1,
   rotation: 0,
   layerOffsetY: 0,
-  gridStepY: 24,
+  gridStepY: 20,
+  guideY: 45,
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
 
@@ -170,13 +172,17 @@ async function renderPage() {
 function resetDocumentAdjustments() {
   state.rotation = 0;
   state.layerOffsetY = 0;
-  state.gridStepY = Number($("gridSize").value);
+  state.gridStepY = 20;
+  state.guideY = 45;
   $("rotateAngle").value = "0";
   $("layerOffsetY").value = "0";
   $("gridStepY").value = String(state.gridStepY);
+  $("guideY").value = String(state.guideY);
+  $("guideToggle").checked = true;
   updateRotationLabel();
   updateLayerOffsetLabel();
   updateGridStepYLabel();
+  applyGuide();
 }
 
 function renderImageDocument() {
@@ -200,6 +206,7 @@ function afterRender() {
   stage.style.height = docCanvas.height + "px";
   applyZoom();
   applyGrid();
+  applyGuide();
   applyLayerOffset();
   renderAnnots();
 }
@@ -214,7 +221,8 @@ function showHome(reset = false) {
     state.image = null;
     state.rotation = 0;
     state.layerOffsetY = 0;
-    state.gridStepY = Number($("gridSize").value);
+    state.gridStepY = 20;
+    state.guideY = 45;
     state.annots = {};
     activeAnnotId = null;
     overlay.innerHTML = "";
@@ -224,9 +232,12 @@ function showHome(reset = false) {
     $("rotateAngle").value = "0";
     $("layerOffsetY").value = "0";
     $("gridStepY").value = String(state.gridStepY);
+    $("guideY").value = String(state.guideY);
+    $("guideToggle").checked = true;
     updateRotationLabel();
     updateLayerOffsetLabel();
     updateGridStepYLabel();
+    applyGuide();
   }
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
@@ -276,6 +287,15 @@ $("rotateReset").onclick = async () => {
   updateRotationLabel();
   await rerenderCurrentDocument();
 };
+
+function applyGuide() {
+  guideEl.hidden = !$("guideToggle").checked || !state.kind;
+  state.guideY = Number($("guideY").value);
+  guideEl.style.top = `${state.guideY}%`;
+}
+
+$("guideToggle").oninput = applyGuide;
+$("guideY").oninput = applyGuide;
 
 function updateLayerOffsetLabel() {
   $("layerOffsetLabel").textContent = `${state.layerOffsetY} px`;
@@ -890,12 +910,13 @@ cropCanvas.addEventListener("pointerdown", (e) => {
   window.addEventListener("pointerup", up);
 });
 
-["threshold", "removeBg", "sigDarkness", "sigSharpness", "sigThickness"].forEach((id) => {
+["threshold", "removeBg", "sigDarkness", "sigSharpness", "sigThickness", "sigColor"].forEach((id) => {
   $(id).oninput = () => {
     updateSignatureEnhancementLabels();
     if (cropImg) previewCrop();
   };
 });
+$("sigColor").onchange = $("sigColor").oninput;
 
 function updateSignatureEnhancementLabels() {
   $("sigDarknessLabel").textContent = `${$("sigDarkness").value}%`;
@@ -929,6 +950,7 @@ function strengthenSignature(canvas) {
   const darkness = Number($("sigDarkness").value) / 100;
   const sharpness = Number($("sigSharpness").value) / 100;
   const thickness = Number($("sigThickness").value);
+  const inkColor = $("sigColor").value === "black" ? [18, 18, 18] : [45, 38, 125];
   const alphaBoost = 0.55 + darkness * 0.65 + sharpness * 0.35;
   const colorFactor = Math.max(0.03, 1 - darkness * 0.94);
 
@@ -949,9 +971,10 @@ function strengthenSignature(canvas) {
       ? Math.min(255, Math.round(255 * sharpenedInk * alphaBoost))
       : Math.min(255, Math.round(p[i + 3] * (1 + darkness * 0.35)));
 
-    p[i] = Math.round(p[i] * colorFactor);
-    p[i + 1] = Math.round(p[i + 1] * colorFactor);
-    p[i + 2] = Math.round(p[i + 2] * colorFactor);
+    const mix = 0.65 + darkness * 0.35;
+    p[i] = Math.round(p[i] * colorFactor * (1 - mix) + inkColor[0] * mix);
+    p[i + 1] = Math.round(p[i + 1] * colorFactor * (1 - mix) + inkColor[1] * mix);
+    p[i + 2] = Math.round(p[i + 2] * colorFactor * (1 - mix) + inkColor[2] * mix);
     p[i + 3] = Math.max(p[i + 3], alpha);
   }
 

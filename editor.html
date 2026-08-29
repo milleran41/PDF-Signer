@@ -61,7 +61,7 @@
           </select>
           <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" />
           <span class="label">Шаг строк</span>
-          <input type="number" id="gridStepY" class="input number small" min="8" max="120" step="0.5" value="24" title="Расстояние между строками сетки" />
+          <input type="number" id="gridStepY" class="input number small" min="8" max="120" step="0.5" value="20" title="Расстояние между строками сетки" />
           <span class="label">Сдвиг слоя</span>
           <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" title="Сдвиг сетки и вводимого текста" />
           <span id="layerOffsetLabel" class="pageLabel">0 px</span>
@@ -79,6 +79,8 @@
           <input type="range" id="rotateAngle" min="-5" max="5" step="0.1" value="0" title="Выравнивание скана" />
           <span id="rotateLabel" class="pageLabel">0°</span>
           <button class="btn ghost small" id="rotateReset">0°</button>
+          <label class="check"><input type="checkbox" id="guideToggle" checked /> Ориентир</label>
+          <input type="range" id="guideY" min="0" max="100" step="1" value="45" title="Положение ориентира" />
         </div>
 
         <div class="spacer"></div>
@@ -134,6 +136,7 @@
           <div id="stage" class="stage">
             <canvas id="docCanvas"></canvas>
             <div id="grid" class="grid"></div>
+            <div id="guide" class="guide"></div>
             <div id="overlay" class="overlay"></div>
           </div>
         </div>
@@ -195,8 +198,13 @@
             <input type="range" id="sigSharpness" min="0" max="100" value="45" />
             <span id="sigSharpnessLabel" class="pageLabel">45%</span>
             <label class="label">Толще</label>
-            <input type="range" id="sigThickness" min="0" max="4" step="0.25" value="1.25" />
-            <span id="sigThicknessLabel" class="pageLabel">1.25</span>
+            <input type="range" id="sigThickness" min="0" max="4" step="0.25" value="0.75" />
+            <span id="sigThicknessLabel" class="pageLabel">0.75</span>
+            <label class="label">Цвет</label>
+            <select id="sigColor" class="select small">
+              <option value="purple" selected>Фиолетовый</option>
+              <option value="black">Чёрный</option>
+            </select>
             <label class="check"><input type="checkbox" id="removeBg" checked /> Прозрачный фон</label>
             <div class="spacer"></div>
             <button class="btn primary" id="cropSave">Сохранить этот вариант</button>

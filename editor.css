@@ -116,6 +116,7 @@ body {
 #lineHeight, #sigDarkness, #sigSharpness, #sigThickness { width: 100px; }
 #layerOffsetY { width: 110px; }
 #rotateAngle { width: 110px; }
+#guideY { width: 90px; }
 .divider-v { width: 1px; height: 22px; background: var(--line); }
 .hint { font-size: 12px; color: var(--muted); }
 
@@ -157,6 +158,29 @@ body {
 .grid.grid-lines {
   background-image: linear-gradient(to bottom, rgba(40, 110, 210, 0.35) 1px, transparent 1px);
 }
+
+.guide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 45%;
+  height: 0;
+  border-top: 2px solid rgba(255, 74, 74, 0.9);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.65), 0 0 10px rgba(255, 74, 74, 0.35);
+  pointer-events: none;
+}
+.guide::before,
+.guide::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  width: 1px;
+  height: 12px;
+  background: rgba(255, 74, 74, 0.9);
+}
+.guide::before { left: 0; }
+.guide::after { right: 0; }
+.guide[hidden] { display: none !important; }
 
 .overlay { position: absolute; inset: 0; cursor: crosshair; }
 
