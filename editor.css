@@ -60,6 +60,11 @@ body {
   font-size: 13px;
 }
 .input { width: 100%; margin-bottom: 10px; }
+.input.number {
+  width: 74px;
+  margin-bottom: 0;
+  padding: 6px 8px;
+}
 .select.small { padding: 6px 8px; }
 .color { width: 34px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: none; }
 .check { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
@@ -108,7 +113,7 @@ body {
 .brand { font-weight: 700; margin-right: 6px; }
 .group { display: flex; align-items: center; gap: 6px; }
 .pageLabel { font-size: 12px; color: var(--muted); min-width: 44px; text-align: center; }
-#gridStepY, #lineHeight, #sigDarkness, #sigSharpness, #sigThickness { width: 100px; }
+#lineHeight, #sigDarkness, #sigSharpness, #sigThickness { width: 100px; }
 #layerOffsetY { width: 110px; }
 #rotateAngle { width: 110px; }
 .divider-v { width: 1px; height: 22px; background: var(--line); }

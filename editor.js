@@ -318,7 +318,7 @@ $("zoomOut").onclick = () => {
 function applyGrid() {
   const on = $("gridToggle").checked;
   const sizeX = Number($("gridSize").value);
-  state.gridStepY = Number($("gridStepY").value);
+  state.gridStepY = Math.max(8, Math.min(120, Number($("gridStepY").value) || sizeX));
   const mode = $("gridMode").value;
   gridEl.className = "grid" + (on ? (mode === "grid" ? " grid-cells" : " grid-lines") : "");
   gridEl.style.backgroundSize = `${sizeX}px ${state.gridStepY}px`;
@@ -326,10 +326,12 @@ function applyGrid() {
 }
 
 function updateGridStepYLabel() {
-  $("gridStepYLabel").textContent = `${state.gridStepY} px`;
+  $("gridStepY").value = Number(state.gridStepY).toFixed(1).replace(".0", "");
 }
 
-["gridToggle", "gridMode", "gridSize", "gridStepY"].forEach((id) => ($(id).oninput = applyGrid));
+["gridToggle", "gridMode", "gridSize"].forEach((id) => ($(id).oninput = applyGrid));
+$("gridStepY").oninput = applyGrid;
+$("gridStepY").onchange = applyGrid;
 
 /* ================= 2. Текстовый слой ================= */
 const textStyle = { family: "sans-serif", size: 16, bold: false, italic: false, color: "#111111", lineHeight: 1.15 };
