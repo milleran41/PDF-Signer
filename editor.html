@@ -60,6 +60,10 @@
             <option value="lines">В линейку</option>
           </select>
           <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" />
+          <span class="label">Сдвиг слоя</span>
+          <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" title="Сдвиг сетки и вводимого текста" />
+          <span id="layerOffsetLabel" class="pageLabel">0 px</span>
+          <button class="btn ghost small" id="layerOffsetReset">0</button>
         </div>
 
         <div class="group">
@@ -179,6 +183,10 @@
           <div class="row">
             <label class="label">Порог удаления фона</label>
             <input type="range" id="threshold" min="120" max="250" value="200" />
+            <label class="label">Темнее</label>
+            <input type="range" id="sigDarkness" min="0" max="100" value="65" />
+            <label class="label">Толще</label>
+            <input type="range" id="sigThickness" min="0" max="3" step="1" value="1" />
             <label class="check"><input type="checkbox" id="removeBg" checked /> Прозрачный фон</label>
             <div class="spacer"></div>
             <button class="btn primary" id="cropSave">Сохранить этот вариант</button>

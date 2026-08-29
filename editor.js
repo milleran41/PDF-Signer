@@ -89,6 +89,7 @@ const state = {
   image: null,
   zoom: 1,
   rotation: 0,
+  layerOffsetY: 0,
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
 
@@ -167,8 +168,11 @@ async function renderPage() {
 
 function resetDocumentAdjustments() {
   state.rotation = 0;
+  state.layerOffsetY = 0;
   $("rotateAngle").value = "0";
+  $("layerOffsetY").value = "0";
   updateRotationLabel();
+  updateLayerOffsetLabel();
 }
 
 function renderImageDocument() {
@@ -192,6 +196,7 @@ function afterRender() {
   stage.style.height = docCanvas.height + "px";
   applyZoom();
   applyGrid();
+  applyLayerOffset();
   renderAnnots();
 }
 
@@ -204,6 +209,7 @@ function showHome(reset = false) {
     state.pages = 1;
     state.image = null;
     state.rotation = 0;
+    state.layerOffsetY = 0;
     state.annots = {};
     activeAnnotId = null;
     overlay.innerHTML = "";
@@ -211,7 +217,9 @@ function showHome(reset = false) {
     $("fileInput").value = "";
     $("fileInput2").value = "";
     $("rotateAngle").value = "0";
+    $("layerOffsetY").value = "0";
     updateRotationLabel();
+    updateLayerOffsetLabel();
   }
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
@@ -260,6 +268,27 @@ $("rotateReset").onclick = async () => {
   $("rotateAngle").value = "0";
   updateRotationLabel();
   await rerenderCurrentDocument();
+};
+
+function updateLayerOffsetLabel() {
+  $("layerOffsetLabel").textContent = `${state.layerOffsetY} px`;
+}
+
+function applyLayerOffset() {
+  const offset = `${state.layerOffsetY}px`;
+  gridEl.style.transform = `translateY(${offset})`;
+  overlay.style.transform = `translateY(${offset})`;
+  updateLayerOffsetLabel();
+}
+
+$("layerOffsetY").oninput = (e) => {
+  state.layerOffsetY = Number(e.target.value);
+  applyLayerOffset();
+};
+$("layerOffsetReset").onclick = () => {
+  state.layerOffsetY = 0;
+  $("layerOffsetY").value = "0";
+  applyLayerOffset();
 };
 
 /* ---------- зум ---------- */
@@ -825,7 +854,7 @@ cropCanvas.addEventListener("pointerdown", (e) => {
   window.addEventListener("pointerup", up);
 });
 
-["threshold", "removeBg"].forEach((id) => ($(id).oninput = () => cropImg && previewCrop()));
+["threshold", "removeBg", "sigDarkness", "sigThickness"].forEach((id) => ($(id).oninput = () => cropImg && previewCrop()));
 
 function buildSignatureFromCrop() {
   if (!cropImg) return null;
@@ -854,9 +883,62 @@ function buildSignatureFromCrop() {
       }
     }
     ctx.putImageData(data, 0, 0);
+    strengthenSignature(out);
     return trimTransparent(out);
   }
+  strengthenSignature(out);
   return out;
+}
+
+function strengthenSignature(canvas) {
+  const ctx = canvas.getContext("2d");
+  const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const p = data.data;
+  const darkness = Number($("sigDarkness").value) / 100;
+  const factor = 1 - darkness * 0.82;
+  for (let i = 0; i < p.length; i += 4) {
+    if (p[i + 3] < 8) continue;
+    const lum = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+    if (lum > 245) continue;
+    p[i] = Math.round(p[i] * factor);
+    p[i + 1] = Math.round(p[i + 1] * factor);
+    p[i + 2] = Math.round(p[i + 2] * factor);
+    p[i + 3] = Math.min(255, Math.round(p[i + 3] * (1 + darkness * 0.35)));
+  }
+  const radius = Number($("sigThickness").value);
+  if (radius > 0) thickenAlpha(p, canvas.width, canvas.height, radius);
+  ctx.putImageData(data, 0, 0);
+}
+
+function thickenAlpha(pixels, width, height, radius) {
+  const original = new Uint8ClampedArray(pixels);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      if (original[idx + 3] > 24) continue;
+      let best = 0;
+      let src = -1;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (dx * dx + dy * dy > radius * radius) continue;
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+          const ni = (ny * width + nx) * 4;
+          if (original[ni + 3] > best) {
+            best = original[ni + 3];
+            src = ni;
+          }
+        }
+      }
+      if (best > 64 && src >= 0) {
+        pixels[idx] = original[src];
+        pixels[idx + 1] = original[src + 1];
+        pixels[idx + 2] = original[src + 2];
+        pixels[idx + 3] = Math.round(best * 0.72);
+      }
+    }
+  }
 }
 
 function previewCrop() {
@@ -918,10 +1000,10 @@ async function flattenPage(pageNumber) {
       ctx.textBaseline = "top";
       ctx.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
       const lineH = a.size * 1.15;
-      a.text.split("\n").forEach((line, i) => ctx.fillText(line, a.x + 2, a.y + i * lineH));
+      a.text.split("\n").forEach((line, i) => ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + i * lineH));
     } else {
       const img = await loadImg(a.dataUrl);
-      ctx.drawImage(img, a.x, a.y, a.w, a.h);
+      ctx.drawImage(img, a.x, a.y + state.layerOffsetY, a.w, a.h);
     }
   }
   return out;
