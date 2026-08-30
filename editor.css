@@ -115,11 +115,6 @@ body {
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
 }
-.topbar {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
 .toolbar { background: var(--panel-2); }
 .brand { font-weight: 700; margin-right: 6px; }
 .group { display: flex; align-items: center; gap: 6px; }
