@@ -45,6 +45,23 @@ Output:
 - PDF
 - PNG
 
+## Supported Platforms
+
+PDF Signer is intended for desktop and laptop computers.
+
+Tested target:
+
+- Windows 10 and Windows 11
+- Google Chrome
+- Microsoft Edge
+
+Expected but not yet fully verified:
+
+- macOS 13+ with a Chromium-based browser
+- Linux with a Chromium-based browser
+
+If you install PDF Signer on macOS or Linux, feedback about installation, PDF rendering, clipboard paste, saving files, and signature handling is welcome.
+
 ## Privacy
 
 PDF Signer is designed to work locally in the browser. Documents are processed on the user's device and are not intentionally uploaded to external servers by the extension.
@@ -86,6 +103,8 @@ Before submitting to Microsoft Edge Add-ons, prepare:
 - certification testing notes explaining how reviewers can open the editor, load a sample document, add text/signature, and export the result.
 
 The listing should clearly say that this is a form filling and signing tool, not an editor for changing the original PDF content.
+
+After publication, the in-app rating prompt should open the Microsoft Edge Add-ons listing page, where users can leave a rating and written review.
 
 ## Current Status
 

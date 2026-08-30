@@ -10,6 +10,11 @@ const LANG_KEY = "pdfsigner.language";
 const DRAFT_DB_NAME = "pdfsigner.drafts";
 const DRAFT_STORE = "drafts";
 const DRAFT_KEY = "current";
+const RATE_LAUNCH_COUNT_KEY = "pdfsigner.rate.launchCount";
+const RATE_LAST_PROMPT_KEY = "pdfsigner.rate.lastPrompt";
+const RATE_DISMISSED_KEY = "pdfsigner.rate.dismissed";
+const RATE_FIRST_PROMPT_AT = 5;
+const RATE_REPEAT_EVERY = 5;
 const HIDDEN_MARK = "CodeWerk Studio | PDF Signer";
 const HIDDEN_MARK_KEYWORDS = "CodeWerk Studio, PDF Signer, hidden origin mark";
 
@@ -59,6 +64,11 @@ const i18n = {
     helpMySignatures: "Открывает страницу с сохранёнными шаблонами подписей.",
     helpSignatureStrip: "Показывает сохранённые подписи для быстрой вставки в документ.",
     helpSave: "Сохраняет весь загруженный документ целиком в выбранном формате.",
+    rateTitle: "Нравится PDF Signer?",
+    rateText: "Если программа помогает вам заполнять документы и экономить бумагу, пожалуйста, поставьте оценку или оставьте отзыв в Microsoft Edge Add-ons.",
+    rateNow: "Оценить",
+    rateLater: "Позже",
+    rateNever: "Больше не показывать",
     createSignature: "Создать подпись",
     mySignatures: "Мои подписи",
     saveDocument: "Сохранить документ",
@@ -171,6 +181,11 @@ const i18n = {
     helpMySignatures: "Öffnet die Seite mit gespeicherten Signaturvorlagen.",
     helpSignatureStrip: "Zeigt gespeicherte Signaturen zum schnellen Einfügen.",
     helpSave: "Speichert das ganze geladene Dokument im gewählten Format.",
+    rateTitle: "Gefällt dir PDF Signer?",
+    rateText: "Wenn dir das Programm beim Ausfüllen von Dokumenten hilft und Papier spart, gib bitte eine Bewertung oder Rezension bei Microsoft Edge Add-ons ab.",
+    rateNow: "Bewerten",
+    rateLater: "Später",
+    rateNever: "Nicht mehr anzeigen",
     createSignature: "Signatur erstellen",
     mySignatures: "Meine Signaturen",
     saveDocument: "Dokument speichern",
@@ -283,6 +298,11 @@ const i18n = {
     helpMySignatures: "Opens the page with saved signature templates.",
     helpSignatureStrip: "Shows saved signatures for quick insertion.",
     helpSave: "Saves the entire loaded document in the selected format.",
+    rateTitle: "Enjoying PDF Signer?",
+    rateText: "If the app helps you fill documents and save paper, please leave a rating or review in Microsoft Edge Add-ons.",
+    rateNow: "Rate",
+    rateLater: "Later",
+    rateNever: "Don't show again",
     createSignature: "Create signature",
     mySignatures: "My signatures",
     saveDocument: "Save document",
@@ -2425,10 +2445,53 @@ function closeHelpModal() {
   $("helpModal").hidden = true;
 }
 
+function closeRateModal() {
+  $("rateModal").hidden = true;
+}
+
+function openRatePage() {
+  localStorage.setItem(RATE_DISMISSED_KEY, "1");
+  closeRateModal();
+  const extensionId = typeof chrome !== "undefined" && chrome.runtime?.id ? chrome.runtime.id : "";
+  const url = extensionId
+    ? `https://microsoftedge.microsoft.com/addons/detail/${extensionId}`
+    : "https://microsoftedge.microsoft.com/addons";
+  if (typeof chrome !== "undefined" && chrome.tabs?.create) chrome.tabs.create({ url });
+  else window.open(url, "_blank", "noopener");
+}
+
+function postponeRatePrompt() {
+  localStorage.setItem(RATE_LAST_PROMPT_KEY, localStorage.getItem(RATE_LAUNCH_COUNT_KEY) || "0");
+  closeRateModal();
+}
+
+function dismissRatePrompt() {
+  localStorage.setItem(RATE_DISMISSED_KEY, "1");
+  closeRateModal();
+}
+
+function maybeShowRatePrompt() {
+  if (localStorage.getItem(RATE_DISMISSED_KEY) === "1") return;
+  const launchCount = Number(localStorage.getItem(RATE_LAUNCH_COUNT_KEY) || "0") + 1;
+  const lastPrompt = Number(localStorage.getItem(RATE_LAST_PROMPT_KEY) || "0");
+  localStorage.setItem(RATE_LAUNCH_COUNT_KEY, String(launchCount));
+  if (launchCount < RATE_FIRST_PROMPT_AT) return;
+  if (lastPrompt && launchCount - lastPrompt < RATE_REPEAT_EVERY) return;
+  $("rateModal").hidden = false;
+  localStorage.setItem(RATE_LAST_PROMPT_KEY, String(launchCount));
+}
+
 $("helpBtn").onclick = openHelpModal;
 $("helpClose").onclick = closeHelpModal;
 $("helpModal").addEventListener("pointerdown", (e) => {
   if (e.target === $("helpModal")) closeHelpModal();
+});
+$("rateClose").onclick = postponeRatePrompt;
+$("rateLater").onclick = postponeRatePrompt;
+$("rateNever").onclick = dismissRatePrompt;
+$("rateNow").onclick = openRatePage;
+$("rateModal").addEventListener("pointerdown", (e) => {
+  if (e.target === $("rateModal")) postponeRatePrompt();
 });
 $("signBtn").onclick = () => openSignatureModal();
 $("sigClose").onclick = closeSignatureModal;
@@ -2438,7 +2501,8 @@ $("sigModal").addEventListener("pointerdown", (e) => {
 });
 window.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
-  if (!$("helpModal").hidden) closeHelpModal();
+  if (!$("rateModal").hidden) postponeRatePrompt();
+  else if (!$("helpModal").hidden) closeHelpModal();
   else if (!$("sigModal").hidden) closeSignatureModal();
 });
 
@@ -3172,4 +3236,5 @@ window.addEventListener("beforeunload", () => {
   } else {
     await restoreDraft().catch((err) => console.warn("Draft restore failed", err));
   }
+  maybeShowRatePrompt();
 })();
