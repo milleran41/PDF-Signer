@@ -92,6 +92,7 @@
         <button class="btn ghost" id="signBtn" data-i18n="createSignature">Создать подпись</button>
         <button class="btn ghost" id="savedSignaturesBtn" data-i18n="mySignatures">Мои подписи</button>
         <div class="actions-stack">
+          <button class="btn icon help-btn" id="helpBtn" title="Справка" data-i18n-title="helpTitle">?</button>
           <select id="languageSelect" class="select small" title="Язык интерфейса" data-i18n-title="languageTitle">
             <option value="ru">RU</option>
             <option value="de">DE</option>
@@ -159,6 +160,47 @@
           </div>
         </div>
       </main>
+    </div>
+
+    <!-- ======== 3a. Справка ======== -->
+    <div id="helpModal" class="modal" hidden>
+      <div class="modal-card help-card">
+        <header class="modal-head">
+          <h2 data-i18n="helpTitle">Справка</h2>
+          <button class="btn icon" id="helpClose">×</button>
+        </header>
+
+        <div class="help-content">
+          <section>
+            <h3 data-i18n="helpHowTitle">Как пользоваться</h3>
+            <ol>
+              <li data-i18n="helpStep1">Нажмите «Добавить файлы» или выберите документ на главной странице. Можно добавлять PDF, DOCX и изображения.</li>
+              <li data-i18n="helpStep2">Выберите нужный лист слева. Ненужные листы можно удалить крестиком на миниатюре.</li>
+              <li data-i18n="helpStep3">Выровняйте скан поворотом, настройте размер документа, сетку, шаг строк и сдвиг слоя.</li>
+              <li data-i18n="helpStep4">Кликните по документу, чтобы добавить текст. Выделенное поле можно двигать, менять шрифт, цвет, подъём и интервал.</li>
+              <li data-i18n="helpStep5">Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».</li>
+            </ol>
+          </section>
+
+          <section>
+            <h3 data-i18n="helpButtonsTitle">Назначение кнопок</h3>
+            <div class="help-grid">
+              <div><strong data-i18n="addFiles">Добавить файлы</strong><p data-i18n="helpAddFiles">Загружает один или несколько документов в редактор.</p></div>
+              <div><strong data-i18n="clearDocs">Очистить</strong><p data-i18n="helpClearDocs">Удаляет все загруженные листы и возвращает главную страницу.</p></div>
+              <div><strong data-i18n="grid">Сетка</strong><p data-i18n="helpGrid">Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.</p></div>
+              <div><strong data-i18n="rowStep">Шаг строк</strong><p data-i18n="helpRowStep">Меняет расстояние между горизонтальными линиями сетки.</p></div>
+              <div><strong data-i18n="layerOffset">Сдвиг слоя</strong><p data-i18n="helpLayerOffset">Двигает сетку и общий слой ввода выше или ниже.</p></div>
+              <div><strong data-i18n="docSize">Размер документа</strong><p data-i18n="helpDocSize">Увеличивает или уменьшает сам документ для удобной работы и сохранения.</p></div>
+              <div><strong data-i18n="rotation">Поворот</strong><p data-i18n="helpRotation">Слегка поворачивает криво отсканированный документ.</p></div>
+              <div><strong data-i18n="guide">Ориентир</strong><p data-i18n="helpGuide">Показывает красную линию, по которой удобно выравнивать скан.</p></div>
+              <div><strong data-i18n="createSignature">Создать подпись</strong><p data-i18n="helpCreateSignature">Открывает окно создания подписи: можно нарисовать, загрузить файл или вставить из буфера.</p></div>
+              <div><strong data-i18n="mySignatures">Мои подписи</strong><p data-i18n="helpMySignatures">Открывает страницу с сохранёнными шаблонами подписей.</p></div>
+              <div><strong data-i18n="signatures">Подписи:</strong><p data-i18n="helpSignatureStrip">Показывает сохранённые подписи для быстрой вставки в документ.</p></div>
+              <div><strong data-i18n="saveDocument">Сохранить документ</strong><p data-i18n="helpSave">Сохраняет весь загруженный документ целиком в выбранном формате.</p></div>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
 
     <!-- ======== 3b. Модуль подписи ======== -->

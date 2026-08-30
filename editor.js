@@ -32,6 +32,26 @@ const i18n = {
     guide: "Ориентир",
     guideTitle: "Положение ориентира",
     languageTitle: "Язык интерфейса",
+    helpTitle: "Справка",
+    helpHowTitle: "Как пользоваться",
+    helpButtonsTitle: "Назначение кнопок",
+    helpStep1: "Нажмите «Добавить файлы» или выберите документ на главной странице. Можно добавлять PDF, DOCX и изображения.",
+    helpStep2: "Выберите нужный лист слева. Ненужные листы можно удалить крестиком на миниатюре.",
+    helpStep3: "Выровняйте скан поворотом, настройте размер документа, сетку, шаг строк и сдвиг слоя.",
+    helpStep4: "Кликните по документу, чтобы добавить текст. Выделенное поле можно двигать, менять шрифт, цвет, подъём и интервал.",
+    helpStep5: "Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».",
+    helpAddFiles: "Загружает один или несколько документов в редактор.",
+    helpClearDocs: "Удаляет все загруженные листы и возвращает главную страницу.",
+    helpGrid: "Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.",
+    helpRowStep: "Меняет расстояние между горизонтальными линиями сетки.",
+    helpLayerOffset: "Двигает сетку и общий слой ввода выше или ниже.",
+    helpDocSize: "Увеличивает или уменьшает сам документ для удобной работы и сохранения.",
+    helpRotation: "Слегка поворачивает криво отсканированный документ.",
+    helpGuide: "Показывает красную линию, по которой удобно выравнивать скан.",
+    helpCreateSignature: "Открывает окно создания подписи: можно нарисовать, загрузить файл или вставить из буфера.",
+    helpMySignatures: "Открывает страницу с сохранёнными шаблонами подписей.",
+    helpSignatureStrip: "Показывает сохранённые подписи для быстрой вставки в документ.",
+    helpSave: "Сохраняет весь загруженный документ целиком в выбранном формате.",
     createSignature: "Создать подпись",
     mySignatures: "Мои подписи",
     saveDocument: "Сохранить документ",
@@ -121,6 +141,26 @@ const i18n = {
     guide: "Hilfslinie",
     guideTitle: "Position der Hilfslinie",
     languageTitle: "Sprache der Oberfläche",
+    helpTitle: "Hilfe",
+    helpHowTitle: "So funktioniert es",
+    helpButtonsTitle: "Schaltflächen",
+    helpStep1: "Klicke auf „Dateien hinzufügen“ oder wähle ein Dokument auf der Startseite. PDF, DOCX und Bilder sind möglich.",
+    helpStep2: "Wähle links die gewünschte Seite. Nicht benötigte Seiten kannst du mit dem Kreuz auf der Miniatur entfernen.",
+    helpStep3: "Richte den Scan mit Drehung aus und passe Dokumentgröße, Raster, Zeilenabstand und Ebenenversatz an.",
+    helpStep4: "Klicke ins Dokument, um Text hinzuzufügen. Das markierte Feld lässt sich verschieben und in Schrift, Farbe, Anheben und Abstand ändern.",
+    helpStep5: "Erstelle oder wähle eine gespeicherte Signatur, füge sie in das Dokument ein und klicke auf „Dokument speichern“.",
+    helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
+    helpClearDocs: "Entfernt alle geladenen Seiten und zeigt wieder die Startseite.",
+    helpGrid: "Schaltet das Hilfsraster oder Linien ein. Es wird nicht mit gespeichert.",
+    helpRowStep: "Ändert den Abstand zwischen den horizontalen Rasterlinien.",
+    helpLayerOffset: "Verschiebt Raster und Eingabeebene nach oben oder unten.",
+    helpDocSize: "Vergrößert oder verkleinert das Dokument zum Bearbeiten und Speichern.",
+    helpRotation: "Dreht einen schief gescannten Beleg leicht.",
+    helpGuide: "Zeigt eine rote Linie zum Ausrichten des Scans.",
+    helpCreateSignature: "Öffnet das Signaturfenster: zeichnen, Datei laden oder aus der Zwischenablage einfügen.",
+    helpMySignatures: "Öffnet die Seite mit gespeicherten Signaturvorlagen.",
+    helpSignatureStrip: "Zeigt gespeicherte Signaturen zum schnellen Einfügen.",
+    helpSave: "Speichert das ganze geladene Dokument im gewählten Format.",
     createSignature: "Signatur erstellen",
     mySignatures: "Meine Signaturen",
     saveDocument: "Dokument speichern",
@@ -210,6 +250,26 @@ const i18n = {
     guide: "Guide",
     guideTitle: "Guide position",
     languageTitle: "Interface language",
+    helpTitle: "Help",
+    helpHowTitle: "How to use",
+    helpButtonsTitle: "Button guide",
+    helpStep1: "Click Add files or choose a document on the home page. You can add PDF, DOCX and image files.",
+    helpStep2: "Select the needed page on the left. Remove unnecessary pages with the cross on the thumbnail.",
+    helpStep3: "Straighten the scan with rotation, then adjust document size, grid, row step and layer offset.",
+    helpStep4: "Click the document to add text. The selected field can be moved and edited with font, color, lift and spacing controls.",
+    helpStep5: "Create or choose a saved signature, insert it into the document, then click Save document.",
+    helpAddFiles: "Loads one or more documents into the editor.",
+    helpClearDocs: "Removes all loaded pages and returns to the home page.",
+    helpGrid: "Turns the helper grid or ruled lines on. It is not exported into the saved document.",
+    helpRowStep: "Changes the distance between horizontal grid lines.",
+    helpLayerOffset: "Moves the grid and input layer up or down.",
+    helpDocSize: "Scales the document for editing and saving.",
+    helpRotation: "Slightly rotates a skewed scanned document.",
+    helpGuide: "Shows a red line for scan alignment.",
+    helpCreateSignature: "Opens the signature window: draw, load a file or paste from the clipboard.",
+    helpMySignatures: "Opens the page with saved signature templates.",
+    helpSignatureStrip: "Shows saved signatures for quick insertion.",
+    helpSave: "Saves the entire loaded document in the selected format.",
     createSignature: "Create signature",
     mySignatures: "My signatures",
     saveDocument: "Save document",
@@ -1295,6 +1355,19 @@ function closeSignatureModal() {
   $("sigModal").hidden = true;
 }
 
+function openHelpModal() {
+  $("helpModal").hidden = false;
+}
+
+function closeHelpModal() {
+  $("helpModal").hidden = true;
+}
+
+$("helpBtn").onclick = openHelpModal;
+$("helpClose").onclick = closeHelpModal;
+$("helpModal").addEventListener("pointerdown", (e) => {
+  if (e.target === $("helpModal")) closeHelpModal();
+});
 $("signBtn").onclick = () => openSignatureModal();
 $("sigClose").onclick = closeSignatureModal;
 $("sigBack").onclick = closeSignatureModal;
@@ -1302,7 +1375,9 @@ $("sigModal").addEventListener("pointerdown", (e) => {
   if (e.target === $("sigModal")) closeSignatureModal();
 });
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !$("sigModal").hidden) closeSignatureModal();
+  if (e.key !== "Escape") return;
+  if (!$("helpModal").hidden) closeHelpModal();
+  else if (!$("sigModal").hidden) closeSignatureModal();
 });
 
 document.querySelectorAll(".tab").forEach((tab) => {
@@ -1816,6 +1891,7 @@ $("saveBtn").onclick = async () => {
 };
 
 /* ================= bootstrap ================= */
+closeHelpModal();
 closeSignatureModal();
 showApp();
 showHome(false);
