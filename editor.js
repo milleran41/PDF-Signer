@@ -7,6 +7,9 @@ const SIG_KEY = "pdfsigner.signatures";
 const USER_KEY = "pdfsigner.user";
 const DEMO_CODE = "000000";
 const LANG_KEY = "pdfsigner.language";
+const DRAFT_DB_NAME = "pdfsigner.drafts";
+const DRAFT_STORE = "drafts";
+const DRAFT_KEY = "current";
 const HIDDEN_MARK = "CodeWerk Studio | PDF Signer";
 const HIDDEN_MARK_KEYWORDS = "CodeWerk Studio, PDF Signer, hidden origin mark";
 
@@ -1281,9 +1284,157 @@ const state = {
 
 let activeAnnotId = null;
 let docScaleTimer = null;
+let draftSaveTimer = null;
+let restoringDraft = false;
 
 function annotsForPage() {
   return (state.annots[state.page] ||= []);
+}
+
+function openDraftDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DRAFT_DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(DRAFT_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function draftDbAction(mode, action) {
+  const db = await openDraftDb();
+  try {
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(DRAFT_STORE, mode);
+      const store = tx.objectStore(DRAFT_STORE);
+      const req = action(store);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally {
+    db.close();
+  }
+}
+
+function canvasToDataUrl(canvas) {
+  return canvas.toDataURL("image/png");
+}
+
+async function sourceToDraftSource(source) {
+  if (source.draftDataUrl) {
+    return { type: "image", label: source.label || t("page"), dataUrl: source.draftDataUrl };
+  }
+  let canvas;
+  if (source.type === "pdf") {
+    const page = await source.pdf.getPage(source.pageNumber);
+    const viewport = page.getViewport({ scale: RENDER_SCALE });
+    canvas = document.createElement("canvas");
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+  } else {
+    canvas = document.createElement("canvas");
+    canvas.width = source.image.naturalWidth;
+    canvas.height = source.image.naturalHeight;
+    canvas.getContext("2d").drawImage(source.image, 0, 0);
+  }
+  source.draftDataUrl = canvasToDataUrl(canvas);
+  return { type: "image", label: source.label || t("page"), dataUrl: source.draftDataUrl };
+}
+
+async function serializeDraft() {
+  const pageSources = [];
+  for (const source of state.pageSources) {
+    pageSources.push(await sourceToDraftSource(source));
+  }
+  return {
+    savedAt: Date.now(),
+    state: {
+      page: state.page,
+      zoom: state.zoom,
+      docScale: state.docScale,
+      rotation: state.rotation,
+      layerOffsetY: state.layerOffsetY,
+      gridStepY: state.gridStepY,
+      guideY: state.guideY,
+      textOffsetY: state.textOffsetY,
+      annots: state.annots,
+    },
+    controls: {
+      gridOn: $("gridToggle").checked,
+      gridMode: $("gridMode").value,
+      gridSize: $("gridSize").value,
+      guideOn: $("guideToggle").checked,
+    },
+    pageSources,
+  };
+}
+
+function scheduleDraftSave() {
+  if (restoringDraft || !state.kind) return;
+  clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(() => {
+    saveDraftNow().catch((err) => console.warn("Draft save failed", err));
+  }, 650);
+}
+
+async function saveDraftNow() {
+  if (restoringDraft || !state.kind) return;
+  const draft = await serializeDraft();
+  await draftDbAction("readwrite", (store) => store.put(draft, DRAFT_KEY));
+}
+
+async function clearDraft() {
+  clearTimeout(draftSaveTimer);
+  try {
+    await draftDbAction("readwrite", (store) => store.delete(DRAFT_KEY));
+  } catch (err) {
+    console.warn("Draft clear failed", err);
+  }
+}
+
+async function restoreDraft() {
+  const draft = await draftDbAction("readonly", (store) => store.get(DRAFT_KEY));
+  if (!draft?.pageSources?.length) return false;
+  restoringDraft = true;
+  try {
+    resetDocumentState();
+    const sources = [];
+    for (const source of draft.pageSources) {
+      const img = await loadImageElement(source.dataUrl);
+      sources.push({ type: "image", image: img, label: source.label || t("page") });
+    }
+    state.pageSources = sources;
+    state.kind = "document";
+    state.pages = sources.length;
+    Object.assign(state, draft.state || {});
+    state.page = Math.max(1, Math.min(Number(state.page) || 1, state.pages));
+    state.annots = draft.state?.annots || {};
+    $("gridToggle").checked = draft.controls?.gridOn ?? true;
+    $("gridMode").value = draft.controls?.gridMode || $("gridMode").value;
+    $("gridSize").value = draft.controls?.gridSize || $("gridSize").value;
+    $("guideToggle").checked = draft.controls?.guideOn ?? true;
+    $("rotateAngle").value = String(state.rotation);
+    $("layerOffsetY").value = String(state.layerOffsetY);
+    $("gridStepY").value = String(state.gridStepY);
+    $("guideY").value = String(state.guideY);
+    $("textOffsetY").value = String(state.textOffsetY);
+    $("docScale").value = String(Math.round(state.docScale * 100));
+    $("pageNav").hidden = state.pages < 2;
+    $("pageCount").textContent = String(state.pages);
+    updateRotationLabel();
+    updateLayerOffsetLabel();
+    updateGridStepYLabel();
+    updateDocScaleLabel();
+    await renderPage();
+    await renderThumbnails();
+    return true;
+  } finally {
+    restoringDraft = false;
+  }
 }
 
 async function openFile(file) {
@@ -1340,6 +1491,7 @@ async function openFiles(files, { append = false } = {}) {
     $("pageCount").textContent = String(state.pages);
     await renderPage();
     await renderThumbnails();
+    scheduleDraftSave();
   }
 
   if (unsupported.length) {
@@ -1478,6 +1630,7 @@ async function openUrl(url) {
   $("pageCount").textContent = String(state.pages);
   await renderPage();
   await renderThumbnails();
+  scheduleDraftSave();
 }
 
 function loadImageElement(src) {
@@ -1588,6 +1741,7 @@ async function removeDocumentPage(index) {
   $("pageCount").textContent = String(state.pages);
   await renderPage();
   await renderThumbnails();
+  scheduleDraftSave();
 }
 
 async function renderThumbnailCanvas(source, target) {
@@ -1663,6 +1817,7 @@ function afterRender() {
 function showHome(reset = false) {
   closeSignatureModal();
   if (reset) {
+    clearDraft();
     resetDocumentState();
     state.rotation = 0;
     state.layerOffsetY = 0;
@@ -1721,12 +1876,14 @@ $("prevPage").onclick = async () => {
   if (state.page > 1) {
     state.page--;
     await renderPage();
+    scheduleDraftSave();
   }
 };
 $("nextPage").onclick = async () => {
   if (state.page < state.pages) {
     state.page++;
     await renderPage();
+    scheduleDraftSave();
   }
 };
 
@@ -1737,6 +1894,7 @@ function updateRotationLabel() {
 async function rerenderCurrentDocument() {
   if (state.kind) await renderPage();
   else updateRotationLabel();
+  scheduleDraftSave();
 }
 
 $("rotateAngle").oninput = async (e) => {
@@ -1755,6 +1913,7 @@ function applyGuide() {
   guideEl.hidden = !$("guideToggle").checked || !state.kind;
   state.guideY = Number($("guideY").value);
   guideEl.style.top = `${state.guideY}%`;
+  scheduleDraftSave();
 }
 
 $("guideToggle").oninput = applyGuide;
@@ -1769,6 +1928,7 @@ function applyLayerOffset() {
   gridEl.style.transform = `translateY(${offset})`;
   overlay.style.transform = `translateY(${offset})`;
   updateLayerOffsetLabel();
+  scheduleDraftSave();
 }
 
 $("layerOffsetY").oninput = (e) => {
@@ -1812,6 +1972,7 @@ async function applyDocumentScale(percent) {
   if (!state.kind) return;
   await renderPage();
   await renderThumbnails();
+  scheduleDraftSave();
 }
 
 $("docScale").oninput = (e) => {
@@ -1834,10 +1995,12 @@ function applyZoom() {
 $("zoomIn").onclick = () => {
   state.zoom = Math.min(3, state.zoom + 0.1);
   applyZoom();
+  scheduleDraftSave();
 };
 $("zoomOut").onclick = () => {
   state.zoom = Math.max(0.2, state.zoom - 0.1);
   applyZoom();
+  scheduleDraftSave();
 };
 
 /* ---------- сетка ---------- */
@@ -1849,6 +2012,7 @@ function applyGrid() {
   gridEl.className = "grid" + (on ? (mode === "grid" ? " grid-cells" : " grid-lines") : "");
   gridEl.style.backgroundSize = `${sizeX}px ${state.gridStepY}px`;
   updateGridStepYLabel();
+  scheduleDraftSave();
 }
 
 function updateGridStepYLabel() {
@@ -1914,6 +2078,7 @@ function applyTextStyleToActive(change) {
   if (change.lineHeight) a.lineHeight = change.lineHeight;
   if (Object.prototype.hasOwnProperty.call(change, "offsetY")) a.offsetY = change.offsetY;
   renderAnnots();
+  scheduleDraftSave();
 }
 
 $("fontFamily").onchange = (e) => applyTextStyleToActive({ family: e.target.value });
@@ -1927,6 +2092,7 @@ $("textOffsetY").oninput = (e) => {
   } else {
     state.textOffsetY = value;
     textStyle.offsetY = value;
+    scheduleDraftSave();
   }
 };
 $("lineHeight").oninput = (e) => {
@@ -1975,6 +2141,7 @@ overlay.addEventListener("mousedown", (e) => {
   annotsForPage().push(a);
   activeAnnotId = a.id;
   renderAnnots();
+  scheduleDraftSave();
   const node = overlay.querySelector(`[data-id="${a.id}"] textarea`);
   node?.focus();
 });
@@ -2018,6 +2185,7 @@ function baseNode(a, cls) {
     state.annots[state.page] = annotsForPage().filter((x) => x !== a);
     if (activeAnnotId === a.id) activeAnnotId = null;
     renderAnnots();
+    scheduleDraftSave();
   };
 
   el.append(handle, del);
@@ -2043,6 +2211,7 @@ function textNode(a) {
   ta.addEventListener("input", () => {
     a.text = ta.value;
     autosize();
+    scheduleDraftSave();
   });
   ta.addEventListener("focus", () => selectAnnot(a));
   el.appendChild(ta);
@@ -2078,6 +2247,7 @@ function sigNode(a) {
     const up = () => {
       window.removeEventListener("mousemove", move);
       window.removeEventListener("mouseup", up);
+      scheduleDraftSave();
     };
     window.addEventListener("mousemove", move);
     window.addEventListener("mouseup", up);
@@ -2104,6 +2274,7 @@ function startDrag(ev, a, el) {
     el.classList.remove("selected");
     window.removeEventListener("mousemove", move);
     window.removeEventListener("mouseup", up);
+    scheduleDraftSave();
   };
   window.addEventListener("mousemove", move);
   window.addEventListener("mouseup", up);
@@ -2163,6 +2334,7 @@ function insertSignature(dataUrl) {
       h: (w * probe.naturalHeight) / probe.naturalWidth,
     });
     renderAnnots();
+    scheduleDraftSave();
     $("sigModal").hidden = true;
   };
   probe.src = dataUrl;
@@ -2387,13 +2559,21 @@ async function pasteSignatureFromClipboard() {
     if (navigator.clipboard?.read) {
       const items = await navigator.clipboard.read();
       for (const item of items) {
-        const type = item.types.find((t) => t.startsWith("image/") || t === "application/pdf");
+        const type = item.types.find((t) => t.startsWith("image/") || t === "application/pdf" || t === "text/html" || t === "text/plain");
         if (type) {
           const blob = await item.getType(type);
-          await loadSignatureFile(new File([blob], `clipboard.${type.includes("pdf") ? "pdf" : "png"}`, { type }));
-          return;
+          if (type.startsWith("image/") || type === "application/pdf") {
+            await loadSignatureFile(new File([blob], `clipboard.${type.includes("pdf") ? "pdf" : "png"}`, { type }));
+            return;
+          }
+          const text = await blob.text();
+          if (await loadSignatureFromTextPayload(text)) return;
         }
       }
+    }
+    if (navigator.clipboard?.readText) {
+      const text = await navigator.clipboard.readText();
+      if (await loadSignatureFromTextPayload(text)) return;
     }
     alert(t("clipboardNoImage"));
   } catch (err) {
@@ -2404,7 +2584,11 @@ async function pasteSignatureFromClipboard() {
 
 $("pasteSig").onclick = pasteSignatureFromClipboard;
 
+const handledPasteEvents = new WeakSet();
+
 async function loadSignatureFromPasteEvent(e) {
+  if (handledPasteEvents.has(e)) return;
+  handledPasteEvents.add(e);
   if ($("sigModal").hidden) return;
   const files = [...(e.clipboardData?.files || [])];
   let file = files.find((f) => f.type.startsWith("image/") || f.type === "application/pdf");
@@ -2419,11 +2603,43 @@ async function loadSignatureFromPasteEvent(e) {
     return;
   }
   const html = e.clipboardData?.getData("text/html") || "";
-  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (match?.[1]?.startsWith("data:image/")) {
+  const text = e.clipboardData?.getData("text/plain") || "";
+  if (await loadSignatureFromTextPayload(html || text)) {
     e.preventDefault();
-    setCropImageSource(match[1]);
   }
+}
+
+async function loadSignatureFromTextPayload(text) {
+  const src = extractImageSource(text);
+  if (!src) return false;
+  if (src.startsWith("data:image/") || src.startsWith("blob:")) {
+    setCropImageSource(src);
+    return true;
+  }
+  if (/^https?:\/\//i.test(src)) {
+    try {
+      const res = await fetch(src);
+      if (!res.ok) return false;
+      const blob = await res.blob();
+      if (!blob.type.startsWith("image/")) return false;
+      await loadSignatureFile(new File([blob], "clipboard-image.png", { type: blob.type }));
+      return true;
+    } catch (err) {
+      console.warn("Clipboard image URL failed", err);
+    }
+  }
+  return false;
+}
+
+function extractImageSource(text = "") {
+  const trimmed = text.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("data:image/") || trimmed.startsWith("blob:") || /^https?:\/\/\S+\.(png|jpe?g|webp|gif|bmp)(\?\S*)?$/i.test(trimmed)) {
+    return trimmed;
+  }
+  const doc = new DOMParser().parseFromString(trimmed, "text/html");
+  const img = doc.querySelector("img[src]");
+  return img?.getAttribute("src") || "";
 }
 
 window.addEventListener("paste", loadSignatureFromPasteEvent);
@@ -2746,16 +2962,29 @@ $("saveBtn").onclick = async () => {
   }
 };
 
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") saveDraftNow().catch(() => {});
+});
+window.addEventListener("beforeunload", () => {
+  saveDraftNow().catch(() => {});
+});
+
 /* ================= bootstrap ================= */
-closeHelpModal();
-closeSignatureModal();
-showApp();
-showHome(false);
-updateGridStepYLabel();
-updateDocScaleLabel();
-updateLineHeightLabel();
-updateSignatureEnhancementLabels();
-$("languageSelect").onchange = (e) => applyLanguage(e.target.value);
-applyLanguage(currentLang);
-const srcParam = new URLSearchParams(location.search).get("src");
-if (srcParam) openUrl(srcParam).catch((e) => alert(t("openFileFailed") + e.message));
+(async function init() {
+  closeHelpModal();
+  closeSignatureModal();
+  showApp();
+  showHome(false);
+  updateGridStepYLabel();
+  updateDocScaleLabel();
+  updateLineHeightLabel();
+  updateSignatureEnhancementLabels();
+  $("languageSelect").onchange = (e) => applyLanguage(e.target.value);
+  applyLanguage(currentLang);
+  const srcParam = new URLSearchParams(location.search).get("src");
+  if (srcParam) {
+    await openUrl(srcParam).catch((e) => alert(t("openFileFailed") + e.message));
+  } else {
+    await restoreDraft().catch((err) => console.warn("Draft restore failed", err));
+  }
+})();
