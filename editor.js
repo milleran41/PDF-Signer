@@ -2322,19 +2322,49 @@ function renderSigStrips() {
   });
 }
 
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function getSignatureInsertPoint(w, h) {
+  const selected = activeAnnot();
+  if (selected) {
+    return {
+      x: clamp(selected.x, 0, Math.max(0, docCanvas.width - w)),
+      y: clamp(selected.y, 0, Math.max(0, docCanvas.height - h)),
+    };
+  }
+
+  const areaRect = $("canvasArea").getBoundingClientRect();
+  const overlayRect = overlay.getBoundingClientRect();
+  const visibleLeft = Math.max(areaRect.left, overlayRect.left);
+  const visibleRight = Math.min(areaRect.right, overlayRect.right);
+  const visibleTop = Math.max(areaRect.top, overlayRect.top);
+  const visibleBottom = Math.min(areaRect.bottom, overlayRect.bottom);
+  const centerX = visibleRight > visibleLeft ? (visibleLeft + visibleRight) / 2 : areaRect.left + areaRect.width / 2;
+  const centerY = visibleBottom > visibleTop ? (visibleTop + visibleBottom) / 2 : areaRect.top + areaRect.height / 2;
+
+  return {
+    x: clamp((centerX - overlayRect.left) / state.zoom - w / 2, 0, Math.max(0, docCanvas.width - w)),
+    y: clamp((centerY - overlayRect.top) / state.zoom - h / 2, 0, Math.max(0, docCanvas.height - h)),
+  };
+}
+
 function insertSignature(dataUrl) {
   if (!state.kind) return alert(t("openDocumentFirst"));
   const probe = new Image();
   probe.onload = () => {
-    const w = Math.min(360, probe.naturalWidth);
+    const w = Math.min(360, probe.naturalWidth, Math.max(60, docCanvas.width * 0.7));
+    const h = (w * probe.naturalHeight) / probe.naturalWidth;
+    const point = getSignatureInsertPoint(w, h);
     annotsForPage().push({
       id: crypto.randomUUID(),
       type: "sig",
       dataUrl,
-      x: 60,
-      y: Math.max(60, docCanvas.height - 240),
+      x: point.x,
+      y: point.y,
       w,
-      h: (w * probe.naturalHeight) / probe.naturalWidth,
+      h,
     });
     renderAnnots();
     scheduleDraftSave();
