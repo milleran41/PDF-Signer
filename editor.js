@@ -7,6 +7,8 @@ const SIG_KEY = "pdfsigner.signatures";
 const USER_KEY = "pdfsigner.user";
 const DEMO_CODE = "000000";
 const LANG_KEY = "pdfsigner.language";
+const HIDDEN_MARK = "CodeWerk Studio | PDF Signer";
+const HIDDEN_MARK_KEYWORDS = "CodeWerk Studio, PDF Signer, hidden origin mark";
 
 const $ = (id) => document.getElementById(id);
 
@@ -2670,6 +2672,38 @@ function loadImg(src) {
   });
 }
 
+function stampHiddenCanvasMark(canvas) {
+  const ctx = canvas.getContext("2d");
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const payload = new TextEncoder().encode(`PDFSIGNER:${HIDDEN_MARK}`);
+  const bytes = new Uint8Array(4 + payload.length);
+  new DataView(bytes.buffer).setUint32(0, payload.length, false);
+  bytes.set(payload, 4);
+  const availablePixels = Math.floor(image.data.length / 4);
+  if (bytes.length * 8 > availablePixels) return canvas;
+
+  let pixel = 0;
+  for (const byte of bytes) {
+    for (let bit = 7; bit >= 0; bit--) {
+      const dataIndex = pixel * 4 + 2;
+      image.data[dataIndex] = (image.data[dataIndex] & 0xfe) | ((byte >> bit) & 1);
+      pixel++;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+  return canvas;
+}
+
+function applyPdfHiddenMark(pdf) {
+  pdf.setProperties({
+    title: "PDF Signer document",
+    subject: HIDDEN_MARK,
+    author: "PDF Signer",
+    creator: HIDDEN_MARK,
+    keywords: HIDDEN_MARK_KEYWORDS,
+  });
+}
+
 function downloadDataUrl(dataUrl, filename) {
   const a = document.createElement("a");
   a.href = dataUrl;
@@ -2686,6 +2720,7 @@ $("saveBtn").onclick = async () => {
     const fmt = $("exportFormat").value;
     if (fmt === "png") {
       const canvas = await flattenPage(state.page);
+      stampHiddenCanvasMark(canvas);
       downloadDataUrl(canvas.toDataURL("image/png"), `document-page-${state.page}.png`);
     } else {
       const { jsPDF } = window.jspdf;
@@ -2699,6 +2734,7 @@ $("saveBtn").onclick = async () => {
         else pdf.addPage([w, h], orientation);
         pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, w, h);
       }
+      applyPdfHiddenMark(pdf);
       pdf.save("document-signed.pdf");
     }
   } catch (err) {
