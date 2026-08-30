@@ -833,7 +833,6 @@ $("canvasArea").addEventListener("drop", async (e) => {
   const files = e.dataTransfer?.files;
   if (files?.length) await openFiles(files, { append: Boolean(state.kind) });
 });
-$("homeBtn").onclick = () => showHome(true);
 $("savedSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
 $("homeCreateSignatureBtn").onclick = () => openSignatureModal();
 $("prevPage").onclick = async () => {

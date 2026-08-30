@@ -47,7 +47,6 @@
           Добавить файлы
           <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
-        <button class="btn ghost" id="clearDocsBtn" data-i18n="clearDocs">Очистить</button>
 
         <div class="group" id="pageNav" hidden>
           <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
@@ -90,19 +89,23 @@
 
         <div class="spacer"></div>
 
-        <select id="languageSelect" class="select small" title="Язык интерфейса" data-i18n-title="languageTitle">
-          <option value="ru">RU</option>
-          <option value="de">DE</option>
-          <option value="en">EN</option>
-        </select>
         <button class="btn ghost" id="signBtn" data-i18n="createSignature">Создать подпись</button>
         <button class="btn ghost" id="savedSignaturesBtn" data-i18n="mySignatures">Мои подписи</button>
-        <select id="exportFormat" class="select small">
-          <option value="pdf">PDF</option>
-          <option value="png">PNG</option>
-        </select>
-        <button class="btn primary" id="saveBtn" data-i18n="saveDocument">Сохранить документ</button>
-        <button class="btn ghost" id="homeBtn" data-i18n="home">Главная</button>
+        <div class="actions-stack">
+          <select id="languageSelect" class="select small" title="Язык интерфейса" data-i18n-title="languageTitle">
+            <option value="ru">RU</option>
+            <option value="de">DE</option>
+            <option value="en">EN</option>
+          </select>
+          <div class="actions-row">
+            <button class="btn ghost" id="clearDocsBtn" data-i18n="clearDocs">Очистить</button>
+            <select id="exportFormat" class="select small">
+              <option value="pdf">PDF</option>
+              <option value="png">PNG</option>
+            </select>
+            <button class="btn primary" id="saveBtn" data-i18n="saveDocument">Сохранить документ</button>
+          </div>
+        </div>
       </header>
 
       <!-- 2. Панель настроек текста -->
