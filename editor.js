@@ -118,6 +118,7 @@ const i18n = {
     signatureFileOpenFailed: "Не удалось открыть файл для поиска подписи: ",
     clipboardNoImage: "В буфере обмена не найдено изображение. Скопируйте скриншот или картинку и нажмите Ctrl+V прямо в этом окне.",
     clipboardDenied: "Браузер не дал прочитать буфер. Нажмите Ctrl+V в окне подписи или загрузите файл.",
+    clipboardPressCtrlV: "Нажмите Ctrl+V прямо сейчас в этом окне. Браузер иногда не отдаёт изображение кнопке, но обычная вставка работает.",
     chooseSignatureSource: "Сначала выберите файл или вставьте изображение из буфера",
     saving: "Сохраняю…",
     saveFailed: "Не удалось сохранить документ: ",
@@ -227,6 +228,7 @@ const i18n = {
     signatureFileOpenFailed: "Datei zur Signatursuche konnte nicht geöffnet werden: ",
     clipboardNoImage: "In der Zwischenablage wurde kein Bild gefunden. Kopiere einen Screenshot oder ein Bild und drücke Ctrl+V in diesem Fenster.",
     clipboardDenied: "Der Browser konnte die Zwischenablage nicht lesen. Drücke Ctrl+V im Signaturfenster oder lade eine Datei.",
+    clipboardPressCtrlV: "Drücke jetzt Ctrl+V in diesem Fenster. Der Browser gibt das Bild manchmal nicht an die Schaltfläche frei, aber normales Einfügen funktioniert.",
     chooseSignatureSource: "Bitte zuerst eine Datei wählen oder ein Bild aus der Zwischenablage einfügen",
     saving: "Speichern…",
     saveFailed: "Dokument konnte nicht gespeichert werden: ",
@@ -336,6 +338,7 @@ const i18n = {
     signatureFileOpenFailed: "Could not open file for signature extraction: ",
     clipboardNoImage: "No image was found in the clipboard. Copy a screenshot or image and press Ctrl+V in this window.",
     clipboardDenied: "The browser did not allow clipboard reading. Press Ctrl+V in the signature window or upload a file.",
+    clipboardPressCtrlV: "Press Ctrl+V in this window now. The browser sometimes does not expose the image to the button, but normal paste works.",
     chooseSignatureSource: "Choose a file or paste an image from the clipboard first",
     saving: "Saving…",
     saveFailed: "Could not save document: ",
@@ -2466,6 +2469,7 @@ let crop = null; // в координатах cropCanvas
 let sigPdf = null;
 let sigPdfPage = 1;
 let sigPdfScale = 2;
+let pasteFallbackResolve = null;
 
 function resetSignatureImport() {
   cropImg = null;
@@ -2554,32 +2558,60 @@ $("sigNextPage").onclick = async () => {
   await renderSignaturePdfPage();
 };
 
-async function pasteSignatureFromClipboard() {
-  try {
-    if (navigator.clipboard?.read) {
-      const items = await navigator.clipboard.read();
-      for (const item of items) {
-        const type = item.types.find((t) => t.startsWith("image/") || t === "application/pdf" || t === "text/html" || t === "text/plain");
-        if (type) {
-          const blob = await item.getType(type);
-          if (type.startsWith("image/") || type === "application/pdf") {
-            await loadSignatureFile(new File([blob], `clipboard.${type.includes("pdf") ? "pdf" : "png"}`, { type }));
-            return;
-          }
-          const text = await blob.text();
-          if (await loadSignatureFromTextPayload(text)) return;
+async function tryReadSignatureFromClipboardApi() {
+  if (navigator.clipboard?.read) {
+    const items = await navigator.clipboard.read();
+    for (const item of items) {
+      const type = item.types.find((t) => t.startsWith("image/") || t === "application/pdf" || t === "text/html" || t === "text/plain");
+      if (type) {
+        const blob = await item.getType(type);
+        if (type.startsWith("image/") || type === "application/pdf") {
+          await loadSignatureFile(new File([blob], `clipboard.${type.includes("pdf") ? "pdf" : "png"}`, { type }));
+          return true;
         }
+        const text = await blob.text();
+        if (await loadSignatureFromTextPayload(text)) return true;
       }
     }
-    if (navigator.clipboard?.readText) {
-      const text = await navigator.clipboard.readText();
-      if (await loadSignatureFromTextPayload(text)) return;
-    }
-    alert(t("clipboardNoImage"));
-  } catch (err) {
-    console.error(err);
-    alert(t("clipboardDenied"));
   }
+  if (navigator.clipboard?.readText) {
+    const text = await navigator.clipboard.readText();
+    if (await loadSignatureFromTextPayload(text)) return true;
+  }
+  return false;
+}
+
+function resolvePasteFallback(value) {
+  if (!pasteFallbackResolve) return;
+  pasteFallbackResolve(value);
+  pasteFallbackResolve = null;
+}
+
+function requestPasteEventFallback() {
+  $("sigPreviewHint").textContent = t("clipboardPressCtrlV");
+  $("sigModal").tabIndex = -1;
+  $("sigModal").focus();
+  return new Promise((resolve) => {
+    pasteFallbackResolve = resolve;
+    try {
+      document.execCommand?.("paste");
+    } catch (err) {
+      console.warn("Programmatic paste failed", err);
+    }
+    setTimeout(() => {
+      if (pasteFallbackResolve === resolve) resolvePasteFallback(false);
+    }, 450);
+  });
+}
+
+async function pasteSignatureFromClipboard() {
+  try {
+    if (await tryReadSignatureFromClipboardApi()) return;
+  } catch (err) {
+    console.warn("Clipboard API read failed", err);
+  }
+  if (await requestPasteEventFallback()) return;
+  $("sigPreviewHint").textContent = t("clipboardPressCtrlV");
 }
 
 $("pasteSig").onclick = pasteSignatureFromClipboard;
@@ -2600,12 +2632,14 @@ async function loadSignatureFromPasteEvent(e) {
   if (file) {
     e.preventDefault();
     await loadSignatureFile(file);
+    resolvePasteFallback(true);
     return;
   }
   const html = e.clipboardData?.getData("text/html") || "";
   const text = e.clipboardData?.getData("text/plain") || "";
   if (await loadSignatureFromTextPayload(html || text)) {
     e.preventDefault();
+    resolvePasteFallback(true);
   }
 }
 
