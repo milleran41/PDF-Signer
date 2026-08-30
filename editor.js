@@ -6,8 +6,307 @@
 const SIG_KEY = "pdfsigner.signatures";
 const USER_KEY = "pdfsigner.user";
 const DEMO_CODE = "000000";
+const LANG_KEY = "pdfsigner.language";
 
 const $ = (id) => document.getElementById(id);
+
+const i18n = {
+  ru: {
+    title: "PDF Signer — редактор бланка",
+    addFiles: "Добавить файлы",
+    clearDocs: "Очистить",
+    prevPage: "Предыдущая страница",
+    nextPage: "Следующая страница",
+    grid: "Сетка",
+    gridCells: "В клеточку",
+    gridLines: "В линейку",
+    cellSize: "Размер клетки",
+    rowStep: "Шаг строк",
+    rowStepTitle: "Расстояние между строками сетки",
+    layerOffset: "Сдвиг слоя",
+    layerOffsetTitle: "Сдвиг сетки и вводимого текста",
+    docSize: "Размер документа",
+    docSizeTitle: "Реальный размер документа при редактировании и сохранении",
+    rotation: "Поворот",
+    rotationTitle: "Выравнивание скана",
+    guide: "Ориентир",
+    guideTitle: "Положение ориентира",
+    languageTitle: "Язык интерфейса",
+    createSignature: "Создать подпись",
+    mySignatures: "Мои подписи",
+    saveDocument: "Сохранить документ",
+    home: "Главная",
+    text: "Текст:",
+    bold: "Жирный",
+    italic: "Курсив",
+    textColor: "Цвет текста",
+    lift: "Подъём",
+    liftTitle: "Смещение текста относительно строки",
+    spacing: "Интервал",
+    spacingTitle: "Межстрочный интервал текста",
+    signatures: "Подписи:",
+    noSaved: "нет сохранённых",
+    editorHint: "Клик по документу — новое текстовое поле. Выделите строку и меняйте подъём отдельно.",
+    homeTitle: "Главная страница",
+    homeText: "Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.",
+    chooseDocument: "Выбрать документ",
+    supportedFiles: "Поддерживаются PDF, DOCX и изображения. Всё обрабатывается локально в браузере.",
+    signatureTitle: "Цифровая подпись",
+    backToDocument: "К документу",
+    draw: "Нарисовать",
+    fromFileOrClipboard: "Из файла или буфера",
+    thickness: "Толщина",
+    clear: "Очистить",
+    saveSignature: "Сохранить подпись",
+    chooseFile: "Выбрать файл",
+    pasteClipboard: "Вставить из буфера",
+    bgThreshold: "Порог удаления фона",
+    darker: "Темнее",
+    sharper: "Резче",
+    thicker: "Толще",
+    color: "Цвет",
+    purple: "Фиолетовый",
+    black: "Чёрный",
+    transparentBg: "Прозрачный фон",
+    saveThisVariant: "Сохранить этот вариант",
+    signatureImportHint: "Загрузите PDF, PNG, JPG или вставьте скриншот из буфера. Выделите подпись рамкой, светлый фон внутри выделения будет удалён.",
+    previewBeforeSave: "Предпросмотр перед сохранением",
+    signaturePreviewEmpty: "После выбора файла здесь появится подпись с удалённым фоном.",
+    saved: "Сохранённые:",
+    unsupportedOpen: "Не удалось открыть",
+    legacyDocUnsupported: "Старый формат Word .doc браузерное расширение не может надёжно отрисовать напрямую. Сохраните такой файл как .docx, PDF или сделайте изображение/скриншот, затем добавьте его сюда.",
+    failedFiles: "Некоторые файлы не удалось обработать:",
+    docxModuleMissing: "Модуль DOCX не загружен. Проверьте файлы vendor/jszip, vendor/docx-preview и vendor/html2canvas.",
+    docxReadFailed: "Не удалось прочитать DOCX",
+    removePage: "Удалить лист",
+    move: "Переместить",
+    delete: "Удалить",
+    savedSignatureName: "Подпись",
+    insertSavedSignature: "Вставить сохранённую подпись в документ",
+    chooseDocumentFirst: "Сначала выберите документ",
+    openDocumentFirst: "Сначала откройте документ",
+    drawSignatureFirst: "Сначала нарисуйте подпись",
+    signaturePreviewReady: "Так подпись будет сохранена в шаблоны.",
+    signaturePreviewWholeFile: "Сейчас показан весь файл. Выделите рамкой только подпись, если нужно обрезать точнее.",
+    imageLoadFailed: "Не удалось загрузить изображение из этого файла",
+    pdfModuleMissing: "PDF-модуль не загружен",
+    signatureFileOpenFailed: "Не удалось открыть файл для поиска подписи: ",
+    clipboardNoImage: "В буфере обмена не найдено изображение. Скопируйте скриншот или картинку и нажмите Ctrl+V прямо в этом окне.",
+    clipboardDenied: "Браузер не дал прочитать буфер. Нажмите Ctrl+V в окне подписи или загрузите файл.",
+    chooseSignatureSource: "Сначала выберите файл или вставьте изображение из буфера",
+    saving: "Сохраняю…",
+    saveFailed: "Не удалось сохранить документ: ",
+    openFileFailed: "Не удалось открыть файл: ",
+    pageNotFound: "Страница не найдена",
+    page: "Страница",
+  },
+  de: {
+    title: "PDF Signer — Formular-Editor",
+    addFiles: "Dateien hinzufügen",
+    clearDocs: "Leeren",
+    prevPage: "Vorherige Seite",
+    nextPage: "Nächste Seite",
+    grid: "Raster",
+    gridCells: "Kästchen",
+    gridLines: "Linien",
+    cellSize: "Kästchengröße",
+    rowStep: "Zeilenabstand",
+    rowStepTitle: "Abstand zwischen Rasterzeilen",
+    layerOffset: "Ebene verschieben",
+    layerOffsetTitle: "Raster und Eingabetext verschieben",
+    docSize: "Dokumentgröße",
+    docSizeTitle: "Tatsächliche Dokumentgröße beim Bearbeiten und Speichern",
+    rotation: "Drehung",
+    rotationTitle: "Scan ausrichten",
+    guide: "Hilfslinie",
+    guideTitle: "Position der Hilfslinie",
+    languageTitle: "Sprache der Oberfläche",
+    createSignature: "Signatur erstellen",
+    mySignatures: "Meine Signaturen",
+    saveDocument: "Dokument speichern",
+    home: "Start",
+    text: "Text:",
+    bold: "Fett",
+    italic: "Kursiv",
+    textColor: "Textfarbe",
+    lift: "Anheben",
+    liftTitle: "Textversatz zur Zeile",
+    spacing: "Abstand",
+    spacingTitle: "Zeilenhöhe des Textes",
+    signatures: "Signaturen:",
+    noSaved: "keine gespeichert",
+    editorHint: "Klick ins Dokument: neues Textfeld. Markiere eine Zeile und passe das Anheben separat an.",
+    homeTitle: "Startseite",
+    homeText: "Wähle das Dokument aus, das ausgefüllt werden soll, und füge dann Text und Signatur hinzu.",
+    chooseDocument: "Dokument wählen",
+    supportedFiles: "PDF, DOCX und Bilder werden unterstützt. Alles wird lokal im Browser verarbeitet.",
+    signatureTitle: "Digitale Signatur",
+    backToDocument: "Zum Dokument",
+    draw: "Zeichnen",
+    fromFileOrClipboard: "Aus Datei oder Zwischenablage",
+    thickness: "Dicke",
+    clear: "Leeren",
+    saveSignature: "Signatur speichern",
+    chooseFile: "Datei wählen",
+    pasteClipboard: "Aus Zwischenablage einfügen",
+    bgThreshold: "Hintergrund entfernen",
+    darker: "Dunkler",
+    sharper: "Schärfer",
+    thicker: "Dicker",
+    color: "Farbe",
+    purple: "Violett",
+    black: "Schwarz",
+    transparentBg: "Transparenter Hintergrund",
+    saveThisVariant: "Diese Variante speichern",
+    signatureImportHint: "Lade PDF, PNG, JPG oder füge einen Screenshot ein. Markiere die Signatur; heller Hintergrund wird entfernt.",
+    previewBeforeSave: "Vorschau vor dem Speichern",
+    signaturePreviewEmpty: "Nach der Dateiauswahl erscheint hier die Signatur mit entferntem Hintergrund.",
+    saved: "Gespeichert:",
+    unsupportedOpen: "Konnte nicht öffnen",
+    legacyDocUnsupported: "Das alte Word-Format .doc kann die Browser-Erweiterung nicht zuverlässig direkt darstellen. Speichere die Datei als .docx, PDF oder Bild/Screenshot und füge sie dann hier hinzu.",
+    failedFiles: "Einige Dateien konnten nicht verarbeitet werden:",
+    docxModuleMissing: "Das DOCX-Modul wurde nicht geladen. Prüfe vendor/jszip, vendor/docx-preview und vendor/html2canvas.",
+    docxReadFailed: "DOCX konnte nicht gelesen werden",
+    removePage: "Seite entfernen",
+    move: "Verschieben",
+    delete: "Löschen",
+    savedSignatureName: "Signatur",
+    insertSavedSignature: "Gespeicherte Signatur ins Dokument einfügen",
+    chooseDocumentFirst: "Bitte zuerst ein Dokument wählen",
+    openDocumentFirst: "Bitte zuerst ein Dokument öffnen",
+    drawSignatureFirst: "Bitte zuerst eine Signatur zeichnen",
+    signaturePreviewReady: "So wird die Signatur als Vorlage gespeichert.",
+    signaturePreviewWholeFile: "Aktuell wird die ganze Datei gezeigt. Markiere nur die Signatur, falls genauer zugeschnitten werden soll.",
+    imageLoadFailed: "Das Bild aus dieser Datei konnte nicht geladen werden",
+    pdfModuleMissing: "PDF-Modul wurde nicht geladen",
+    signatureFileOpenFailed: "Datei zur Signatursuche konnte nicht geöffnet werden: ",
+    clipboardNoImage: "In der Zwischenablage wurde kein Bild gefunden. Kopiere einen Screenshot oder ein Bild und drücke Ctrl+V in diesem Fenster.",
+    clipboardDenied: "Der Browser konnte die Zwischenablage nicht lesen. Drücke Ctrl+V im Signaturfenster oder lade eine Datei.",
+    chooseSignatureSource: "Bitte zuerst eine Datei wählen oder ein Bild aus der Zwischenablage einfügen",
+    saving: "Speichern…",
+    saveFailed: "Dokument konnte nicht gespeichert werden: ",
+    openFileFailed: "Datei konnte nicht geöffnet werden: ",
+    pageNotFound: "Seite nicht gefunden",
+    page: "Seite",
+  },
+  en: {
+    title: "PDF Signer — form editor",
+    addFiles: "Add files",
+    clearDocs: "Clear",
+    prevPage: "Previous page",
+    nextPage: "Next page",
+    grid: "Grid",
+    gridCells: "Cells",
+    gridLines: "Lines",
+    cellSize: "Cell size",
+    rowStep: "Row step",
+    rowStepTitle: "Distance between grid rows",
+    layerOffset: "Layer offset",
+    layerOffsetTitle: "Move grid and entered text",
+    docSize: "Document size",
+    docSizeTitle: "Real document size for editing and saving",
+    rotation: "Rotation",
+    rotationTitle: "Align scanned document",
+    guide: "Guide",
+    guideTitle: "Guide position",
+    languageTitle: "Interface language",
+    createSignature: "Create signature",
+    mySignatures: "My signatures",
+    saveDocument: "Save document",
+    home: "Home",
+    text: "Text:",
+    bold: "Bold",
+    italic: "Italic",
+    textColor: "Text color",
+    lift: "Lift",
+    liftTitle: "Text offset from the line",
+    spacing: "Spacing",
+    spacingTitle: "Text line height",
+    signatures: "Signatures:",
+    noSaved: "none saved",
+    editorHint: "Click the document to add a text field. Select a line to adjust its lift separately.",
+    homeTitle: "Home page",
+    homeText: "Choose the document you need to fill, then add text and a signature.",
+    chooseDocument: "Choose document",
+    supportedFiles: "PDF, DOCX and images are supported. Everything is processed locally in the browser.",
+    signatureTitle: "Digital signature",
+    backToDocument: "To document",
+    draw: "Draw",
+    fromFileOrClipboard: "From file or clipboard",
+    thickness: "Thickness",
+    clear: "Clear",
+    saveSignature: "Save signature",
+    chooseFile: "Choose file",
+    pasteClipboard: "Paste from clipboard",
+    bgThreshold: "Background threshold",
+    darker: "Darker",
+    sharper: "Sharper",
+    thicker: "Thicker",
+    color: "Color",
+    purple: "Purple",
+    black: "Black",
+    transparentBg: "Transparent background",
+    saveThisVariant: "Save this variant",
+    signatureImportHint: "Upload PDF, PNG, JPG or paste a screenshot. Select the signature area; light background will be removed.",
+    previewBeforeSave: "Preview before saving",
+    signaturePreviewEmpty: "After choosing a file, the signature with removed background will appear here.",
+    saved: "Saved:",
+    unsupportedOpen: "Could not open",
+    legacyDocUnsupported: "The old Word .doc format cannot be rendered reliably inside the browser extension. Save it as .docx, PDF, or an image/screenshot, then add it here.",
+    failedFiles: "Some files could not be processed:",
+    docxModuleMissing: "DOCX module is not loaded. Check vendor/jszip, vendor/docx-preview and vendor/html2canvas.",
+    docxReadFailed: "Could not read DOCX",
+    removePage: "Remove page",
+    move: "Move",
+    delete: "Delete",
+    savedSignatureName: "Signature",
+    insertSavedSignature: "Insert saved signature into document",
+    chooseDocumentFirst: "Choose a document first",
+    openDocumentFirst: "Open a document first",
+    drawSignatureFirst: "Draw a signature first",
+    signaturePreviewReady: "This is how the signature will be saved as a template.",
+    signaturePreviewWholeFile: "The whole file is shown now. Select only the signature if you need a tighter crop.",
+    imageLoadFailed: "Could not load an image from this file",
+    pdfModuleMissing: "PDF module is not loaded",
+    signatureFileOpenFailed: "Could not open file for signature extraction: ",
+    clipboardNoImage: "No image was found in the clipboard. Copy a screenshot or image and press Ctrl+V in this window.",
+    clipboardDenied: "The browser did not allow clipboard reading. Press Ctrl+V in the signature window or upload a file.",
+    chooseSignatureSource: "Choose a file or paste an image from the clipboard first",
+    saving: "Saving…",
+    saveFailed: "Could not save document: ",
+    openFileFailed: "Could not open file: ",
+    pageNotFound: "Page not found",
+    page: "Page",
+  },
+};
+
+let currentLang = localStorage.getItem(LANG_KEY) || "ru";
+
+function t(key) {
+  return (i18n[currentLang] && i18n[currentLang][key]) || i18n.ru[key] || key;
+}
+
+function setElementText(el, text) {
+  const textNode = Array.from(el.childNodes).find((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+  if (textNode) {
+    textNode.textContent = text;
+  } else {
+    el.insertBefore(document.createTextNode(text), el.firstChild);
+  }
+}
+
+function applyLanguage(lang = currentLang) {
+  currentLang = i18n[lang] ? lang : "ru";
+  localStorage.setItem(LANG_KEY, currentLang);
+  document.documentElement.lang = currentLang;
+  document.title = t("title");
+  $("languageSelect").value = currentLang;
+  document.querySelectorAll("[data-i18n]").forEach((el) => setElementText(el, t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    el.title = t(el.dataset.i18nTitle);
+  });
+  renderSigStrips();
+}
 
 /* ================= 3a. Авторизация (заглушка) ================= */
 const auth = {
@@ -163,13 +462,12 @@ async function openFiles(files, { append = false } = {}) {
 
   if (unsupported.length) {
     alert(
-      `Не удалось открыть: ${unsupported.join(", ")}\n\n` +
-        "Старый формат Word .doc браузерное расширение не может надёжно отрисовать напрямую. " +
-        "Сохраните такой файл как .docx, PDF или сделайте изображение/скриншот, затем добавьте его сюда."
+      `${t("unsupportedOpen")}: ${unsupported.join(", ")}\n\n` +
+        t("legacyDocUnsupported")
     );
   }
   if (failed.length) {
-    alert("Некоторые файлы не удалось обработать:\n\n" + failed.join("\n"));
+    alert(`${t("failedFiles")}\n\n` + failed.join("\n"));
   }
 }
 
@@ -189,7 +487,7 @@ function isLegacyDocFile(file) {
 
 async function renderDocxFileToSources(file) {
   if (!window.docx?.renderAsync || !window.html2canvas || !window.JSZip) {
-    throw new Error("Модуль DOCX не загружен. Проверьте файлы vendor/jszip, vendor/docx-preview и vendor/html2canvas.");
+    throw new Error(t("docxModuleMissing"));
   }
   try {
     docxRenderHost.innerHTML = "";
@@ -286,7 +584,7 @@ async function openUrl(url) {
   ) {
     state.pageSources = await renderDocxFileToSources(new File([blob], name, { type }));
   } else if (type.includes("msword") || /\.doc(\?|$)/i.test(url)) {
-    throw new Error("Старый формат Word .doc пока не поддерживается. Сохраните файл как .docx или PDF.");
+    throw new Error(t("legacyDocUnsupported"));
   } else {
     const img = await loadImageElement(URL.createObjectURL(blob));
     state.pageSources = [{ type: "image", image: img, label: name }];
@@ -355,11 +653,11 @@ async function renderThumbnails() {
     const canvas = document.createElement("canvas");
     const title = document.createElement("span");
     title.className = "thumb-title";
-    title.textContent = `${i + 1}. ${state.pageSources[i].label || "Страница"}`;
+    title.textContent = `${i + 1}. ${state.pageSources[i].label || t("page")}`;
     const remove = document.createElement("button");
     remove.className = "thumb-remove";
     remove.type = "button";
-    remove.title = "Удалить лист";
+    remove.title = t("removePage");
     remove.textContent = "×";
     const openPage = async () => {
       state.page = i + 1;
@@ -828,13 +1126,13 @@ function baseNode(a, cls) {
   const handle = document.createElement("button");
   handle.className = "handle";
   handle.textContent = "⠿";
-  handle.title = "Переместить";
+  handle.title = t("move");
   handle.addEventListener("mousedown", (ev) => startDrag(ev, a, el));
 
   const del = document.createElement("button");
   del.className = "del";
   del.textContent = "×";
-  del.title = "Удалить";
+  del.title = t("delete");
   del.onclick = () => {
     state.annots[state.page] = annotsForPage().filter((x) => x !== a);
     if (activeAnnotId === a.id) activeAnnotId = null;
@@ -941,7 +1239,7 @@ const sigStore = {
   },
   add(dataUrl) {
     const list = sigStore.list();
-    list.unshift({ name: `Подпись ${list.length + 1}`, dataUrl, at: Date.now() });
+    list.unshift({ name: `${t("savedSignatureName")} ${list.length + 1}`, dataUrl, at: Date.now() });
     localStorage.setItem(SIG_KEY, JSON.stringify(list.slice(0, 12)));
     renderSigStrips();
   },
@@ -953,13 +1251,16 @@ function renderSigStrips() {
     if (!strip) return;
     strip.innerHTML = "";
     if (!list.length) {
-      strip.innerHTML = '<span class="muted small">нет сохранённых</span>';
+      const empty = document.createElement("span");
+      empty.className = "muted small";
+      empty.textContent = t("noSaved");
+      strip.appendChild(empty);
       return;
     }
     list.forEach((s) => {
       const img = new Image();
       img.src = s.dataUrl;
-      img.title = state.kind ? "Вставить сохранённую подпись в документ" : "Сначала выберите документ";
+      img.title = state.kind ? t("insertSavedSignature") : t("chooseDocumentFirst");
       img.onclick = () => insertSignature(s.dataUrl);
       strip.appendChild(img);
     });
@@ -967,7 +1268,7 @@ function renderSigStrips() {
 }
 
 function insertSignature(dataUrl) {
-  if (!state.kind) return alert("Сначала откройте документ");
+  if (!state.kind) return alert(t("openDocumentFirst"));
   const probe = new Image();
   probe.onload = () => {
     const w = Math.min(360, probe.naturalWidth);
@@ -1053,7 +1354,7 @@ $("padClear").onclick = () => {
 };
 
 $("padSave").onclick = () => {
-  if (!padDirty) return alert("Сначала нарисуйте подпись");
+  if (!padDirty) return alert(t("drawSignatureFirst"));
   const trimmed = trimTransparent(pad);
   sigStore.add(trimmed.toDataURL("image/png"));
   $("padClear").click();
@@ -1109,7 +1410,7 @@ function resetSignatureImport() {
   prev.width = 320;
   prev.height = 120;
   prev.getContext("2d").clearRect(0, 0, prev.width, prev.height);
-  $("sigPreviewHint").textContent = "После выбора файла здесь появится подпись с удалённым фоном.";
+  $("sigPreviewHint").textContent = t("signaturePreviewEmpty");
 }
 
 function setCropImageSource(src) {
@@ -1127,13 +1428,13 @@ function setCropImageSource(src) {
     cropBox.hidden = true;
     previewCrop();
   };
-  img.onerror = () => alert("Не удалось загрузить изображение из этого файла");
+  img.onerror = () => alert(t("imageLoadFailed"));
   img.src = src;
 }
 
 async function setCropPdf(file) {
   resetSignatureImport();
-  if (!window.pdfjsLib) return alert("PDF-модуль не загружен");
+  if (!window.pdfjsLib) return alert(t("pdfModuleMissing"));
   sigPdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
   sigPdfPage = 1;
   $("sigPageNav").hidden = sigPdf.numPages < 2;
@@ -1167,7 +1468,7 @@ async function loadSignatureFile(file) {
     setCropImageSource(URL.createObjectURL(file));
   } catch (err) {
     console.error(err);
-    alert("Не удалось открыть файл для поиска подписи: " + err.message);
+    alert(t("signatureFileOpenFailed") + err.message);
   }
 }
 
@@ -1198,10 +1499,10 @@ async function pasteSignatureFromClipboard() {
         }
       }
     }
-    alert("В буфере обмена не найдено изображение. Скопируйте скриншот или картинку и нажмите Ctrl+V прямо в этом окне.");
+    alert(t("clipboardNoImage"));
   } catch (err) {
     console.error(err);
-    alert("Браузер не дал прочитать буфер. Нажмите Ctrl+V в окне подписи или загрузите файл.");
+    alert(t("clipboardDenied"));
   }
 }
 
@@ -1404,20 +1705,20 @@ function previewCrop() {
   ctx.clearRect(0, 0, prev.width, prev.height);
   ctx.drawImage(sig, Math.round((maxW - w) / 2), Math.round((maxH - h) / 2), w, h);
   $("sigPreviewHint").textContent = crop && crop.w > 8 && crop.h > 8
-    ? "Так подпись будет сохранена в шаблоны."
-    : "Сейчас показан весь файл. Выделите рамкой только подпись, если нужно обрезать точнее.";
+    ? t("signaturePreviewReady")
+    : t("signaturePreviewWholeFile");
 }
 
 $("cropSave").onclick = () => {
   const sig = buildSignatureFromCrop();
-  if (!sig) return alert("Сначала выберите файл или вставьте изображение из буфера");
+  if (!sig) return alert(t("chooseSignatureSource"));
   sigStore.add(sig.toDataURL("image/png"));
 };
 
 /* ================= 4. Экспорт (сплющивание слоёв, без сетки) ================= */
 async function flattenPage(pageNumber) {
   const source = state.pageSources[pageNumber - 1];
-  if (!source) throw new Error(`Страница ${pageNumber} не найдена`);
+  if (!source) throw new Error(`${t("pageNotFound")}: ${pageNumber}`);
   const sourceCanvas = await renderSourceCanvas(source, RENDER_SCALE);
   const base = document.createElement("canvas");
   drawCanvasInto(base, sourceCanvas, state.rotation);
@@ -1483,10 +1784,10 @@ function downloadDataUrl(dataUrl, filename) {
 }
 
 $("saveBtn").onclick = async () => {
-  if (!state.kind) return alert("Сначала откройте документ");
+  if (!state.kind) return alert(t("openDocumentFirst"));
   const btn = $("saveBtn");
   btn.disabled = true;
-  btn.textContent = "Сохраняю…";
+  btn.textContent = t("saving");
   try {
     const fmt = $("exportFormat").value;
     if (fmt === "png") {
@@ -1508,10 +1809,10 @@ $("saveBtn").onclick = async () => {
     }
   } catch (err) {
     console.error(err);
-    alert("Не удалось сохранить документ: " + err.message);
+    alert(t("saveFailed") + err.message);
   } finally {
     btn.disabled = false;
-    btn.textContent = "Сохранить документ";
+    btn.textContent = t("saveDocument");
   }
 };
 
@@ -1523,5 +1824,7 @@ updateGridStepYLabel();
 updateDocScaleLabel();
 updateLineHeightLabel();
 updateSignatureEnhancementLabels();
+$("languageSelect").onchange = (e) => applyLanguage(e.target.value);
+applyLanguage(currentLang);
 const srcParam = new URLSearchParams(location.search).get("src");
-if (srcParam) openUrl(srcParam).catch((e) => alert("Не удалось открыть файл: " + e.message));
+if (srcParam) openUrl(srcParam).catch((e) => alert(t("openFileFailed") + e.message));

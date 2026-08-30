@@ -39,39 +39,40 @@
 
     <!-- ======== Редактор ======== -->
     <div id="app" hidden>
+      <div class="app-header">
       <header class="topbar">
         <div class="brand">✍ PDF Signer</div>
 
-        <label class="btn ghost">
+        <label class="btn ghost" data-i18n="addFiles">
           Добавить файлы
           <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
-        <button class="btn ghost" id="clearDocsBtn">Очистить</button>
+        <button class="btn ghost" id="clearDocsBtn" data-i18n="clearDocs">Очистить</button>
 
         <div class="group" id="pageNav" hidden>
-          <button class="btn icon" id="prevPage" title="Предыдущая страница">‹</button>
+          <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
           <span class="pageLabel"><b id="pageNum">1</b>/<span id="pageCount">1</span></span>
-          <button class="btn icon" id="nextPage" title="Следующая страница">›</button>
+          <button class="btn icon" id="nextPage" title="Следующая страница" data-i18n-title="nextPage">›</button>
         </div>
 
         <div class="group">
-          <label class="check"><input type="checkbox" id="gridToggle" checked /> Сетка</label>
+          <label class="check"><input type="checkbox" id="gridToggle" checked /> <span data-i18n="grid">Сетка</span></label>
           <select id="gridMode" class="select small">
-            <option value="grid">В клеточку</option>
-            <option value="lines">В линейку</option>
+            <option value="grid" data-i18n="gridCells">В клеточку</option>
+            <option value="lines" data-i18n="gridLines">В линейку</option>
           </select>
-          <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" />
-          <span class="label">Шаг строк</span>
-          <input type="number" id="gridStepY" class="input number small" min="8" max="120" step="0.5" value="20" title="Расстояние между строками сетки" />
-          <span class="label">Сдвиг слоя</span>
-          <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" title="Сдвиг сетки и вводимого текста" />
+          <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" data-i18n-title="cellSize" />
+          <span class="label" data-i18n="rowStep">Шаг строк</span>
+          <input type="number" id="gridStepY" class="input number small" min="8" max="120" step="0.5" value="20" title="Расстояние между строками сетки" data-i18n-title="rowStepTitle" />
+          <span class="label" data-i18n="layerOffset">Сдвиг слоя</span>
+          <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" title="Сдвиг сетки и вводимого текста" data-i18n-title="layerOffsetTitle" />
           <span id="layerOffsetLabel" class="pageLabel">0 px</span>
           <button class="btn ghost small" id="layerOffsetReset">0</button>
         </div>
 
         <div class="group">
-          <span class="label">Размер документа</span>
-          <input type="range" id="docScale" min="50" max="200" step="5" value="100" title="Реальный размер документа при редактировании и сохранении" />
+          <span class="label" data-i18n="docSize">Размер документа</span>
+          <input type="range" id="docScale" min="50" max="200" step="5" value="100" title="Реальный размер документа при редактировании и сохранении" data-i18n-title="docSizeTitle" />
           <span id="docScaleLabel" class="pageLabel">100%</span>
           <button class="btn ghost" id="zoomOut">−</button>
           <span id="zoomLabel" class="pageLabel">100%</span>
@@ -79,29 +80,34 @@
         </div>
 
         <div class="group">
-          <span class="label">Поворот</span>
-          <input type="range" id="rotateAngle" min="-5" max="5" step="0.1" value="0" title="Выравнивание скана" />
+          <span class="label" data-i18n="rotation">Поворот</span>
+          <input type="range" id="rotateAngle" min="-5" max="5" step="0.1" value="0" title="Выравнивание скана" data-i18n-title="rotationTitle" />
           <span id="rotateLabel" class="pageLabel">0°</span>
           <button class="btn ghost small" id="rotateReset">0°</button>
-          <label class="check"><input type="checkbox" id="guideToggle" checked /> Ориентир</label>
-          <input type="range" id="guideY" min="0" max="100" step="1" value="45" title="Положение ориентира" />
+          <label class="check"><input type="checkbox" id="guideToggle" checked /> <span data-i18n="guide">Ориентир</span></label>
+          <input type="range" id="guideY" min="0" max="100" step="1" value="45" title="Положение ориентира" data-i18n-title="guideTitle" />
         </div>
 
         <div class="spacer"></div>
 
-        <button class="btn ghost" id="signBtn">Создать подпись</button>
-        <button class="btn ghost" id="savedSignaturesBtn">Мои подписи</button>
+        <select id="languageSelect" class="select small" title="Язык интерфейса" data-i18n-title="languageTitle">
+          <option value="ru">RU</option>
+          <option value="de">DE</option>
+          <option value="en">EN</option>
+        </select>
+        <button class="btn ghost" id="signBtn" data-i18n="createSignature">Создать подпись</button>
+        <button class="btn ghost" id="savedSignaturesBtn" data-i18n="mySignatures">Мои подписи</button>
         <select id="exportFormat" class="select small">
           <option value="pdf">PDF</option>
           <option value="png">PNG</option>
         </select>
-        <button class="btn primary" id="saveBtn">Сохранить документ</button>
-        <button class="btn ghost" id="homeBtn">Главная</button>
+        <button class="btn primary" id="saveBtn" data-i18n="saveDocument">Сохранить документ</button>
+        <button class="btn ghost" id="homeBtn" data-i18n="home">Главная</button>
       </header>
 
       <!-- 2. Панель настроек текста -->
       <div class="toolbar">
-        <span class="label">Текст:</span>
+        <span class="label" data-i18n="text">Текст:</span>
         <select id="fontFamily" class="select">
           <option value="sans-serif">Sans-serif</option>
           <option value="serif">Serif</option>
@@ -111,31 +117,32 @@
           <option>10</option><option>12</option><option selected>16</option>
           <option>20</option><option>24</option><option>32</option><option>48</option>
         </select>
-        <button class="btn toggle" id="boldBtn" title="Жирный"><b>B</b></button>
-        <button class="btn toggle" id="italicBtn" title="Курсив"><i>I</i></button>
-        <input type="color" id="textColor" value="#111111" class="color" title="Цвет текста" />
-        <span class="label">Подъём</span>
-        <input type="number" id="textOffsetY" class="input number small" min="-40" max="40" step="0.5" value="-6" title="Смещение текста относительно строки" />
-        <span class="label">Интервал</span>
-        <input type="range" id="lineHeight" min="0.8" max="2" step="0.05" value="1.15" title="Межстрочный интервал текста" />
+        <button class="btn toggle" id="boldBtn" title="Жирный" data-i18n-title="bold"><b>B</b></button>
+        <button class="btn toggle" id="italicBtn" title="Курсив" data-i18n-title="italic"><i>I</i></button>
+        <input type="color" id="textColor" value="#111111" class="color" title="Цвет текста" data-i18n-title="textColor" />
+        <span class="label" data-i18n="lift">Подъём</span>
+        <input type="number" id="textOffsetY" class="input number small" min="-40" max="40" step="0.5" value="-6" title="Смещение текста относительно строки" data-i18n-title="liftTitle" />
+        <span class="label" data-i18n="spacing">Интервал</span>
+        <input type="range" id="lineHeight" min="0.8" max="2" step="0.05" value="1.15" title="Межстрочный интервал текста" data-i18n-title="spacingTitle" />
         <span id="lineHeightLabel" class="pageLabel">1.15</span>
         <span class="divider-v"></span>
-        <span class="label">Подписи:</span>
-        <div id="sigStrip" class="sig-strip"><span class="muted small">нет сохранённых</span></div>
+        <span class="label" data-i18n="signatures">Подписи:</span>
+        <div id="sigStrip" class="sig-strip"><span class="muted small" data-i18n="noSaved">нет сохранённых</span></div>
         <div class="spacer"></div>
-        <span class="hint">Клик по документу — новое текстовое поле. Выделите строку и меняйте подъём отдельно.</span>
+        <span class="hint" data-i18n="editorHint">Клик по документу — новое текстовое поле. Выделите строку и меняйте подъём отдельно.</span>
+      </div>
       </div>
 
       <main class="canvas-area" id="canvasArea">
         <div id="empty" class="empty home-screen">
-          <h2>Главная страница</h2>
-          <p class="muted">Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.</p>
-          <label class="btn primary">
+          <h2 data-i18n="homeTitle">Главная страница</h2>
+          <p class="muted" data-i18n="homeText">Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.</p>
+          <label class="btn primary" data-i18n="chooseDocument">
             Выбрать документ
             <input type="file" id="fileInput2" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
           </label>
-          <button class="btn ghost" id="homeCreateSignatureBtn">Создать подпись</button>
-          <p class="muted small">Поддерживаются PDF, DOCX и изображения. Всё обрабатывается локально в браузере.</p>
+          <button class="btn ghost" id="homeCreateSignatureBtn" data-i18n="createSignature">Создать подпись</button>
+          <p class="muted small" data-i18n="supportedFiles">Поддерживаются PDF, DOCX и изображения. Всё обрабатывается локально в браузере.</p>
         </div>
 
         <aside id="thumbPane" class="thumb-pane" hidden></aside>
@@ -155,41 +162,41 @@
     <div id="sigModal" class="modal" hidden>
       <div class="modal-card">
         <header class="modal-head">
-          <h2>Цифровая подпись</h2>
+          <h2 data-i18n="signatureTitle">Цифровая подпись</h2>
           <div class="group">
-            <button class="btn ghost" id="sigBack">К документу</button>
+            <button class="btn ghost" id="sigBack" data-i18n="backToDocument">К документу</button>
             <button class="btn icon" id="sigClose">×</button>
           </div>
         </header>
 
         <div class="tabs">
-          <button class="tab active" data-tab="draw">Нарисовать</button>
-          <button class="tab" data-tab="upload">Из файла или буфера</button>
+          <button class="tab active" data-tab="draw" data-i18n="draw">Нарисовать</button>
+          <button class="tab" data-tab="upload" data-i18n="fromFileOrClipboard">Из файла или буфера</button>
         </div>
 
         <section class="tab-panel" data-panel="draw">
           <canvas id="padCanvas" width="640" height="240" class="pad"></canvas>
           <div class="row">
-            <label class="label">Толщина</label>
+            <label class="label" data-i18n="thickness">Толщина</label>
             <input type="range" id="penWidth" min="1" max="10" value="3" />
             <input type="color" id="penColor" value="#0b1b3a" class="color" />
-            <button class="btn ghost" id="padClear">Очистить</button>
+            <button class="btn ghost" id="padClear" data-i18n="clear">Очистить</button>
             <div class="spacer"></div>
-            <button class="btn primary" id="padSave">Сохранить подпись</button>
+            <button class="btn primary" id="padSave" data-i18n="saveSignature">Сохранить подпись</button>
           </div>
         </section>
 
         <section class="tab-panel" data-panel="upload" hidden>
           <div class="row import-row">
-            <label class="btn ghost">
+            <label class="btn ghost" data-i18n="chooseFile">
               Выбрать файл
               <input type="file" id="sigFile" hidden />
             </label>
-            <button class="btn ghost" id="pasteSig">Вставить из буфера</button>
+            <button class="btn ghost" id="pasteSig" data-i18n="pasteClipboard">Вставить из буфера</button>
             <div class="group sig-page-nav" id="sigPageNav" hidden>
-              <button class="btn icon" id="sigPrevPage" title="Предыдущая страница">‹</button>
+              <button class="btn icon" id="sigPrevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
               <span class="pageLabel"><b id="sigPageNum">1</b>/<span id="sigPageCount">1</span></span>
-              <button class="btn icon" id="sigNextPage" title="Следующая страница">›</button>
+              <button class="btn icon" id="sigNextPage" title="Следующая страница" data-i18n-title="nextPage">›</button>
             </div>
           </div>
           <div class="crop-wrap">
@@ -197,40 +204,40 @@
             <div id="cropBox" class="crop-box" hidden></div>
           </div>
           <div class="row">
-            <label class="label">Порог удаления фона</label>
+            <label class="label" data-i18n="bgThreshold">Порог удаления фона</label>
             <input type="range" id="threshold" min="120" max="250" value="200" />
-            <label class="label">Темнее</label>
+            <label class="label" data-i18n="darker">Темнее</label>
             <input type="range" id="sigDarkness" min="0" max="100" value="80" />
             <span id="sigDarknessLabel" class="pageLabel">80%</span>
-            <label class="label">Резче</label>
+            <label class="label" data-i18n="sharper">Резче</label>
             <input type="range" id="sigSharpness" min="0" max="100" value="45" />
             <span id="sigSharpnessLabel" class="pageLabel">45%</span>
-            <label class="label">Толще</label>
+            <label class="label" data-i18n="thicker">Толще</label>
             <input type="range" id="sigThickness" min="0" max="4" step="0.25" value="0.75" />
             <span id="sigThicknessLabel" class="pageLabel">0.75</span>
-            <label class="label">Цвет</label>
+            <label class="label" data-i18n="color">Цвет</label>
             <select id="sigColor" class="select small">
-              <option value="purple" selected>Фиолетовый</option>
-              <option value="black">Чёрный</option>
+              <option value="purple" selected data-i18n="purple">Фиолетовый</option>
+              <option value="black" data-i18n="black">Чёрный</option>
             </select>
-            <label class="check"><input type="checkbox" id="removeBg" checked /> Прозрачный фон</label>
+            <label class="check"><input type="checkbox" id="removeBg" checked /> <span data-i18n="transparentBg">Прозрачный фон</span></label>
             <div class="spacer"></div>
-            <button class="btn primary" id="cropSave">Сохранить этот вариант</button>
+            <button class="btn primary" id="cropSave" data-i18n="saveThisVariant">Сохранить этот вариант</button>
           </div>
-          <p class="muted small">
+          <p class="muted small" data-i18n="signatureImportHint">
             Загрузите PDF, PNG, JPG или вставьте скриншот из буфера. Выделите подпись рамкой, светлый фон внутри выделения будет удалён.
           </p>
           <div class="preview-panel">
             <div>
-              <div class="label">Предпросмотр перед сохранением</div>
-              <p class="muted small" id="sigPreviewHint">После выбора файла здесь появится подпись с удалённым фоном.</p>
+              <div class="label" data-i18n="previewBeforeSave">Предпросмотр перед сохранением</div>
+              <p class="muted small" id="sigPreviewHint" data-i18n="signaturePreviewEmpty">После выбора файла здесь появится подпись с удалённым фоном.</p>
             </div>
             <canvas id="sigPreview" class="preview" width="320" height="120"></canvas>
           </div>
         </section>
 
         <footer class="modal-foot">
-          <span class="label">Сохранённые:</span>
+          <span class="label" data-i18n="saved">Сохранённые:</span>
           <div id="sigStripModal" class="sig-strip"></div>
         </footer>
       </div>
