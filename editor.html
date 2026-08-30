@@ -260,7 +260,12 @@
           </div>
           <div class="crop-wrap">
             <canvas id="cropCanvas" class="pad"></canvas>
-            <div id="cropBox" class="crop-box" hidden></div>
+            <div id="cropBox" class="crop-box" hidden>
+              <span class="crop-handle nw" data-crop-handle="nw"></span>
+              <span class="crop-handle ne" data-crop-handle="ne"></span>
+              <span class="crop-handle sw" data-crop-handle="sw"></span>
+              <span class="crop-handle se" data-crop-handle="se"></span>
+            </div>
           </div>
           <div class="row">
             <label class="label" data-i18n="bgThreshold">Порог удаления фона</label>

@@ -2324,9 +2324,14 @@ const sigStore = {
   },
   add(dataUrl) {
     const list = sigStore.list();
+    if (list.some((item) => item.dataUrl === dataUrl)) {
+      renderSigStrips();
+      return false;
+    }
     list.unshift({ name: `${t("savedSignatureName")} ${list.length + 1}`, dataUrl, at: Date.now() });
     localStorage.setItem(SIG_KEY, JSON.stringify(list.slice(0, 12)));
     renderSigStrips();
+    return true;
   },
 };
 
@@ -2460,6 +2465,7 @@ function padStart(e) {
   e.preventDefault();
   drawing = true;
   padDirty = true;
+  setPadSaveEnabled(true);
   const p = padPos(e);
   padCtx.beginPath();
   padCtx.moveTo(p.x, p.y);
@@ -2479,9 +2485,14 @@ pad.addEventListener("pointerdown", padStart);
 pad.addEventListener("pointermove", padMove);
 window.addEventListener("pointerup", padEnd);
 
+function setPadSaveEnabled(enabled) {
+  $("padSave").disabled = !enabled;
+}
+
 $("padClear").onclick = () => {
   padCtx.clearRect(0, 0, pad.width, pad.height);
   padDirty = false;
+  setPadSaveEnabled(false);
 };
 
 $("padSave").onclick = () => {
@@ -2489,6 +2500,7 @@ $("padSave").onclick = () => {
   const trimmed = trimTransparent(pad);
   sigStore.add(trimmed.toDataURL("image/png"));
   $("padClear").click();
+  setPadSaveEnabled(false);
 };
 
 // обрезка прозрачных полей
@@ -2531,6 +2543,10 @@ let sigPdfPage = 1;
 let sigPdfScale = 2;
 let pasteFallbackResolve = null;
 
+function setSignatureSaveEnabled(enabled) {
+  $("cropSave").disabled = !enabled;
+}
+
 function resetSignatureImport() {
   cropImg = null;
   crop = null;
@@ -2543,6 +2559,7 @@ function resetSignatureImport() {
   prev.height = 120;
   prev.getContext("2d").clearRect(0, 0, prev.width, prev.height);
   $("sigPreviewHint").textContent = t("signaturePreviewEmpty");
+  setSignatureSaveEnabled(false);
 }
 
 function setCropImageSource(src) {
@@ -2558,6 +2575,7 @@ function setCropImageSource(src) {
     cropCanvas.getContext("2d").drawImage(img, 0, 0, cropCanvas.width, cropCanvas.height);
     crop = null;
     cropBox.hidden = true;
+    setSignatureSaveEnabled(true);
     previewCrop();
   };
   img.onerror = () => alert(t("imageLoadFailed"));
@@ -2739,24 +2757,53 @@ function extractImageSource(text = "") {
 window.addEventListener("paste", loadSignatureFromPasteEvent);
 document.addEventListener("paste", loadSignatureFromPasteEvent);
 
-cropCanvas.addEventListener("pointerdown", (e) => {
-  if (!cropImg) return;
+function cropCanvasPoint(e) {
+  const r = cropCanvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) * (cropCanvas.width / r.width),
+    y: (e.clientY - r.top) * (cropCanvas.height / r.height),
+  };
+}
+
+function normalizeCrop(nextCrop) {
+  const x1 = clamp(nextCrop.x, 0, cropCanvas.width);
+  const y1 = clamp(nextCrop.y, 0, cropCanvas.height);
+  const x2 = clamp(nextCrop.x + nextCrop.w, 0, cropCanvas.width);
+  const y2 = clamp(nextCrop.y + nextCrop.h, 0, cropCanvas.height);
+  return {
+    x: Math.min(x1, x2),
+    y: Math.min(y1, y2),
+    w: Math.abs(x2 - x1),
+    h: Math.abs(y2 - y1),
+  };
+}
+
+function syncCropBox() {
+  if (!crop || crop.w <= 0 || crop.h <= 0) {
+    cropBox.hidden = true;
+    return;
+  }
   const r = cropCanvas.getBoundingClientRect();
   const kx = cropCanvas.width / r.width;
   const ky = cropCanvas.height / r.height;
-  const sx = (e.clientX - r.left) * kx;
-  const sy = (e.clientY - r.top) * ky;
-  crop = { x: sx, y: sy, w: 0, h: 0 };
   cropBox.hidden = false;
+  cropBox.style.left = crop.x / kx + "px";
+  cropBox.style.top = crop.y / ky + "px";
+  cropBox.style.width = crop.w / kx + "px";
+  cropBox.style.height = crop.h / ky + "px";
+}
+
+cropCanvas.addEventListener("pointerdown", (e) => {
+  if (!cropImg) return;
+  const { x: sx, y: sy } = cropCanvasPoint(e);
+  crop = { x: sx, y: sy, w: 0, h: 0 };
+  setSignatureSaveEnabled(true);
+  syncCropBox();
 
   const move = (m) => {
-    const cx = (m.clientX - r.left) * kx;
-    const cy = (m.clientY - r.top) * ky;
+    const { x: cx, y: cy } = cropCanvasPoint(m);
     crop = { x: Math.min(sx, cx), y: Math.min(sy, cy), w: Math.abs(cx - sx), h: Math.abs(cy - sy) };
-    cropBox.style.left = crop.x / kx + "px";
-    cropBox.style.top = crop.y / ky + "px";
-    cropBox.style.width = crop.w / kx + "px";
-    cropBox.style.height = crop.h / ky + "px";
+    syncCropBox();
   };
   const up = () => {
     window.removeEventListener("pointermove", move);
@@ -2765,6 +2812,47 @@ cropCanvas.addEventListener("pointerdown", (e) => {
   };
   window.addEventListener("pointermove", move);
   window.addEventListener("pointerup", up);
+});
+
+cropBox.querySelectorAll("[data-crop-handle]").forEach((handle) => {
+  handle.addEventListener("pointerdown", (e) => {
+    if (!cropImg || !crop) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const corner = handle.dataset.cropHandle;
+    const start = { ...crop };
+    const right = start.x + start.w;
+    const bottom = start.y + start.h;
+
+    const move = (m) => {
+      const p = cropCanvasPoint(m);
+      const next = { ...start };
+      if (corner.includes("n")) {
+        next.y = p.y;
+        next.h = bottom - p.y;
+      }
+      if (corner.includes("s")) {
+        next.h = p.y - start.y;
+      }
+      if (corner.includes("w")) {
+        next.x = p.x;
+        next.w = right - p.x;
+      }
+      if (corner.includes("e")) {
+        next.w = p.x - start.x;
+      }
+      crop = normalizeCrop(next);
+      setSignatureSaveEnabled(true);
+      syncCropBox();
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      if (crop && crop.w > 8 && crop.h > 8) previewCrop();
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  });
 });
 
 ["threshold", "removeBg", "sigDarkness", "sigSharpness", "sigThickness", "sigColor"].forEach((id) => {
@@ -2919,6 +3007,7 @@ $("cropSave").onclick = () => {
   const sig = buildSignatureFromCrop();
   if (!sig) return alert(t("chooseSignatureSource"));
   sigStore.add(sig.toDataURL("image/png"));
+  setSignatureSaveEnabled(false);
 };
 
 /* ================= 4. Экспорт (сплющивание слоёв, без сетки) ================= */
@@ -3073,6 +3162,8 @@ window.addEventListener("beforeunload", () => {
   updateDocScaleLabel();
   updateLineHeightLabel();
   updateSignatureEnhancementLabels();
+  setPadSaveEnabled(false);
+  setSignatureSaveEnabled(false);
   $("languageSelect").onchange = (e) => applyLanguage(e.target.value);
   applyLanguage(currentLang);
   const srcParam = new URLSearchParams(location.search).get("src");
