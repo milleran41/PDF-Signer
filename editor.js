@@ -1920,7 +1920,7 @@ $("fileInput2").onchange = async (e) => {
   e.target.value = "";
 };
 $("clearDocsBtn").onclick = () => showHome(true);
-$("scanBtn").onclick = scanDocument;
+if ($("scanBtn")) $("scanBtn").onclick = scanDocument;
 
 let fileDragDepth = 0;
 
