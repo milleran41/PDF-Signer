@@ -54,7 +54,7 @@ const i18n = {
     helpAddFiles: "Загружает один или несколько документов в редактор.",
     helpClearDocs: "Удаляет все загруженные листы и возвращает главную страницу.",
     helpGrid: "Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.",
-    helpRowStep: "Меняет расстояние между горизонтальными линиями сетки.",
+    helpRowStep: "Меняет расстояние между горизонтальными линиями в режиме «В линейку». В режиме «В клеточку» клетки всегда остаются квадратными.",
     helpLayerOffset: "Двигает сетку и общий слой ввода выше или ниже.",
     helpDocSize: "Увеличивает или уменьшает сам документ для удобной работы и сохранения.",
     helpZoomView: "Меняет только масштаб просмотра на экране. На размер сохранённого документа не влияет.",
@@ -171,7 +171,7 @@ const i18n = {
     helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
     helpClearDocs: "Entfernt alle geladenen Seiten und zeigt wieder die Startseite.",
     helpGrid: "Schaltet das Hilfsraster oder Linien ein. Es wird nicht mit gespeichert.",
-    helpRowStep: "Ändert den Abstand zwischen den horizontalen Rasterlinien.",
+    helpRowStep: "Ändert den Abstand zwischen horizontalen Linien im Linienmodus. Im Kästchenmodus bleiben die Zellen immer quadratisch.",
     helpLayerOffset: "Verschiebt Raster und Eingabeebene nach oben oder unten.",
     helpDocSize: "Vergrößert oder verkleinert das Dokument zum Bearbeiten und Speichern.",
     helpZoomView: "Ändert nur die Bildschirmansicht. Die Größe des gespeicherten Dokuments bleibt unverändert.",
@@ -288,7 +288,7 @@ const i18n = {
     helpAddFiles: "Loads one or more documents into the editor.",
     helpClearDocs: "Removes all loaded pages and returns to the home page.",
     helpGrid: "Turns the helper grid or ruled lines on. It is not exported into the saved document.",
-    helpRowStep: "Changes the distance between horizontal grid lines.",
+    helpRowStep: "Changes the distance between horizontal lines in lined mode. In cell mode, cells always stay square.",
     helpLayerOffset: "Moves the grid and input layer up or down.",
     helpDocSize: "Scales the document for editing and saving.",
     helpZoomView: "Changes only the on-screen view scale. It does not affect the saved document size.",
@@ -2059,13 +2059,28 @@ $("zoomOut").onclick = () => {
 /* ---------- сетка ---------- */
 function applyGrid() {
   const on = $("gridToggle").checked;
-  const sizeX = Number($("gridSize").value);
-  state.gridStepY = Math.max(8, Math.min(120, Number($("gridStepY").value) || sizeX));
+  const sizeX = currentGridSize();
   const mode = $("gridMode").value;
+  state.gridStepY = Math.max(8, Math.min(120, Number($("gridStepY").value) || sizeX));
+  const stepY = mode === "grid" ? sizeX : state.gridStepY;
   gridEl.className = "grid" + (on ? (mode === "grid" ? " grid-cells" : " grid-lines") : "");
-  gridEl.style.backgroundSize = `${sizeX}px ${state.gridStepY}px`;
+  gridEl.style.backgroundSize = `${sizeX}px ${stepY}px`;
+  $("gridStepY").disabled = mode === "grid";
+  updateGridSizeLabel();
   updateGridStepYLabel();
   scheduleDraftSave();
+}
+
+function currentGridSize() {
+  return Number($("gridSize").value) || 24;
+}
+
+function currentGridStepY() {
+  return $("gridMode").value === "grid" ? currentGridSize() : state.gridStepY;
+}
+
+function updateGridSizeLabel() {
+  $("gridSizeLabel").textContent = `${currentGridSize()} px`;
 }
 
 function updateGridStepYLabel() {
@@ -2201,13 +2216,14 @@ overlay.addEventListener("mousedown", (e) => {
 
 function snap(v) {
   if (!$("gridToggle").checked) return v;
-  const step = Number($("gridSize").value);
+  const step = currentGridSize();
   return Math.round(v / step) * step;
 }
 
 function snapY(v) {
   if (!$("gridToggle").checked) return v;
-  return Math.round(v / state.gridStepY) * state.gridStepY;
+  const step = currentGridStepY();
+  return Math.round(v / step) * step;
 }
 
 function renderAnnots() {

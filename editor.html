@@ -60,7 +60,9 @@
             <option value="grid" data-i18n="gridCells">В клеточку</option>
             <option value="lines" data-i18n="gridLines">В линейку</option>
           </select>
+          <span class="label" data-i18n="cellSize">Размер клетки</span>
           <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" data-i18n-title="cellSize" />
+          <span id="gridSizeLabel" class="pageLabel">24 px</span>
           <span class="label" data-i18n="rowStep">Шаг строк</span>
           <input type="number" id="gridStepY" class="input number small" min="8" max="120" step="0.5" value="20" title="Расстояние между строками сетки" data-i18n-title="rowStepTitle" />
           <span class="label" data-i18n="layerOffset">Сдвиг слоя</span>
@@ -217,7 +219,7 @@
               <div><strong data-i18n="addFiles">Добавить файлы</strong><p data-i18n="helpAddFiles">Загружает один или несколько документов в редактор.</p></div>
               <div><strong data-i18n="clearDocs">Очистить</strong><p data-i18n="helpClearDocs">Удаляет все загруженные листы и возвращает главную страницу.</p></div>
               <div><strong data-i18n="grid">Сетка</strong><p data-i18n="helpGrid">Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.</p></div>
-              <div><strong data-i18n="rowStep">Шаг строк</strong><p data-i18n="helpRowStep">Меняет расстояние между горизонтальными линиями сетки.</p></div>
+              <div><strong data-i18n="rowStep">Шаг строк</strong><p data-i18n="helpRowStep">Меняет расстояние между горизонтальными линиями в режиме «В линейку». В режиме «В клеточку» клетки всегда остаются квадратными.</p></div>
               <div><strong data-i18n="layerOffset">Сдвиг слоя</strong><p data-i18n="helpLayerOffset">Двигает сетку и общий слой ввода выше или ниже.</p></div>
               <div><strong data-i18n="docSize">Размер документа</strong><p data-i18n="helpDocSize">Увеличивает или уменьшает сам документ для удобной работы и сохранения.</p></div>
               <div><strong data-i18n="zoomView">Просмотр</strong><p data-i18n="helpZoomView">Меняет только масштаб просмотра на экране. На размер сохранённого документа не влияет.</p></div>
