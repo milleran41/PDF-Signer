@@ -261,6 +261,7 @@ body {
   inset: 0;
   pointer-events: none;
   opacity: 0.72;
+  z-index: 1;
 }
 .grid.grid-cells {
   background-image:
@@ -280,6 +281,7 @@ body {
   border-top: 2px solid rgba(255, 74, 74, 0.9);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.65), 0 0 10px rgba(255, 74, 74, 0.35);
   pointer-events: none;
+  z-index: 2;
 }
 .guide::before,
 .guide::after {
@@ -294,8 +296,40 @@ body {
 .guide::after { right: 0; }
 .guide[hidden] { display: none !important; }
 
-.overlay { position: absolute; inset: 0; cursor: crosshair; }
+.overlay { position: absolute; inset: 0; cursor: crosshair; z-index: 4; }
 .overlay.redaction-mode { cursor: cell; }
+
+.align-guides {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+}
+.align-guides:empty { display: none; }
+.align-guide {
+  position: absolute;
+  background: rgba(0, 191, 255, 0.95);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(0, 191, 255, 0.55);
+}
+.align-guide.v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-0.5px);
+}
+.align-guide.h {
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-0.5px);
+}
+.align-guide.measure-x,
+.align-guide.measure-y {
+  background: rgba(123, 255, 91, 0.95);
+  box-shadow: 0 0 0 1px rgba(15, 35, 15, 0.25), 0 0 8px rgba(123, 255, 91, 0.5);
+}
+.align-guide.measure-x { height: 2px; }
+.align-guide.measure-y { width: 2px; }
 
 .docx-render-host {
   position: fixed;

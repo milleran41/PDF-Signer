@@ -34,6 +34,7 @@ const i18n = {
     rotationTitle: "Выравнивание скана",
     guide: "Ориентир",
     guideTitle: "Положение ориентира",
+    alignmentGuides: "Направляющие",
     languageTitle: "Язык интерфейса",
     helpTitle: "Справка",
     helpHowTitle: "Как пользоваться",
@@ -41,7 +42,7 @@ const i18n = {
     helpStep1: "Нажмите «Добавить файлы» или выберите документ на главной странице. Можно добавлять PDF, DOCX и изображения.",
     helpStep2: "Выберите нужный лист слева. Ненужные листы можно удалить крестиком на миниатюре.",
     helpStep3: "Выровняйте скан поворотом и при необходимости настройте общий размер документа.",
-    helpStep4: "Нажмите «Добавить текстовое поле» или кликните по документу. Поле можно перетаскивать и менять шрифт, цвет, подъём и интервал.",
+    helpStep4: "Нажмите «Добавить текстовое поле» или кликните по документу. Поле можно перетаскивать и менять шрифт и цвет.",
     helpStep5: "Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».",
     helpAddFiles: "Загружает один или несколько документов в редактор.",
     helpAddTextField: "Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.",
@@ -50,6 +51,7 @@ const i18n = {
     helpDocSize: "Увеличивает или уменьшает сам документ для удобной работы и сохранения.",
     helpRotation: "Слегка поворачивает криво отсканированный документ.",
     helpGuide: "Показывает красную линию, по которой удобно выравнивать скан.",
+    helpAlignmentGuides: "Во время перемещения или изменения размера показывают, когда поля, подписи и маркеры выровнялись между собой.",
     helpCreateSignature: "Открывает окно создания подписи: можно нарисовать, загрузить файл или вставить из буфера.",
     helpMySignatures: "Открывает страницу с сохранёнными шаблонами подписей.",
     helpSignatureStrip: "Показывает сохранённые подписи для быстрой вставки в документ.",
@@ -140,6 +142,7 @@ const i18n = {
     rotationTitle: "Scan ausrichten",
     guide: "Hilfslinie",
     guideTitle: "Position der Hilfslinie",
+    alignmentGuides: "Ausrichtungslinien",
     languageTitle: "Sprache der Oberfläche",
     helpTitle: "Hilfe",
     helpHowTitle: "So funktioniert es",
@@ -147,7 +150,7 @@ const i18n = {
     helpStep1: "Klicke auf „Dateien hinzufügen“ oder wähle ein Dokument auf der Startseite. PDF, DOCX und Bilder sind möglich.",
     helpStep2: "Wähle links die gewünschte Seite. Nicht benötigte Seiten kannst du mit dem Kreuz auf der Miniatur entfernen.",
     helpStep3: "Richte den Scan mit Drehung aus und passe bei Bedarf die gesamte Dokumentgröße an.",
-    helpStep4: "Klicke auf „Textfeld hinzufügen“ oder ins Dokument. Das Feld lässt sich verschieben und in Schrift, Farbe, Anheben und Abstand ändern.",
+    helpStep4: "Klicke auf „Textfeld hinzufügen“ oder ins Dokument. Das Feld lässt sich verschieben und in Schrift und Farbe ändern.",
     helpStep5: "Erstelle oder wähle eine gespeicherte Signatur, füge sie in das Dokument ein und klicke auf „Dokument speichern“.",
     helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
     helpAddTextField: "Fügt ein neues Feld in die Mitte des sichtbaren Dokumentbereichs ein. Du kannst es an die gewünschte Stelle ziehen.",
@@ -156,6 +159,7 @@ const i18n = {
     helpDocSize: "Vergrößert oder verkleinert das Dokument zum Bearbeiten und Speichern.",
     helpRotation: "Dreht einen schief gescannten Beleg leicht.",
     helpGuide: "Zeigt eine rote Linie zum Ausrichten des Scans.",
+    helpAlignmentGuides: "Beim Verschieben oder Ändern der Größe zeigen sie, wann Felder, Signaturen und Marker zueinander ausgerichtet sind.",
     helpCreateSignature: "Öffnet das Signaturfenster: zeichnen, Datei laden oder aus der Zwischenablage einfügen.",
     helpMySignatures: "Öffnet die Seite mit gespeicherten Signaturvorlagen.",
     helpSignatureStrip: "Zeigt gespeicherte Signaturen zum schnellen Einfügen.",
@@ -246,6 +250,7 @@ const i18n = {
     rotationTitle: "Align scanned document",
     guide: "Guide",
     guideTitle: "Guide position",
+    alignmentGuides: "Alignment guides",
     languageTitle: "Interface language",
     helpTitle: "Help",
     helpHowTitle: "How to use",
@@ -253,7 +258,7 @@ const i18n = {
     helpStep1: "Click Add files or choose a document on the home page. You can add PDF, DOCX and image files.",
     helpStep2: "Select the needed page on the left. Remove unnecessary pages with the cross on the thumbnail.",
     helpStep3: "Straighten the scan with rotation and adjust the overall document size if needed.",
-    helpStep4: "Click Add text field or click the document. The field can be dragged and edited with font, color, lift and spacing controls.",
+    helpStep4: "Click Add text field or click the document. The field can be dragged and edited with font and color controls.",
     helpStep5: "Create or choose a saved signature, insert it into the document, then click Save document.",
     helpAddFiles: "Loads one or more documents into the editor.",
     helpAddTextField: "Adds a new field in the center of the visible document area. You can drag it to the exact place you need.",
@@ -262,6 +267,7 @@ const i18n = {
     helpDocSize: "Scales the document for editing and saving.",
     helpRotation: "Slightly rotates a skewed scanned document.",
     helpGuide: "Shows a red line for scan alignment.",
+    helpAlignmentGuides: "While moving or resizing, they show when fields, signatures and markers are aligned with each other.",
     helpCreateSignature: "Opens the signature window: draw, load a file or paste from the clipboard.",
     helpMySignatures: "Opens the page with saved signature templates.",
     helpSignatureStrip: "Shows saved signatures for quick insertion.",
@@ -1213,6 +1219,7 @@ const docCanvas = $("docCanvas");
 const overlay = $("overlay");
 const gridEl = $("grid");
 const guideEl = $("guide");
+const alignGuides = $("alignGuides");
 const docxRenderHost = $("docxRenderHost");
 
 const state = {
@@ -1723,6 +1730,7 @@ function resetDocumentState() {
   state.annots = {};
   activeAnnotId = null;
   overlay.innerHTML = "";
+  clearAlignmentGuides();
   $("thumbPane").innerHTML = "";
   $("thumbPane").hidden = true;
   $("canvasArea").classList.remove("with-thumbs");
@@ -1763,11 +1771,13 @@ function afterRender() {
   applyGrid();
   applyGuide();
   applyLayerOffset();
+  clearAlignmentGuides();
   renderAnnots();
 }
 
 function showHome(reset = false) {
   closeSignatureModal();
+  clearAlignmentGuides();
   if (reset) {
     clearDraft();
     resetDocumentState();
@@ -1879,6 +1889,7 @@ function applyLayerOffset() {
   const offset = `${state.layerOffsetY}px`;
   gridEl.style.transform = `translateY(${offset})`;
   overlay.style.transform = `translateY(${offset})`;
+  alignGuides.style.transform = `translateY(${offset})`;
   updateLayerOffsetLabel();
   scheduleDraftSave();
 }
@@ -2193,6 +2204,7 @@ function snapY(v) {
 }
 
 function renderAnnots() {
+  clearAlignmentGuides();
   overlay.innerHTML = "";
   annotsForPage().forEach((a) => {
     const node = a.type === "text" ? textNode(a) : a.type === "redaction" ? redactionNode(a) : sigNode(a);
@@ -2270,26 +2282,7 @@ function sigNode(a) {
 
   const rz = document.createElement("div");
   rz.className = "resize";
-  rz.addEventListener("mousedown", (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    const sx = ev.clientX;
-    const ratio = a.h / a.w;
-    const w0 = a.w;
-    const move = (m) => {
-      a.w = Math.max(40, w0 + (m.clientX - sx) / state.zoom);
-      a.h = a.w * ratio;
-      el.style.width = a.w + "px";
-      el.style.height = a.h + "px";
-    };
-    const up = () => {
-      window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseup", up);
-      scheduleDraftSave();
-    };
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseup", up);
-  });
+  rz.addEventListener("mousedown", (ev) => startResizeSignature(ev, a, el));
   el.appendChild(rz);
   return el;
 }
@@ -2315,12 +2308,180 @@ function startResizeBox(ev, a, el) {
   const w0 = a.w;
   const h0 = a.h;
   const move = (m) => {
-    a.w = Math.max(10, w0 + (m.clientX - sx) / state.zoom);
-    a.h = Math.max(8, h0 + (m.clientY - sy) / state.zoom);
+    const nextBox = {
+      x: a.x,
+      y: a.y,
+      w: Math.max(10, w0 + (m.clientX - sx) / state.zoom),
+      h: Math.max(8, h0 + (m.clientY - sy) / state.zoom),
+    };
+    const snapped = applyResizeSnap(a, nextBox, { minW: 10, minH: 8 });
+    a.w = snapped.box.w;
+    a.h = snapped.box.h;
     el.style.width = a.w + "px";
     el.style.height = a.h + "px";
+    showAlignmentGuides(snapped.guides);
   };
   const up = () => {
+    clearAlignmentGuides();
+    window.removeEventListener("mousemove", move);
+    window.removeEventListener("mouseup", up);
+    scheduleDraftSave();
+  };
+  window.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
+}
+
+const ALIGN_SNAP_PX = 7;
+
+function clampToDocumentBox(box) {
+  return {
+    ...box,
+    x: Math.max(0, Math.min(docCanvas.width - box.w, box.x)),
+    y: Math.max(0, Math.min(docCanvas.height - box.h, box.y)),
+  };
+}
+
+function getAnnotBox(a, el = null) {
+  const node = el || overlay.querySelector(`[data-id="${a.id}"]`);
+  const fallbackSize = Math.max(16, Number(a.size || textStyle.size * RENDER_SCALE));
+  return {
+    x: a.x,
+    y: a.y,
+    w: Number(a.w || node?.offsetWidth || 90),
+    h: Number(a.h || node?.offsetHeight || fallbackSize * Number(a.lineHeight || 1.15)),
+  };
+}
+
+function annotGuides(box) {
+  return {
+    left: box.x,
+    centerX: box.x + box.w / 2,
+    right: box.x + box.w,
+    top: box.y,
+    centerY: box.y + box.h / 2,
+    bottom: box.y + box.h,
+  };
+}
+
+function otherAnnotBoxes(active) {
+  return annotsForPage()
+    .filter((item) => item !== active)
+    .map((item) => getAnnotBox(item))
+    .filter((box) => box.w > 0 && box.h > 0);
+}
+
+function showAlignmentGuides(guides) {
+  if (!alignGuides) return;
+  alignGuides.innerHTML = "";
+  guides.forEach((guide) => {
+    const line = document.createElement("div");
+    line.className = `align-guide ${guide.type}`;
+    if (guide.type === "v") line.style.left = `${guide.x}px`;
+    if (guide.type === "h") line.style.top = `${guide.y}px`;
+    if (guide.type === "measure-x") {
+      line.style.left = `${guide.x}px`;
+      line.style.top = `${guide.y}px`;
+      line.style.width = `${guide.w}px`;
+    }
+    if (guide.type === "measure-y") {
+      line.style.left = `${guide.x}px`;
+      line.style.top = `${guide.y}px`;
+      line.style.height = `${guide.h}px`;
+    }
+    alignGuides.appendChild(line);
+  });
+}
+
+function clearAlignmentGuides() {
+  if (alignGuides) alignGuides.innerHTML = "";
+}
+
+function applyPositionSnap(active, nextBox) {
+  let bestX = null;
+  let bestY = null;
+  const mine = annotGuides(nextBox);
+  const xKeys = ["left", "centerX", "right"];
+  const yKeys = ["top", "centerY", "bottom"];
+
+  otherAnnotBoxes(active).forEach((other) => {
+    const theirs = annotGuides(other);
+    xKeys.forEach((key) => {
+      const diff = theirs[key] - mine[key];
+      if (Math.abs(diff) <= ALIGN_SNAP_PX && (!bestX || Math.abs(diff) < Math.abs(bestX.diff))) {
+        bestX = { diff, x: theirs[key] };
+      }
+    });
+    yKeys.forEach((key) => {
+      const diff = theirs[key] - mine[key];
+      if (Math.abs(diff) <= ALIGN_SNAP_PX && (!bestY || Math.abs(diff) < Math.abs(bestY.diff))) {
+        bestY = { diff, y: theirs[key] };
+      }
+    });
+  });
+
+  const box = { ...nextBox };
+  const guides = [];
+  if (bestX) {
+    box.x += bestX.diff;
+    guides.push({ type: "v", x: bestX.x });
+  }
+  if (bestY) {
+    box.y += bestY.diff;
+    guides.push({ type: "h", y: bestY.y });
+  }
+  return { box: clampToDocumentBox(box), guides };
+}
+
+function applyResizeSnap(active, nextBox, options = {}) {
+  const ratio = options.ratio || nextBox.h / Math.max(1, nextBox.w);
+  const minW = options.minW || 10;
+  const minH = options.minH || 8;
+  const candidates = [];
+
+  otherAnnotBoxes(active).forEach((other) => {
+    const widthDiff = Math.abs(other.w - nextBox.w);
+    const heightDiff = Math.abs(other.h - nextBox.h);
+    if (widthDiff <= ALIGN_SNAP_PX) {
+      const w = Math.max(minW, other.w);
+      candidates.push({
+        score: widthDiff,
+        box: { ...nextBox, w, h: options.lockRatio ? Math.max(minH, w * ratio) : nextBox.h },
+        guides: [{ type: "measure-x", x: nextBox.x, y: Math.max(0, nextBox.y - 8), w }],
+      });
+    }
+    if (heightDiff <= ALIGN_SNAP_PX) {
+      const h = Math.max(minH, other.h);
+      candidates.push({
+        score: heightDiff,
+        box: { ...nextBox, w: options.lockRatio ? Math.max(minW, h / ratio) : nextBox.w, h },
+        guides: [{ type: "measure-y", x: Math.max(0, nextBox.x - 8), y: nextBox.y, h }],
+      });
+    }
+  });
+
+  if (!candidates.length) return { box: nextBox, guides: [] };
+  candidates.sort((a, b) => a.score - b.score);
+  return candidates[0];
+}
+
+function startResizeSignature(ev, a, el) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  const sx = ev.clientX;
+  const ratio = a.h / a.w;
+  const w0 = a.w;
+  const move = (m) => {
+    const w = Math.max(40, w0 + (m.clientX - sx) / state.zoom);
+    const nextBox = { x: a.x, y: a.y, w, h: w * ratio };
+    const snapped = applyResizeSnap(a, nextBox, { lockRatio: true, ratio, minW: 40, minH: 20 });
+    a.w = snapped.box.w;
+    a.h = snapped.box.h;
+    el.style.width = a.w + "px";
+    el.style.height = a.h + "px";
+    showAlignmentGuides(snapped.guides);
+  };
+  const up = () => {
+    clearAlignmentGuides();
     window.removeEventListener("mousemove", move);
     window.removeEventListener("mouseup", up);
     scheduleDraftSave();
@@ -2336,15 +2497,24 @@ function startDrag(ev, a, el) {
   const sy = ev.clientY;
   const x0 = a.x;
   const y0 = a.y;
+  const startBox = getAnnotBox(a, el);
   el.classList.add("selected");
   const move = (m) => {
-    a.x = snap(x0 + (m.clientX - sx) / state.zoom);
-    a.y = snapY(y0 + (m.clientY - sy) / state.zoom);
+    const nextBox = {
+      ...startBox,
+      x: snap(x0 + (m.clientX - sx) / state.zoom),
+      y: snapY(y0 + (m.clientY - sy) / state.zoom),
+    };
+    const snapped = applyPositionSnap(a, nextBox);
+    a.x = snapped.box.x;
+    a.y = snapped.box.y;
     el.style.left = a.x + "px";
     el.style.top = a.y + "px";
+    showAlignmentGuides(snapped.guides);
   };
   const up = () => {
     el.classList.remove("selected");
+    clearAlignmentGuides();
     window.removeEventListener("mousemove", move);
     window.removeEventListener("mouseup", up);
     scheduleDraftSave();
