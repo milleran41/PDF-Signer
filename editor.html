@@ -48,6 +48,8 @@
           <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
 
+        <button class="btn ghost" id="addTextFieldBtn" data-i18n="addTextField">Добавить текстовое поле</button>
+
         <div class="group" id="pageNav" hidden>
           <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
           <span class="pageLabel"><b id="pageNum">1</b>/<span id="pageCount">1</span></span>
@@ -55,30 +57,9 @@
         </div>
 
         <div class="group">
-          <label class="check"><input type="checkbox" id="gridToggle" checked /> <span data-i18n="grid">Сетка</span></label>
-          <select id="gridMode" class="select small">
-            <option value="grid" data-i18n="gridCells">В клеточку</option>
-            <option value="lines" data-i18n="gridLines">В линейку</option>
-          </select>
-          <span class="label" data-i18n="cellSize">Размер клетки</span>
-          <input type="range" id="gridSize" min="10" max="60" step="2" value="24" title="Размер клетки" data-i18n-title="cellSize" />
-          <span id="gridSizeLabel" class="pageLabel">24 px</span>
-          <span class="label" data-i18n="rowStep">Шаг строк</span>
-          <input type="number" id="gridStepY" class="input number small" min="8" max="120" step="0.5" value="20" title="Расстояние между строками сетки" data-i18n-title="rowStepTitle" />
-          <span class="label" data-i18n="layerOffset">Сдвиг слоя</span>
-          <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" title="Сдвиг сетки и вводимого текста" data-i18n-title="layerOffsetTitle" />
-          <span id="layerOffsetLabel" class="pageLabel">0 px</span>
-          <button class="btn ghost small" id="layerOffsetReset">0</button>
-        </div>
-
-        <div class="group">
           <span class="label" data-i18n="docSize">Размер документа</span>
           <input type="range" id="docScale" min="50" max="200" step="5" value="100" title="Реальный размер документа при редактировании и сохранении" data-i18n-title="docSizeTitle" />
           <span id="docScaleLabel" class="pageLabel">100%</span>
-          <span class="label" data-i18n="zoomView">Просмотр</span>
-          <button class="btn ghost" id="zoomOut">−</button>
-          <span id="zoomLabel" class="pageLabel">100%</span>
-          <button class="btn ghost" id="zoomIn">+</button>
         </div>
 
         <div class="group">
@@ -94,6 +75,19 @@
 
         <button class="btn ghost" id="signBtn" data-i18n="createSignature">Создать подпись</button>
         <button class="btn ghost" id="savedSignaturesBtn" data-i18n="mySignatures">Мои подписи</button>
+        <div hidden>
+          <input type="checkbox" id="gridToggle" />
+          <select id="gridMode"><option value="grid">grid</option><option value="lines">lines</option></select>
+          <input type="range" id="gridSize" min="10" max="60" step="2" value="24" />
+          <span id="gridSizeLabel">24 px</span>
+          <input type="number" id="gridStepY" min="8" max="120" step="0.5" value="20" />
+          <input type="range" id="layerOffsetY" min="-80" max="80" step="1" value="0" />
+          <span id="layerOffsetLabel">0 px</span>
+          <button id="layerOffsetReset">0</button>
+          <button id="zoomOut">−</button>
+          <span id="zoomLabel">100%</span>
+          <button id="zoomIn">+</button>
+        </div>
         <div class="actions-stack">
           <button class="btn icon help-btn" id="helpBtn" title="Справка" data-i18n-title="helpTitle">?</button>
           <select id="languageSelect" class="select small" title="Язык интерфейса" data-i18n-title="languageTitle">
@@ -207,8 +201,8 @@
             <ol>
               <li data-i18n="helpStep1">Нажмите «Добавить файлы» или выберите документ на главной странице. Можно добавлять PDF, DOCX и изображения.</li>
               <li data-i18n="helpStep2">Выберите нужный лист слева. Ненужные листы можно удалить крестиком на миниатюре.</li>
-              <li data-i18n="helpStep3">Выровняйте скан поворотом, настройте размер документа, сетку, шаг строк и сдвиг слоя.</li>
-              <li data-i18n="helpStep4">Кликните по документу, чтобы добавить текст. Выделенное поле можно двигать, менять шрифт, цвет, подъём и интервал.</li>
+              <li data-i18n="helpStep3">Выровняйте скан поворотом и при необходимости настройте общий размер документа.</li>
+              <li data-i18n="helpStep4">Нажмите «Добавить текстовое поле» или кликните по документу. Поле можно перетаскивать и менять шрифт, цвет, подъём и интервал.</li>
               <li data-i18n="helpStep5">Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».</li>
             </ol>
           </section>
@@ -217,12 +211,9 @@
             <h3 data-i18n="helpButtonsTitle">Назначение кнопок</h3>
             <div class="help-grid">
               <div><strong data-i18n="addFiles">Добавить файлы</strong><p data-i18n="helpAddFiles">Загружает один или несколько документов в редактор.</p></div>
+              <div><strong data-i18n="addTextField">Добавить текстовое поле</strong><p data-i18n="helpAddTextField">Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.</p></div>
               <div><strong data-i18n="clearDocs">Очистить</strong><p data-i18n="helpClearDocs">Удаляет все загруженные листы и возвращает главную страницу.</p></div>
-              <div><strong data-i18n="grid">Сетка</strong><p data-i18n="helpGrid">Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.</p></div>
-              <div><strong data-i18n="rowStep">Шаг строк</strong><p data-i18n="helpRowStep">Меняет расстояние между горизонтальными линиями в режиме «В линейку». В режиме «В клеточку» клетки всегда остаются квадратными.</p></div>
-              <div><strong data-i18n="layerOffset">Сдвиг слоя</strong><p data-i18n="helpLayerOffset">Двигает сетку и общий слой ввода выше или ниже.</p></div>
               <div><strong data-i18n="docSize">Размер документа</strong><p data-i18n="helpDocSize">Увеличивает или уменьшает сам документ для удобной работы и сохранения.</p></div>
-              <div><strong data-i18n="zoomView">Просмотр</strong><p data-i18n="helpZoomView">Меняет только масштаб просмотра на экране. На размер сохранённого документа не влияет.</p></div>
               <div><strong data-i18n="rotation">Поворот</strong><p data-i18n="helpRotation">Слегка поворачивает криво отсканированный документ.</p></div>
               <div><strong data-i18n="guide">Ориентир</strong><p data-i18n="helpGuide">Показывает красную линию, по которой удобно выравнивать скан.</p></div>
               <div><strong data-i18n="createSignature">Создать подпись</strong><p data-i18n="helpCreateSignature">Открывает окно создания подписи: можно нарисовать, загрузить файл или вставить из буфера.</p></div>

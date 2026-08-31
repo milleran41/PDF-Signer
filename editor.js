@@ -24,6 +24,7 @@ const i18n = {
   ru: {
     title: "BRINO — редактор бланка",
     addFiles: "Добавить файлы",
+    addTextField: "Добавить текстовое поле",
     clearDocs: "Очистить",
     prevPage: "Предыдущая страница",
     nextPage: "Следующая страница",
@@ -48,10 +49,11 @@ const i18n = {
     helpButtonsTitle: "Назначение кнопок",
     helpStep1: "Нажмите «Добавить файлы» или выберите документ на главной странице. Можно добавлять PDF, DOCX и изображения.",
     helpStep2: "Выберите нужный лист слева. Ненужные листы можно удалить крестиком на миниатюре.",
-    helpStep3: "Выровняйте скан поворотом, настройте размер документа, сетку, шаг строк и сдвиг слоя.",
-    helpStep4: "Кликните по документу, чтобы добавить текст. Выделенное поле можно двигать, менять шрифт, цвет, подъём и интервал.",
+    helpStep3: "Выровняйте скан поворотом и при необходимости настройте общий размер документа.",
+    helpStep4: "Нажмите «Добавить текстовое поле» или кликните по документу. Поле можно перетаскивать и менять шрифт, цвет, подъём и интервал.",
     helpStep5: "Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».",
     helpAddFiles: "Загружает один или несколько документов в редактор.",
+    helpAddTextField: "Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.",
     helpClearDocs: "Удаляет все загруженные листы и возвращает главную страницу.",
     helpGrid: "Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.",
     helpRowStep: "Меняет расстояние между горизонтальными линиями в режиме «В линейку». В режиме «В клеточку» клетки всегда остаются квадратными.",
@@ -83,7 +85,7 @@ const i18n = {
     spacingTitle: "Межстрочный интервал текста",
     signatures: "Подписи:",
     noSaved: "нет сохранённых",
-    editorHint: "Клик по документу — новое текстовое поле. Выделите строку и меняйте подъём отдельно.",
+    editorHint: "Добавьте текстовое поле кнопкой сверху или кликом по документу. Каждое поле можно перетаскивать отдельно.",
     homeTitle: "Главная страница",
     homeText: "Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.",
     chooseDocument: "Выбрать документ",
@@ -141,6 +143,7 @@ const i18n = {
   de: {
     title: "BRINO — Formular-Editor",
     addFiles: "Dateien hinzufügen",
+    addTextField: "Textfeld hinzufügen",
     clearDocs: "Leeren",
     prevPage: "Vorherige Seite",
     nextPage: "Nächste Seite",
@@ -165,10 +168,11 @@ const i18n = {
     helpButtonsTitle: "Schaltflächen",
     helpStep1: "Klicke auf „Dateien hinzufügen“ oder wähle ein Dokument auf der Startseite. PDF, DOCX und Bilder sind möglich.",
     helpStep2: "Wähle links die gewünschte Seite. Nicht benötigte Seiten kannst du mit dem Kreuz auf der Miniatur entfernen.",
-    helpStep3: "Richte den Scan mit Drehung aus und passe Dokumentgröße, Raster, Zeilenabstand und Ebenenversatz an.",
-    helpStep4: "Klicke ins Dokument, um Text hinzuzufügen. Das markierte Feld lässt sich verschieben und in Schrift, Farbe, Anheben und Abstand ändern.",
+    helpStep3: "Richte den Scan mit Drehung aus und passe bei Bedarf die gesamte Dokumentgröße an.",
+    helpStep4: "Klicke auf „Textfeld hinzufügen“ oder ins Dokument. Das Feld lässt sich verschieben und in Schrift, Farbe, Anheben und Abstand ändern.",
     helpStep5: "Erstelle oder wähle eine gespeicherte Signatur, füge sie in das Dokument ein und klicke auf „Dokument speichern“.",
     helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
+    helpAddTextField: "Fügt ein neues Feld in die Mitte des sichtbaren Dokumentbereichs ein. Du kannst es an die gewünschte Stelle ziehen.",
     helpClearDocs: "Entfernt alle geladenen Seiten und zeigt wieder die Startseite.",
     helpGrid: "Schaltet das Hilfsraster oder Linien ein. Es wird nicht mit gespeichert.",
     helpRowStep: "Ändert den Abstand zwischen horizontalen Linien im Linienmodus. Im Kästchenmodus bleiben die Zellen immer quadratisch.",
@@ -200,7 +204,7 @@ const i18n = {
     spacingTitle: "Zeilenhöhe des Textes",
     signatures: "Signaturen:",
     noSaved: "keine gespeichert",
-    editorHint: "Klick ins Dokument: neues Textfeld. Markiere eine Zeile und passe das Anheben separat an.",
+    editorHint: "Füge ein Textfeld über die Schaltfläche oben oder per Klick ins Dokument hinzu. Jedes Feld kann separat verschoben werden.",
     homeTitle: "Startseite",
     homeText: "Wähle das Dokument aus, das ausgefüllt werden soll, und füge dann Text und Signatur hinzu.",
     chooseDocument: "Dokument wählen",
@@ -258,6 +262,7 @@ const i18n = {
   en: {
     title: "BRINO — form editor",
     addFiles: "Add files",
+    addTextField: "Add text field",
     clearDocs: "Clear",
     prevPage: "Previous page",
     nextPage: "Next page",
@@ -282,10 +287,11 @@ const i18n = {
     helpButtonsTitle: "Button guide",
     helpStep1: "Click Add files or choose a document on the home page. You can add PDF, DOCX and image files.",
     helpStep2: "Select the needed page on the left. Remove unnecessary pages with the cross on the thumbnail.",
-    helpStep3: "Straighten the scan with rotation, then adjust document size, grid, row step and layer offset.",
-    helpStep4: "Click the document to add text. The selected field can be moved and edited with font, color, lift and spacing controls.",
+    helpStep3: "Straighten the scan with rotation and adjust the overall document size if needed.",
+    helpStep4: "Click Add text field or click the document. The field can be dragged and edited with font, color, lift and spacing controls.",
     helpStep5: "Create or choose a saved signature, insert it into the document, then click Save document.",
     helpAddFiles: "Loads one or more documents into the editor.",
+    helpAddTextField: "Adds a new field in the center of the visible document area. You can drag it to the exact place you need.",
     helpClearDocs: "Removes all loaded pages and returns to the home page.",
     helpGrid: "Turns the helper grid or ruled lines on. It is not exported into the saved document.",
     helpRowStep: "Changes the distance between horizontal lines in lined mode. In cell mode, cells always stay square.",
@@ -317,7 +323,7 @@ const i18n = {
     spacingTitle: "Text line height",
     signatures: "Signatures:",
     noSaved: "none saved",
-    editorHint: "Click the document to add a text field. Select a line to adjust its lift separately.",
+    editorHint: "Add a text field with the top button or by clicking the document. Each field can be moved separately.",
     homeTitle: "Home page",
     homeText: "Choose the document you need to fill, then add text and a signature.",
     chooseDocument: "Choose document",
@@ -378,6 +384,7 @@ const extraLocales = {
   es: {
     title: "BRINO — editor de formularios",
     addFiles: "Añadir archivos",
+    addTextField: "Añadir campo de texto",
     clearDocs: "Limpiar",
     prevPage: "Página anterior",
     nextPage: "Página siguiente",
@@ -402,10 +409,11 @@ const extraLocales = {
     helpButtonsTitle: "Guía de botones",
     helpStep1: "Haz clic en Añadir archivos o elige un documento en la página principal. Puedes añadir PDF, DOCX e imágenes.",
     helpStep2: "Selecciona la página necesaria a la izquierda. Elimina páginas innecesarias con la cruz de la miniatura.",
-    helpStep3: "Endereza el escaneo con la rotación y ajusta el tamaño del documento, la cuadrícula, el paso de línea y el desplazamiento de capa.",
-    helpStep4: "Haz clic en el documento para añadir texto. El campo seleccionado se puede mover y editar con fuente, color, elevación y espaciado.",
+    helpStep3: "Endereza el escaneo con la rotación y ajusta el tamaño general del documento si hace falta.",
+    helpStep4: "Haz clic en Añadir campo de texto o en el documento. El campo se puede arrastrar y editar con fuente, color, elevación y espaciado.",
     helpStep5: "Crea o elige una firma guardada, insértala en el documento y haz clic en Guardar documento.",
     helpAddFiles: "Carga uno o varios documentos en el editor.",
+    helpAddTextField: "Añade un nuevo campo en el centro de la parte visible del documento. Puedes arrastrarlo al lugar exacto.",
     helpClearDocs: "Elimina todas las páginas cargadas y vuelve a la página principal.",
     helpGrid: "Activa la cuadrícula auxiliar o las líneas. No se exporta al documento guardado.",
     helpRowStep: "Cambia la distancia entre las líneas horizontales de la cuadrícula.",
@@ -431,7 +439,7 @@ const extraLocales = {
     spacingTitle: "Altura de línea del texto",
     signatures: "Firmas:",
     noSaved: "ninguna guardada",
-    editorHint: "Haz clic en el documento para añadir un campo de texto. Selecciona una línea para ajustar su elevación por separado.",
+    editorHint: "Añade un campo de texto con el botón superior o haciendo clic en el documento. Cada campo se puede mover por separado.",
     homeTitle: "Página principal",
     homeText: "Elige el documento que necesitas rellenar y luego añade texto y firma.",
     chooseDocument: "Elegir documento",
@@ -464,6 +472,7 @@ const extraLocales = {
   fr: {
     title: "BRINO — éditeur de formulaire",
     addFiles: "Ajouter des fichiers",
+    addTextField: "Ajouter un champ texte",
     clearDocs: "Effacer",
     prevPage: "Page précédente",
     nextPage: "Page suivante",
@@ -488,10 +497,11 @@ const extraLocales = {
     helpButtonsTitle: "Rôle des boutons",
     helpStep1: "Cliquez sur Ajouter des fichiers ou choisissez un document sur la page d’accueil. PDF, DOCX et images sont acceptés.",
     helpStep2: "Sélectionnez la page voulue à gauche. Supprimez les pages inutiles avec la croix sur la miniature.",
-    helpStep3: "Redressez le scan avec la rotation, puis ajustez la taille du document, la grille, le pas des lignes et le décalage du calque.",
-    helpStep4: "Cliquez sur le document pour ajouter du texte. Le champ sélectionné peut être déplacé et modifié avec la police, la couleur, le décalage et l’interligne.",
+    helpStep3: "Redressez le scan avec la rotation et ajustez la taille générale du document si nécessaire.",
+    helpStep4: "Cliquez sur Ajouter un champ texte ou sur le document. Le champ peut être déplacé et modifié avec la police, la couleur, le décalage et l’interligne.",
     helpStep5: "Créez ou choisissez une signature enregistrée, insérez-la dans le document, puis cliquez sur Enregistrer le document.",
     helpAddFiles: "Charge un ou plusieurs documents dans l’éditeur.",
+    helpAddTextField: "Ajoute un nouveau champ au centre de la zone visible du document. Vous pouvez le faire glisser à l’endroit voulu.",
     helpClearDocs: "Supprime toutes les pages chargées et revient à la page d’accueil.",
     helpGrid: "Active la grille ou les lignes d’aide. Elle n’est pas exportée dans le document enregistré.",
     helpRowStep: "Modifie la distance entre les lignes horizontales de la grille.",
@@ -517,7 +527,7 @@ const extraLocales = {
     spacingTitle: "Hauteur de ligne du texte",
     signatures: "Signatures :",
     noSaved: "aucune enregistrée",
-    editorHint: "Cliquez sur le document pour ajouter un champ texte. Sélectionnez une ligne pour régler son décalage séparément.",
+    editorHint: "Ajoutez un champ texte avec le bouton du haut ou en cliquant sur le document. Chaque champ peut être déplacé séparément.",
     homeTitle: "Page d’accueil",
     homeText: "Choisissez le document à remplir, puis ajoutez du texte et une signature.",
     chooseDocument: "Choisir un document",
@@ -550,6 +560,7 @@ const extraLocales = {
   it: {
     title: "BRINO — editor moduli",
     addFiles: "Aggiungi file",
+    addTextField: "Aggiungi campo testo",
     clearDocs: "Cancella",
     grid: "Griglia",
     gridCells: "Quadretti",
@@ -566,10 +577,11 @@ const extraLocales = {
     helpButtonsTitle: "Guida ai pulsanti",
     helpStep1: "Fai clic su Aggiungi file o scegli un documento nella pagina principale. Puoi aggiungere PDF, DOCX e immagini.",
     helpStep2: "Seleziona la pagina necessaria a sinistra. Elimina le pagine inutili con la croce sulla miniatura.",
-    helpStep3: "Raddrizza la scansione con la rotazione e regola dimensione documento, griglia, passo righe e spostamento livello.",
-    helpStep4: "Fai clic sul documento per aggiungere testo. Il campo selezionato può essere spostato e modificato.",
+    helpStep3: "Raddrizza la scansione con la rotazione e, se serve, regola la dimensione generale del documento.",
+    helpStep4: "Fai clic su Aggiungi campo testo o sul documento. Il campo può essere trascinato e modificato.",
     helpStep5: "Crea o scegli una firma salvata, inseriscila nel documento e fai clic su Salva documento.",
     helpAddFiles: "Carica uno o più documenti nell’editor.",
+    helpAddTextField: "Aggiunge un nuovo campo al centro dell’area visibile del documento. Puoi trascinarlo nel punto esatto.",
     helpClearDocs: "Rimuove tutte le pagine caricate e torna alla pagina principale.",
     helpGrid: "Attiva la griglia o le righe di aiuto. Non viene esportata nel documento salvato.",
     helpRowStep: "Cambia la distanza tra le righe orizzontali della griglia.",
@@ -593,6 +605,7 @@ const extraLocales = {
     spacing: "Interlinea",
     signatures: "Firme:",
     noSaved: "nessuna salvata",
+    editorHint: "Aggiungi un campo testo con il pulsante in alto o facendo clic sul documento. Ogni campo può essere spostato separatamente.",
     homeTitle: "Pagina principale",
     homeText: "Scegli il documento da compilare, poi aggiungi testo e firma.",
     chooseDocument: "Scegli documento",
@@ -617,6 +630,7 @@ const extraLocales = {
   pt: {
     title: "BRINO — editor de formulários",
     addFiles: "Adicionar arquivos",
+    addTextField: "Adicionar campo de texto",
     clearDocs: "Limpar",
     grid: "Grade",
     gridCells: "Células",
@@ -633,10 +647,11 @@ const extraLocales = {
     helpButtonsTitle: "Guia dos botões",
     helpStep1: "Clique em Adicionar arquivos ou escolha um documento na página inicial. Você pode adicionar PDF, DOCX e imagens.",
     helpStep2: "Selecione a página desejada à esquerda. Remova páginas desnecessárias com o X da miniatura.",
-    helpStep3: "Endireite o escaneamento com a rotação e ajuste tamanho do documento, grade, passo das linhas e deslocamento da camada.",
-    helpStep4: "Clique no documento para adicionar texto. O campo selecionado pode ser movido e editado.",
+    helpStep3: "Endireite o escaneamento com a rotação e ajuste o tamanho geral do documento se necessário.",
+    helpStep4: "Clique em Adicionar campo de texto ou no documento. O campo pode ser arrastado e editado.",
     helpStep5: "Crie ou escolha uma assinatura salva, insira no documento e clique em Salvar documento.",
     helpAddFiles: "Carrega um ou mais documentos no editor.",
+    helpAddTextField: "Adiciona um novo campo no centro da parte visível do documento. Você pode arrastá-lo para o lugar certo.",
     helpClearDocs: "Remove todas as páginas carregadas e volta para a página inicial.",
     helpGrid: "Ativa a grade ou linhas auxiliares. Ela não é exportada no documento salvo.",
     helpRowStep: "Altera a distância entre as linhas horizontais da grade.",
@@ -660,6 +675,7 @@ const extraLocales = {
     spacing: "Espaçamento",
     signatures: "Assinaturas:",
     noSaved: "nenhuma salva",
+    editorHint: "Adicione um campo de texto com o botão superior ou clicando no documento. Cada campo pode ser movido separadamente.",
     homeTitle: "Página inicial",
     homeText: "Escolha o documento que precisa preencher e depois adicione texto e assinatura.",
     chooseDocument: "Escolher documento",
@@ -684,6 +700,7 @@ const extraLocales = {
   pl: {
     title: "BRINO — edytor formularzy",
     addFiles: "Dodaj pliki",
+    addTextField: "Dodaj pole tekstowe",
     clearDocs: "Wyczyść",
     grid: "Siatka",
     gridCells: "Kratka",
@@ -700,10 +717,11 @@ const extraLocales = {
     helpButtonsTitle: "Opis przycisków",
     helpStep1: "Kliknij Dodaj pliki albo wybierz dokument na stronie głównej. Możesz dodać PDF, DOCX i obrazy.",
     helpStep2: "Wybierz potrzebną stronę po lewej. Niepotrzebne strony usuń krzyżykiem na miniaturze.",
-    helpStep3: "Wyprostuj skan obrotem i ustaw rozmiar dokumentu, siatkę, odstęp linii oraz przesunięcie warstwy.",
-    helpStep4: "Kliknij dokument, aby dodać tekst. Zaznaczone pole można przesuwać i edytować.",
+    helpStep3: "Wyprostuj skan obrotem i w razie potrzeby ustaw ogólny rozmiar dokumentu.",
+    helpStep4: "Kliknij Dodaj pole tekstowe albo kliknij dokument. Pole można przeciągać i edytować.",
     helpStep5: "Utwórz lub wybierz zapisaną podpis, wstaw go do dokumentu i kliknij Zapisz dokument.",
     helpAddFiles: "Wczytuje jeden lub kilka dokumentów do edytora.",
+    helpAddTextField: "Dodaje nowe pole na środku widocznej części dokumentu. Można je przeciągnąć w dokładne miejsce.",
     helpClearDocs: "Usuwa wszystkie wczytane strony i wraca do strony głównej.",
     helpGrid: "Włącza pomocniczą siatkę lub linie. Nie trafia ona do zapisanego dokumentu.",
     helpRowStep: "Zmienia odległość między poziomymi liniami siatki.",
@@ -727,6 +745,7 @@ const extraLocales = {
     spacing: "Interlinia",
     signatures: "Podpisy:",
     noSaved: "brak zapisanych",
+    editorHint: "Dodaj pole tekstowe przyciskiem u góry albo kliknięciem dokumentu. Każde pole można przesuwać osobno.",
     homeTitle: "Strona główna",
     chooseDocument: "Wybierz dokument",
     signatureTitle: "Podpis cyfrowy",
@@ -750,6 +769,7 @@ const extraLocales = {
   uk: {
     title: "BRINO — редактор бланків",
     addFiles: "Додати файли",
+    addTextField: "Додати текстове поле",
     clearDocs: "Очистити",
     grid: "Сітка",
     gridCells: "У клітинку",
@@ -766,10 +786,11 @@ const extraLocales = {
     helpButtonsTitle: "Призначення кнопок",
     helpStep1: "Натисніть Додати файли або виберіть документ на головній сторінці. Можна додавати PDF, DOCX і зображення.",
     helpStep2: "Виберіть потрібний аркуш ліворуч. Непотрібні сторінки можна видалити хрестиком на мініатюрі.",
-    helpStep3: "Вирівняйте скан поворотом, налаштуйте розмір документа, сітку, крок рядків і зсув шару.",
-    helpStep4: "Клацніть по документу, щоб додати текст. Виділене поле можна рухати й редагувати.",
+    helpStep3: "Вирівняйте скан поворотом і за потреби налаштуйте загальний розмір документа.",
+    helpStep4: "Натисніть Додати текстове поле або клацніть по документу. Поле можна перетягувати й редагувати.",
     helpStep5: "Створіть або виберіть збережений підпис, вставте його в документ і натисніть Зберегти документ.",
     helpAddFiles: "Завантажує один або кілька документів у редактор.",
+    helpAddTextField: "Додає нове поле в центр видимої частини документа. Його можна перетягнути в потрібне місце.",
     helpClearDocs: "Видаляє всі завантажені аркуші й повертає головну сторінку.",
     helpGrid: "Вмикає допоміжну сітку або лінії. У збережений документ вона не потрапляє.",
     helpRowStep: "Змінює відстань між горизонтальними лініями сітки.",
@@ -793,6 +814,7 @@ const extraLocales = {
     spacing: "Інтервал",
     signatures: "Підписи:",
     noSaved: "немає збережених",
+    editorHint: "Додайте текстове поле кнопкою зверху або клацанням по документу. Кожне поле можна рухати окремо.",
     homeTitle: "Головна сторінка",
     chooseDocument: "Вибрати документ",
     signatureTitle: "Цифровий підпис",
@@ -816,6 +838,7 @@ const extraLocales = {
   tr: {
     title: "BRINO — form düzenleyici",
     addFiles: "Dosya ekle",
+    addTextField: "Metin alanı ekle",
     clearDocs: "Temizle",
     grid: "Izgara",
     gridCells: "Kareli",
@@ -832,10 +855,11 @@ const extraLocales = {
     helpButtonsTitle: "Düğme rehberi",
     helpStep1: "Dosya ekle’ye tıklayın veya ana sayfadan belge seçin. PDF, DOCX ve resim ekleyebilirsiniz.",
     helpStep2: "Soldan gerekli sayfayı seçin. Gereksiz sayfaları küçük resimdeki çarpı ile kaldırın.",
-    helpStep3: "Taramayı döndürme ile düzeltin; belge boyutu, ızgara, satır aralığı ve katman kaydırmayı ayarlayın.",
-    helpStep4: "Metin eklemek için belgeye tıklayın. Seçili alan taşınabilir ve düzenlenebilir.",
+    helpStep3: "Taramayı döndürme ile düzeltin ve gerekirse genel belge boyutunu ayarlayın.",
+    helpStep4: "Metin alanı ekle düğmesine veya belgeye tıklayın. Alan sürüklenebilir ve düzenlenebilir.",
     helpStep5: "Kaydedilmiş bir imza oluşturun veya seçin, belgeye ekleyin ve Belgeyi kaydet’e tıklayın.",
     helpAddFiles: "Düzenleyiciye bir veya birkaç belge yükler.",
+    helpAddTextField: "Belgenin görünen bölümünün ortasına yeni bir alan ekler. İstediğiniz yere sürükleyebilirsiniz.",
     helpClearDocs: "Yüklenen tüm sayfaları kaldırır ve ana sayfaya döner.",
     helpGrid: "Yardımcı ızgara veya çizgileri açar. Kaydedilen belgeye aktarılmaz.",
     helpRowStep: "Yatay ızgara çizgileri arasındaki mesafeyi değiştirir.",
@@ -859,6 +883,7 @@ const extraLocales = {
     spacing: "Aralık",
     signatures: "İmzalar:",
     noSaved: "kayıtlı yok",
+    editorHint: "Üstteki düğmeyle veya belgeye tıklayarak metin alanı ekleyin. Her alan ayrı ayrı taşınabilir.",
     homeTitle: "Ana sayfa",
     chooseDocument: "Belge seç",
     signatureTitle: "Dijital imza",
@@ -882,6 +907,7 @@ const extraLocales = {
   ar: {
     title: "BRINO — محرر النماذج",
     addFiles: "إضافة ملفات",
+    addTextField: "إضافة حقل نص",
     clearDocs: "مسح",
     grid: "الشبكة",
     gridCells: "مربعات",
@@ -898,10 +924,11 @@ const extraLocales = {
     helpButtonsTitle: "دليل الأزرار",
     helpStep1: "اضغط إضافة ملفات أو اختر مستنداً من الصفحة الرئيسية. يمكنك إضافة PDF و DOCX والصور.",
     helpStep2: "اختر الصفحة المطلوبة من اليسار. احذف الصفحات غير المطلوبة بعلامة X على الصورة المصغرة.",
-    helpStep3: "قم بتسوية المسح بالتدوير ثم اضبط حجم المستند والشبكة وتباعد الأسطر وإزاحة الطبقة.",
-    helpStep4: "اضغط على المستند لإضافة نص. يمكن نقل الحقل المحدد وتعديل خطه ولونه وارتفاعه وتباعده.",
+    helpStep3: "قم بتسوية المسح بالتدوير واضبط الحجم العام للمستند عند الحاجة.",
+    helpStep4: "اضغط إضافة حقل نص أو اضغط على المستند. يمكن سحب الحقل وتعديل خطه ولونه وارتفاعه وتباعده.",
     helpStep5: "أنشئ توقيعاً أو اختر توقيعاً محفوظاً، أدخله في المستند ثم اضغط حفظ المستند.",
     helpAddFiles: "يحمّل مستنداً واحداً أو عدة مستندات في المحرر.",
+    helpAddTextField: "يضيف حقلاً جديداً في وسط الجزء المرئي من المستند. يمكنك سحبه إلى المكان المطلوب.",
     helpClearDocs: "يزيل كل الصفحات المحملة ويعود إلى الصفحة الرئيسية.",
     helpGrid: "يشغّل شبكة أو خطوطاً مساعدة. لا تظهر في المستند المحفوظ.",
     helpRowStep: "يغيّر المسافة بين خطوط الشبكة الأفقية.",
@@ -925,6 +952,7 @@ const extraLocales = {
     spacing: "تباعد",
     signatures: "التوقيعات:",
     noSaved: "لا يوجد محفوظ",
+    editorHint: "أضف حقل نص بالزر العلوي أو بالضغط على المستند. يمكن نقل كل حقل بشكل مستقل.",
     homeTitle: "الصفحة الرئيسية",
     chooseDocument: "اختيار مستند",
     signatureTitle: "توقيع رقمي",
@@ -948,6 +976,7 @@ const extraLocales = {
   zh: {
     title: "BRINO — 表单编辑器",
     addFiles: "添加文件",
+    addTextField: "添加文本框",
     clearDocs: "清空",
     grid: "网格",
     gridCells: "方格",
@@ -964,10 +993,11 @@ const extraLocales = {
     helpButtonsTitle: "按钮说明",
     helpStep1: "点击“添加文件”或在主页选择文档。可以添加 PDF、DOCX 和图片。",
     helpStep2: "在左侧选择需要的页面。可用缩略图上的叉号删除不需要的页面。",
-    helpStep3: "用旋转校正扫描件，然后调整文档大小、网格、行距和图层偏移。",
-    helpStep4: "点击文档添加文字。选中的文本框可以移动并修改字体、颜色、上移和间距。",
+    helpStep3: "用旋转校正扫描件，需要时调整整个文档大小。",
+    helpStep4: "点击添加文本框或点击文档。文本框可以拖动，并可修改字体、颜色、上移和间距。",
     helpStep5: "创建或选择已保存的签名，插入到文档中，然后点击“保存文档”。",
     helpAddFiles: "将一个或多个文档加载到编辑器。",
+    helpAddTextField: "在文档可见区域中央添加一个新文本框。你可以把它拖到需要的位置。",
     helpClearDocs: "移除所有已加载页面并返回主页。",
     helpGrid: "开启辅助网格或横线。保存文档时不会导出它。",
     helpRowStep: "改变水平网格线之间的距离。",
@@ -991,6 +1021,7 @@ const extraLocales = {
     spacing: "间距",
     signatures: "签名：",
     noSaved: "没有已保存",
+    editorHint: "用顶部按钮或点击文档添加文本框。每个文本框都可以单独移动。",
     homeTitle: "主页",
     chooseDocument: "选择文档",
     signatureTitle: "数字签名",
@@ -1014,6 +1045,7 @@ const extraLocales = {
   ja: {
     title: "BRINO — フォーム編集",
     addFiles: "ファイル追加",
+    addTextField: "テキスト欄を追加",
     clearDocs: "クリア",
     grid: "グリッド",
     gridCells: "方眼",
@@ -1030,10 +1062,11 @@ const extraLocales = {
     helpButtonsTitle: "ボタンの説明",
     helpStep1: "ファイル追加をクリックするか、ホーム画面で文書を選びます。PDF、DOCX、画像を追加できます。",
     helpStep2: "左側で必要なページを選びます。不要なページはサムネイルの×で削除できます。",
-    helpStep3: "回転でスキャンを整え、文書サイズ、グリッド、行間、レイヤー移動を調整します。",
-    helpStep4: "文書をクリックすると文字を追加できます。選択した欄は移動や編集ができます。",
+    helpStep3: "回転でスキャンを整え、必要に応じて文書全体のサイズを調整します。",
+    helpStep4: "テキスト欄を追加をクリックするか、文書をクリックします。欄はドラッグして編集できます。",
     helpStep5: "署名を作成または保存済み署名を選び、文書に挿入して文書を保存します。",
     helpAddFiles: "1つまたは複数の文書を編集画面に読み込みます。",
+    helpAddTextField: "文書の表示部分の中央に新しい欄を追加します。必要な場所へドラッグできます。",
     helpClearDocs: "読み込んだ全ページを削除し、ホーム画面に戻ります。",
     helpGrid: "補助グリッドまたは罫線を表示します。保存文書には出力されません。",
     helpRowStep: "横方向のグリッド線の間隔を変更します。",
@@ -1057,6 +1090,7 @@ const extraLocales = {
     spacing: "間隔",
     signatures: "署名:",
     noSaved: "保存なし",
+    editorHint: "上のボタンまたは文書クリックでテキスト欄を追加します。各欄は個別に移動できます。",
     homeTitle: "ホーム",
     chooseDocument: "文書を選択",
     signatureTitle: "デジタル署名",
@@ -1080,6 +1114,7 @@ const extraLocales = {
   ko: {
     title: "BRINO — 양식 편집기",
     addFiles: "파일 추가",
+    addTextField: "텍스트 필드 추가",
     clearDocs: "비우기",
     grid: "격자",
     gridCells: "칸",
@@ -1096,10 +1131,11 @@ const extraLocales = {
     helpButtonsTitle: "버튼 안내",
     helpStep1: "파일 추가를 누르거나 홈 화면에서 문서를 선택하세요. PDF, DOCX, 이미지를 추가할 수 있습니다.",
     helpStep2: "왼쪽에서 필요한 페이지를 선택하세요. 필요 없는 페이지는 썸네일의 X로 삭제합니다.",
-    helpStep3: "회전으로 스캔을 바로잡고 문서 크기, 격자, 줄 간격, 레이어 이동을 조정하세요.",
-    helpStep4: "문서를 클릭하면 텍스트를 추가할 수 있습니다. 선택한 필드는 이동하고 편집할 수 있습니다.",
+    helpStep3: "회전으로 스캔을 바로잡고 필요하면 전체 문서 크기를 조정하세요.",
+    helpStep4: "텍스트 필드 추가를 누르거나 문서를 클릭하세요. 필드는 드래그하고 편집할 수 있습니다.",
     helpStep5: "서명을 만들거나 저장된 서명을 선택해 문서에 넣고 문서 저장을 누르세요.",
     helpAddFiles: "하나 이상의 문서를 편집기에 불러옵니다.",
+    helpAddTextField: "문서의 보이는 영역 중앙에 새 필드를 추가합니다. 원하는 위치로 끌어 놓을 수 있습니다.",
     helpClearDocs: "불러온 모든 페이지를 제거하고 홈 화면으로 돌아갑니다.",
     helpGrid: "보조 격자 또는 줄을 켭니다. 저장된 문서에는 포함되지 않습니다.",
     helpRowStep: "가로 격자선 사이의 거리를 바꿉니다.",
@@ -1123,6 +1159,7 @@ const extraLocales = {
     spacing: "간격",
     signatures: "서명:",
     noSaved: "저장 없음",
+    editorHint: "위쪽 버튼이나 문서 클릭으로 텍스트 필드를 추가하세요. 각 필드는 따로 이동할 수 있습니다.",
     homeTitle: "홈",
     chooseDocument: "문서 선택",
     signatureTitle: "디지털 서명",
@@ -1146,6 +1183,7 @@ const extraLocales = {
   hi: {
     title: "BRINO — फ़ॉर्म संपादक",
     addFiles: "फ़ाइलें जोड़ें",
+    addTextField: "टेक्स्ट फ़ील्ड जोड़ें",
     clearDocs: "साफ़ करें",
     grid: "ग्रिड",
     gridCells: "खाने",
@@ -1162,10 +1200,11 @@ const extraLocales = {
     helpButtonsTitle: "बटन गाइड",
     helpStep1: "फ़ाइलें जोड़ें पर क्लिक करें या मुख्य पेज से दस्तावेज़ चुनें। PDF, DOCX और चित्र जोड़े जा सकते हैं।",
     helpStep2: "बाईं ओर से ज़रूरी पेज चुनें। अनचाहे पेज थंबनेल के X से हटाएँ।",
-    helpStep3: "रोटेशन से स्कैन सीधा करें, फिर दस्तावेज़ आकार, ग्रिड, लाइन अंतर और लेयर ऑफ़सेट सेट करें।",
-    helpStep4: "टेक्स्ट जोड़ने के लिए दस्तावेज़ पर क्लिक करें। चुना हुआ फ़ील्ड हिलाया और संपादित किया जा सकता है।",
+    helpStep3: "रोटेशन से स्कैन सीधा करें और ज़रूरत हो तो पूरे दस्तावेज़ का आकार सेट करें।",
+    helpStep4: "टेक्स्ट फ़ील्ड जोड़ें पर क्लिक करें या दस्तावेज़ पर क्लिक करें। फ़ील्ड को खींचकर रखा और संपादित किया जा सकता है।",
     helpStep5: "हस्ताक्षर बनाएँ या सहेजा हुआ हस्ताक्षर चुनें, उसे दस्तावेज़ में डालें और दस्तावेज़ सहेजें दबाएँ।",
     helpAddFiles: "एक या अधिक दस्तावेज़ संपादक में लोड करता है।",
+    helpAddTextField: "दस्तावेज़ के दिख रहे हिस्से के बीच में नया फ़ील्ड जोड़ता है। इसे सही जगह खींच सकते हैं।",
     helpClearDocs: "सभी लोड किए पेज हटाता है और मुख्य पेज पर लौटता है।",
     helpGrid: "सहायक ग्रिड या लाइनें चालू करता है। यह सहेजे गए दस्तावेज़ में नहीं जाती।",
     helpRowStep: "क्षैतिज ग्रिड लाइनों के बीच की दूरी बदलता है।",
@@ -1189,6 +1228,7 @@ const extraLocales = {
     spacing: "अंतर",
     signatures: "हस्ताक्षर:",
     noSaved: "कोई सहेजा नहीं",
+    editorHint: "ऊपर के बटन से या दस्तावेज़ पर क्लिक करके टेक्स्ट फ़ील्ड जोड़ें। हर फ़ील्ड को अलग से हिलाया जा सकता है।",
     homeTitle: "मुख्य पेज",
     chooseDocument: "दस्तावेज़ चुनें",
     signatureTitle: "डिजिटल हस्ताक्षर",
@@ -1407,17 +1447,17 @@ async function serializeDraft() {
     savedAt: Date.now(),
     state: {
       page: state.page,
-      zoom: state.zoom,
+      zoom: 1,
       docScale: state.docScale,
       rotation: state.rotation,
-      layerOffsetY: state.layerOffsetY,
+      layerOffsetY: 0,
       gridStepY: state.gridStepY,
       guideY: state.guideY,
       textOffsetY: state.textOffsetY,
       annots: state.annots,
     },
     controls: {
-      gridOn: $("gridToggle").checked,
+      gridOn: false,
       gridMode: $("gridMode").value,
       gridSize: $("gridSize").value,
       guideOn: $("guideToggle").checked,
@@ -1464,14 +1504,16 @@ async function restoreDraft() {
     state.kind = "document";
     state.pages = sources.length;
     Object.assign(state, draft.state || {});
+    state.zoom = 1;
     state.page = Math.max(1, Math.min(Number(state.page) || 1, state.pages));
     state.annots = draft.state?.annots || {};
-    $("gridToggle").checked = draft.controls?.gridOn ?? true;
+    $("gridToggle").checked = false;
     $("gridMode").value = draft.controls?.gridMode || $("gridMode").value;
     $("gridSize").value = draft.controls?.gridSize || $("gridSize").value;
     $("guideToggle").checked = draft.controls?.guideOn ?? true;
     $("rotateAngle").value = String(state.rotation);
-    $("layerOffsetY").value = String(state.layerOffsetY);
+    state.layerOffsetY = 0;
+    $("layerOffsetY").value = "0";
     $("gridStepY").value = String(state.gridStepY);
     $("guideY").value = String(state.guideY);
     $("textOffsetY").value = String(state.textOffsetY);
@@ -1820,6 +1862,7 @@ function resetDocumentState() {
   state.pageSources = [];
   state.page = 1;
   state.pages = 1;
+  state.zoom = 1;
   state.docScale = 1;
   state.annots = {};
   activeAnnotId = null;
@@ -1872,8 +1915,8 @@ function showHome(reset = false) {
   if (reset) {
     clearDraft();
     resetDocumentState();
-    state.rotation = 0;
-    state.layerOffsetY = 0;
+  state.rotation = 0;
+  state.layerOffsetY = 0;
     state.gridStepY = 20;
     state.guideY = 45;
     state.textOffsetY = -6;
@@ -2185,18 +2228,13 @@ function updateLineHeightLabel(value = Number($("lineHeight").value)) {
   $("lineHeightLabel").textContent = value.toFixed(2).replace(/0$/, "");
 }
 
-// клик по документу -> новое текстовое поле в координатах документа
-overlay.addEventListener("mousedown", (e) => {
-  if (e.target !== overlay) return;
-  const rect = overlay.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / state.zoom;
-  const y = (e.clientY - rect.top) / state.zoom;
+function createTextAnnotation(x, y) {
   const size = textStyle.size * RENDER_SCALE;
   const a = {
     id: crypto.randomUUID(),
     type: "text",
-    x: snap(x),
-    y: snapY(y),
+    x: Math.max(0, Math.min(docCanvas.width - 40, x)),
+    y: Math.max(0, Math.min(docCanvas.height - 24, y)),
     text: "",
     family: textStyle.family,
     size,
@@ -2212,18 +2250,50 @@ overlay.addEventListener("mousedown", (e) => {
   scheduleDraftSave();
   const node = overlay.querySelector(`[data-id="${a.id}"] textarea`);
   node?.focus();
+  return a;
+}
+
+function visibleDocumentCenter() {
+  const rect = overlay.getBoundingClientRect();
+  const viewport = $("canvasArea").getBoundingClientRect();
+  const left = Math.max(rect.left, viewport.left);
+  const right = Math.min(rect.right, viewport.right);
+  const top = Math.max(rect.top, viewport.top);
+  const bottom = Math.min(rect.bottom, viewport.bottom);
+  const centerX = right > left ? (left + right) / 2 : rect.left + rect.width / 2;
+  const centerY = bottom > top ? (top + bottom) / 2 : rect.top + rect.height / 2;
+  return {
+    x: (centerX - rect.left) / state.zoom,
+    y: (centerY - rect.top) / state.zoom,
+  };
+}
+
+function addTextFieldAtVisibleCenter() {
+  if (!state.kind) {
+    alert(t("openDocumentFirst"));
+    return;
+  }
+  const { x, y } = visibleDocumentCenter();
+  createTextAnnotation(x, y);
+}
+
+$("addTextFieldBtn").onclick = addTextFieldAtVisibleCenter;
+
+// клик по документу -> новое текстовое поле в координатах документа
+overlay.addEventListener("mousedown", (e) => {
+  if (e.target !== overlay) return;
+  const rect = overlay.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / state.zoom;
+  const y = (e.clientY - rect.top) / state.zoom;
+  createTextAnnotation(x, y);
 });
 
 function snap(v) {
-  if (!$("gridToggle").checked) return v;
-  const step = currentGridSize();
-  return Math.round(v / step) * step;
+  return v;
 }
 
 function snapY(v) {
-  if (!$("gridToggle").checked) return v;
-  const step = currentGridStepY();
-  return Math.round(v / step) * step;
+  return v;
 }
 
 function renderAnnots() {
