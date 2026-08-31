@@ -1178,6 +1178,7 @@ function applyLanguage(lang = currentLang) {
   document.querySelectorAll("[data-i18n-title]").forEach((el) => {
     el.title = t(el.dataset.i18nTitle);
   });
+  $("printBtn").setAttribute("aria-label", t("printDocument"));
   renderSigStrips();
 }
 
@@ -3510,7 +3511,8 @@ async function printCurrentDocument() {
   if (!state.kind) return alert(t("openDocumentFirst"));
   const btn = $("printBtn");
   btn.disabled = true;
-  btn.textContent = t("printing");
+  btn.title = t("printing");
+  btn.setAttribute("aria-label", t("printing"));
   let url = "";
   let frame = null;
   try {
@@ -3537,7 +3539,8 @@ async function printCurrentDocument() {
     alert(t("printFailed") + err.message);
   } finally {
     btn.disabled = false;
-    btn.textContent = t("printDocument");
+    btn.title = t("printDocument");
+    btn.setAttribute("aria-label", t("printDocument"));
   }
 }
 
