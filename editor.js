@@ -54,6 +54,7 @@ const i18n = {
     helpStep5: "Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».",
     helpAddFiles: "Загружает один или несколько документов в редактор.",
     helpAddTextField: "Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.",
+    helpRedaction: "Добавляет видимый маркер поверх конфиденциальной записи. Это не меняет исходный документ и не предназначено для незаметной подмены текста.",
     helpClearDocs: "Удаляет все загруженные листы и возвращает главную страницу.",
     helpGrid: "Включает вспомогательную сетку или линейки. В сохранённый документ она не попадает.",
     helpRowStep: "Меняет расстояние между горизонтальными линиями в режиме «В линейку». В режиме «В клеточку» клетки всегда остаются квадратными.",
@@ -79,6 +80,10 @@ const i18n = {
     bold: "Жирный",
     italic: "Курсив",
     textColor: "Цвет текста",
+    redactionTool: "Скрыть данные",
+    redactionColor: "Цвет маркера",
+    redactionBlack: "Чёрный",
+    redactionWhite: "Белый",
     lift: "Подъём",
     liftTitle: "Смещение текста относительно строки",
     spacing: "Интервал",
@@ -173,6 +178,7 @@ const i18n = {
     helpStep5: "Erstelle oder wähle eine gespeicherte Signatur, füge sie in das Dokument ein und klicke auf „Dokument speichern“.",
     helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
     helpAddTextField: "Fügt ein neues Feld in die Mitte des sichtbaren Dokumentbereichs ein. Du kannst es an die gewünschte Stelle ziehen.",
+    helpRedaction: "Fügt einen sichtbaren Marker über vertrauliche Angaben. Das Originaldokument wird nicht geändert und der Marker ist nicht für unbemerkte Textersetzung gedacht.",
     helpClearDocs: "Entfernt alle geladenen Seiten und zeigt wieder die Startseite.",
     helpGrid: "Schaltet das Hilfsraster oder Linien ein. Es wird nicht mit gespeichert.",
     helpRowStep: "Ändert den Abstand zwischen horizontalen Linien im Linienmodus. Im Kästchenmodus bleiben die Zellen immer quadratisch.",
@@ -198,6 +204,10 @@ const i18n = {
     bold: "Fett",
     italic: "Kursiv",
     textColor: "Textfarbe",
+    redactionTool: "Daten verdecken",
+    redactionColor: "Markerfarbe",
+    redactionBlack: "Schwarz",
+    redactionWhite: "Weiß",
     lift: "Anheben",
     liftTitle: "Textversatz zur Zeile",
     spacing: "Abstand",
@@ -292,6 +302,7 @@ const i18n = {
     helpStep5: "Create or choose a saved signature, insert it into the document, then click Save document.",
     helpAddFiles: "Loads one or more documents into the editor.",
     helpAddTextField: "Adds a new field in the center of the visible document area. You can drag it to the exact place you need.",
+    helpRedaction: "Adds a visible marker over confidential information. It does not change the original document and is not intended for hidden text replacement.",
     helpClearDocs: "Removes all loaded pages and returns to the home page.",
     helpGrid: "Turns the helper grid or ruled lines on. It is not exported into the saved document.",
     helpRowStep: "Changes the distance between horizontal lines in lined mode. In cell mode, cells always stay square.",
@@ -317,6 +328,10 @@ const i18n = {
     bold: "Bold",
     italic: "Italic",
     textColor: "Text color",
+    redactionTool: "Hide data",
+    redactionColor: "Marker color",
+    redactionBlack: "Black",
+    redactionWhite: "White",
     lift: "Lift",
     liftTitle: "Text offset from the line",
     spacing: "Spacing",
@@ -414,6 +429,7 @@ const extraLocales = {
     helpStep5: "Crea o elige una firma guardada, insértala en el documento y haz clic en Guardar documento.",
     helpAddFiles: "Carga uno o varios documentos en el editor.",
     helpAddTextField: "Añade un nuevo campo en el centro de la parte visible del documento. Puedes arrastrarlo al lugar exacto.",
+    helpRedaction: "Añade un marcador visible sobre datos confidenciales. No cambia el documento original ni sirve para sustituir texto de forma oculta.",
     helpClearDocs: "Elimina todas las páginas cargadas y vuelve a la página principal.",
     helpGrid: "Activa la cuadrícula auxiliar o las líneas. No se exporta al documento guardado.",
     helpRowStep: "Cambia la distancia entre las líneas horizontales de la cuadrícula.",
@@ -433,6 +449,10 @@ const extraLocales = {
     bold: "Negrita",
     italic: "Cursiva",
     textColor: "Color del texto",
+    redactionTool: "Ocultar datos",
+    redactionColor: "Color del marcador",
+    redactionBlack: "Negro",
+    redactionWhite: "Blanco",
     lift: "Elevación",
     liftTitle: "Desplazamiento del texto respecto a la línea",
     spacing: "Espaciado",
@@ -502,6 +522,7 @@ const extraLocales = {
     helpStep5: "Créez ou choisissez une signature enregistrée, insérez-la dans le document, puis cliquez sur Enregistrer le document.",
     helpAddFiles: "Charge un ou plusieurs documents dans l’éditeur.",
     helpAddTextField: "Ajoute un nouveau champ au centre de la zone visible du document. Vous pouvez le faire glisser à l’endroit voulu.",
+    helpRedaction: "Ajoute un marqueur visible sur les informations confidentielles. Cela ne modifie pas le document original et ne sert pas à remplacer du texte discrètement.",
     helpClearDocs: "Supprime toutes les pages chargées et revient à la page d’accueil.",
     helpGrid: "Active la grille ou les lignes d’aide. Elle n’est pas exportée dans le document enregistré.",
     helpRowStep: "Modifie la distance entre les lignes horizontales de la grille.",
@@ -521,6 +542,10 @@ const extraLocales = {
     bold: "Gras",
     italic: "Italique",
     textColor: "Couleur du texte",
+    redactionTool: "Masquer les données",
+    redactionColor: "Couleur du marqueur",
+    redactionBlack: "Noir",
+    redactionWhite: "Blanc",
     lift: "Décalage",
     liftTitle: "Décalage du texte par rapport à la ligne",
     spacing: "Interligne",
@@ -582,6 +607,7 @@ const extraLocales = {
     helpStep5: "Crea o scegli una firma salvata, inseriscila nel documento e fai clic su Salva documento.",
     helpAddFiles: "Carica uno o più documenti nell’editor.",
     helpAddTextField: "Aggiunge un nuovo campo al centro dell’area visibile del documento. Puoi trascinarlo nel punto esatto.",
+    helpRedaction: "Aggiunge un marcatore visibile sopra dati riservati. Non modifica il documento originale e non serve a sostituire testo di nascosto.",
     helpClearDocs: "Rimuove tutte le pagine caricate e torna alla pagina principale.",
     helpGrid: "Attiva la griglia o le righe di aiuto. Non viene esportata nel documento salvato.",
     helpRowStep: "Cambia la distanza tra le righe orizzontali della griglia.",
@@ -601,6 +627,10 @@ const extraLocales = {
     bold: "Grassetto",
     italic: "Corsivo",
     textColor: "Colore testo",
+    redactionTool: "Nascondi dati",
+    redactionColor: "Colore marcatore",
+    redactionBlack: "Nero",
+    redactionWhite: "Bianco",
     lift: "Alza",
     spacing: "Interlinea",
     signatures: "Firme:",
@@ -652,6 +682,7 @@ const extraLocales = {
     helpStep5: "Crie ou escolha uma assinatura salva, insira no documento e clique em Salvar documento.",
     helpAddFiles: "Carrega um ou mais documentos no editor.",
     helpAddTextField: "Adiciona um novo campo no centro da parte visível do documento. Você pode arrastá-lo para o lugar certo.",
+    helpRedaction: "Adiciona um marcador visível sobre dados confidenciais. Não altera o documento original nem serve para substituir texto de forma oculta.",
     helpClearDocs: "Remove todas as páginas carregadas e volta para a página inicial.",
     helpGrid: "Ativa a grade ou linhas auxiliares. Ela não é exportada no documento salvo.",
     helpRowStep: "Altera a distância entre as linhas horizontais da grade.",
@@ -671,6 +702,10 @@ const extraLocales = {
     bold: "Negrito",
     italic: "Itálico",
     textColor: "Cor do texto",
+    redactionTool: "Ocultar dados",
+    redactionColor: "Cor do marcador",
+    redactionBlack: "Preto",
+    redactionWhite: "Branco",
     lift: "Elevar",
     spacing: "Espaçamento",
     signatures: "Assinaturas:",
@@ -722,6 +757,7 @@ const extraLocales = {
     helpStep5: "Utwórz lub wybierz zapisaną podpis, wstaw go do dokumentu i kliknij Zapisz dokument.",
     helpAddFiles: "Wczytuje jeden lub kilka dokumentów do edytora.",
     helpAddTextField: "Dodaje nowe pole na środku widocznej części dokumentu. Można je przeciągnąć w dokładne miejsce.",
+    helpRedaction: "Dodaje widoczny marker nad poufnymi danymi. Nie zmienia oryginalnego dokumentu i nie służy do ukrytej zamiany tekstu.",
     helpClearDocs: "Usuwa wszystkie wczytane strony i wraca do strony głównej.",
     helpGrid: "Włącza pomocniczą siatkę lub linie. Nie trafia ona do zapisanego dokumentu.",
     helpRowStep: "Zmienia odległość między poziomymi liniami siatki.",
@@ -741,6 +777,10 @@ const extraLocales = {
     bold: "Pogrubienie",
     italic: "Kursywa",
     textColor: "Kolor tekstu",
+    redactionTool: "Ukryj dane",
+    redactionColor: "Kolor markera",
+    redactionBlack: "Czarny",
+    redactionWhite: "Biały",
     lift: "Podnieś",
     spacing: "Interlinia",
     signatures: "Podpisy:",
@@ -791,6 +831,7 @@ const extraLocales = {
     helpStep5: "Створіть або виберіть збережений підпис, вставте його в документ і натисніть Зберегти документ.",
     helpAddFiles: "Завантажує один або кілька документів у редактор.",
     helpAddTextField: "Додає нове поле в центр видимої частини документа. Його можна перетягнути в потрібне місце.",
+    helpRedaction: "Додає видимий маркер поверх конфіденційних даних. Це не змінює вихідний документ і не призначено для непомітної заміни тексту.",
     helpClearDocs: "Видаляє всі завантажені аркуші й повертає головну сторінку.",
     helpGrid: "Вмикає допоміжну сітку або лінії. У збережений документ вона не потрапляє.",
     helpRowStep: "Змінює відстань між горизонтальними лініями сітки.",
@@ -810,6 +851,10 @@ const extraLocales = {
     bold: "Жирний",
     italic: "Курсив",
     textColor: "Колір тексту",
+    redactionTool: "Приховати дані",
+    redactionColor: "Колір маркера",
+    redactionBlack: "Чорний",
+    redactionWhite: "Білий",
     lift: "Підйом",
     spacing: "Інтервал",
     signatures: "Підписи:",
@@ -860,6 +905,7 @@ const extraLocales = {
     helpStep5: "Kaydedilmiş bir imza oluşturun veya seçin, belgeye ekleyin ve Belgeyi kaydet’e tıklayın.",
     helpAddFiles: "Düzenleyiciye bir veya birkaç belge yükler.",
     helpAddTextField: "Belgenin görünen bölümünün ortasına yeni bir alan ekler. İstediğiniz yere sürükleyebilirsiniz.",
+    helpRedaction: "Gizli bilgiler üzerine görünür bir işaretleyici ekler. Orijinal belgeyi değiştirmez ve gizli metin değiştirme amacı taşımaz.",
     helpClearDocs: "Yüklenen tüm sayfaları kaldırır ve ana sayfaya döner.",
     helpGrid: "Yardımcı ızgara veya çizgileri açar. Kaydedilen belgeye aktarılmaz.",
     helpRowStep: "Yatay ızgara çizgileri arasındaki mesafeyi değiştirir.",
@@ -879,6 +925,10 @@ const extraLocales = {
     bold: "Kalın",
     italic: "İtalik",
     textColor: "Metin rengi",
+    redactionTool: "Verileri gizle",
+    redactionColor: "İşaretleyici rengi",
+    redactionBlack: "Siyah",
+    redactionWhite: "Beyaz",
     lift: "Yükselt",
     spacing: "Aralık",
     signatures: "İmzalar:",
@@ -929,6 +979,7 @@ const extraLocales = {
     helpStep5: "أنشئ توقيعاً أو اختر توقيعاً محفوظاً، أدخله في المستند ثم اضغط حفظ المستند.",
     helpAddFiles: "يحمّل مستنداً واحداً أو عدة مستندات في المحرر.",
     helpAddTextField: "يضيف حقلاً جديداً في وسط الجزء المرئي من المستند. يمكنك سحبه إلى المكان المطلوب.",
+    helpRedaction: "يضيف علامة مرئية فوق البيانات السرية. لا يغيّر المستند الأصلي ولا يُقصد به استبدال النص بشكل مخفي.",
     helpClearDocs: "يزيل كل الصفحات المحملة ويعود إلى الصفحة الرئيسية.",
     helpGrid: "يشغّل شبكة أو خطوطاً مساعدة. لا تظهر في المستند المحفوظ.",
     helpRowStep: "يغيّر المسافة بين خطوط الشبكة الأفقية.",
@@ -948,6 +999,10 @@ const extraLocales = {
     bold: "عريض",
     italic: "مائل",
     textColor: "لون النص",
+    redactionTool: "إخفاء البيانات",
+    redactionColor: "لون العلامة",
+    redactionBlack: "أسود",
+    redactionWhite: "أبيض",
     lift: "رفع",
     spacing: "تباعد",
     signatures: "التوقيعات:",
@@ -998,6 +1053,7 @@ const extraLocales = {
     helpStep5: "创建或选择已保存的签名，插入到文档中，然后点击“保存文档”。",
     helpAddFiles: "将一个或多个文档加载到编辑器。",
     helpAddTextField: "在文档可见区域中央添加一个新文本框。你可以把它拖到需要的位置。",
+    helpRedaction: "在机密信息上添加可见标记。它不会修改原始文档，也不用于隐蔽替换文字。",
     helpClearDocs: "移除所有已加载页面并返回主页。",
     helpGrid: "开启辅助网格或横线。保存文档时不会导出它。",
     helpRowStep: "改变水平网格线之间的距离。",
@@ -1017,6 +1073,10 @@ const extraLocales = {
     bold: "粗体",
     italic: "斜体",
     textColor: "文字颜色",
+    redactionTool: "隐藏数据",
+    redactionColor: "标记颜色",
+    redactionBlack: "黑色",
+    redactionWhite: "白色",
     lift: "上移",
     spacing: "间距",
     signatures: "签名：",
@@ -1067,6 +1127,7 @@ const extraLocales = {
     helpStep5: "署名を作成または保存済み署名を選び、文書に挿入して文書を保存します。",
     helpAddFiles: "1つまたは複数の文書を編集画面に読み込みます。",
     helpAddTextField: "文書の表示部分の中央に新しい欄を追加します。必要な場所へドラッグできます。",
+    helpRedaction: "機密情報の上に見えるマーカーを追加します。元の文書は変更せず、文字をこっそり置き換える用途ではありません。",
     helpClearDocs: "読み込んだ全ページを削除し、ホーム画面に戻ります。",
     helpGrid: "補助グリッドまたは罫線を表示します。保存文書には出力されません。",
     helpRowStep: "横方向のグリッド線の間隔を変更します。",
@@ -1086,6 +1147,10 @@ const extraLocales = {
     bold: "太字",
     italic: "斜体",
     textColor: "文字色",
+    redactionTool: "データを隠す",
+    redactionColor: "マーカー色",
+    redactionBlack: "黒",
+    redactionWhite: "白",
     lift: "上げる",
     spacing: "間隔",
     signatures: "署名:",
@@ -1136,6 +1201,7 @@ const extraLocales = {
     helpStep5: "서명을 만들거나 저장된 서명을 선택해 문서에 넣고 문서 저장을 누르세요.",
     helpAddFiles: "하나 이상의 문서를 편집기에 불러옵니다.",
     helpAddTextField: "문서의 보이는 영역 중앙에 새 필드를 추가합니다. 원하는 위치로 끌어 놓을 수 있습니다.",
+    helpRedaction: "기밀 정보 위에 보이는 마커를 추가합니다. 원본 문서를 변경하지 않으며 몰래 텍스트를 바꾸는 용도가 아닙니다.",
     helpClearDocs: "불러온 모든 페이지를 제거하고 홈 화면으로 돌아갑니다.",
     helpGrid: "보조 격자 또는 줄을 켭니다. 저장된 문서에는 포함되지 않습니다.",
     helpRowStep: "가로 격자선 사이의 거리를 바꿉니다.",
@@ -1155,6 +1221,10 @@ const extraLocales = {
     bold: "굵게",
     italic: "기울임",
     textColor: "글자 색",
+    redactionTool: "데이터 숨기기",
+    redactionColor: "마커 색",
+    redactionBlack: "검정",
+    redactionWhite: "흰색",
     lift: "올림",
     spacing: "간격",
     signatures: "서명:",
@@ -1205,6 +1275,7 @@ const extraLocales = {
     helpStep5: "हस्ताक्षर बनाएँ या सहेजा हुआ हस्ताक्षर चुनें, उसे दस्तावेज़ में डालें और दस्तावेज़ सहेजें दबाएँ।",
     helpAddFiles: "एक या अधिक दस्तावेज़ संपादक में लोड करता है।",
     helpAddTextField: "दस्तावेज़ के दिख रहे हिस्से के बीच में नया फ़ील्ड जोड़ता है। इसे सही जगह खींच सकते हैं।",
+    helpRedaction: "गोपनीय जानकारी के ऊपर दिखने वाला मार्कर जोड़ता है। यह मूल दस्तावेज़ को नहीं बदलता और छिपे हुए टेक्स्ट बदलने के लिए नहीं है।",
     helpClearDocs: "सभी लोड किए पेज हटाता है और मुख्य पेज पर लौटता है।",
     helpGrid: "सहायक ग्रिड या लाइनें चालू करता है। यह सहेजे गए दस्तावेज़ में नहीं जाती।",
     helpRowStep: "क्षैतिज ग्रिड लाइनों के बीच की दूरी बदलता है।",
@@ -1224,6 +1295,10 @@ const extraLocales = {
     bold: "बोल्ड",
     italic: "इटैलिक",
     textColor: "टेक्स्ट रंग",
+    redactionTool: "डेटा छिपाएँ",
+    redactionColor: "मार्कर रंग",
+    redactionBlack: "काला",
+    redactionWhite: "सफेद",
     lift: "ऊपर करें",
     spacing: "अंतर",
     signatures: "हस्ताक्षर:",
@@ -1372,6 +1447,7 @@ const state = {
   gridStepY: 20,
   guideY: 45,
   textOffsetY: 0,
+  tool: "text",
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
 
@@ -2151,6 +2227,9 @@ function activeAnnot() {
 
 function selectAnnot(a) {
   activeAnnotId = a?.id || null;
+  if (a?.type === "redaction") {
+    $("redactColor").value = a.color || "#000000";
+  }
   if (a?.type === "text") {
     textStyle.family = a.family;
     textStyle.size = Math.round(a.size / RENDER_SCALE);
@@ -2228,6 +2307,22 @@ function updateLineHeightLabel(value = Number($("lineHeight").value)) {
   $("lineHeightLabel").textContent = value.toFixed(2).replace(/0$/, "");
 }
 
+function setActiveTool(tool) {
+  state.tool = tool;
+  $("redactBtn").classList.toggle("active", tool === "redaction");
+  overlay.classList.toggle("redaction-mode", tool === "redaction");
+}
+
+$("redactBtn").onclick = () => setActiveTool(state.tool === "redaction" ? "text" : "redaction");
+$("redactColor").onchange = () => {
+  const a = activeAnnot();
+  if (a?.type === "redaction") {
+    a.color = $("redactColor").value;
+    renderAnnots();
+    scheduleDraftSave();
+  }
+};
+
 function createTextAnnotation(x, y) {
   const size = textStyle.size * RENDER_SCALE;
   const a = {
@@ -2253,6 +2348,25 @@ function createTextAnnotation(x, y) {
   return a;
 }
 
+function createRedactionAnnotation(x, y) {
+  const height = Math.max(12, Math.round(textStyle.size * RENDER_SCALE * 1.25));
+  const width = Math.max(80, height * 5);
+  const a = {
+    id: crypto.randomUUID(),
+    type: "redaction",
+    x: Math.max(0, Math.min(docCanvas.width - width, x)),
+    y: Math.max(0, Math.min(docCanvas.height - height, y)),
+    w: width,
+    h: height,
+    color: $("redactColor").value,
+  };
+  annotsForPage().push(a);
+  activeAnnotId = a.id;
+  renderAnnots();
+  scheduleDraftSave();
+  return a;
+}
+
 function visibleDocumentCenter() {
   const rect = overlay.getBoundingClientRect();
   const viewport = $("canvasArea").getBoundingClientRect();
@@ -2273,6 +2387,7 @@ function addTextFieldAtVisibleCenter() {
     alert(t("openDocumentFirst"));
     return;
   }
+  setActiveTool("text");
   const { x, y } = visibleDocumentCenter();
   createTextAnnotation(x, y);
 }
@@ -2285,7 +2400,8 @@ overlay.addEventListener("mousedown", (e) => {
   const rect = overlay.getBoundingClientRect();
   const x = (e.clientX - rect.left) / state.zoom;
   const y = (e.clientY - rect.top) / state.zoom;
-  createTextAnnotation(x, y);
+  if (state.tool === "redaction") createRedactionAnnotation(x, y);
+  else createTextAnnotation(x, y);
 });
 
 function snap(v) {
@@ -2298,7 +2414,10 @@ function snapY(v) {
 
 function renderAnnots() {
   overlay.innerHTML = "";
-  annotsForPage().forEach((a) => overlay.appendChild(a.type === "text" ? textNode(a) : sigNode(a)));
+  annotsForPage().forEach((a) => {
+    const node = a.type === "text" ? textNode(a) : a.type === "redaction" ? redactionNode(a) : sigNode(a);
+    overlay.appendChild(node);
+  });
 }
 
 function baseNode(a, cls) {
@@ -2393,6 +2512,41 @@ function sigNode(a) {
   });
   el.appendChild(rz);
   return el;
+}
+
+function redactionNode(a) {
+  const el = baseNode(a, "item-redaction");
+  el.style.width = a.w + "px";
+  el.style.height = a.h + "px";
+  el.style.background = a.color || "#000000";
+
+  const rz = document.createElement("div");
+  rz.className = "resize";
+  rz.addEventListener("mousedown", (ev) => startResizeBox(ev, a, el));
+  el.appendChild(rz);
+  return el;
+}
+
+function startResizeBox(ev, a, el) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  const sx = ev.clientX;
+  const sy = ev.clientY;
+  const w0 = a.w;
+  const h0 = a.h;
+  const move = (m) => {
+    a.w = Math.max(10, w0 + (m.clientX - sx) / state.zoom);
+    a.h = Math.max(8, h0 + (m.clientY - sy) / state.zoom);
+    el.style.width = a.w + "px";
+    el.style.height = a.h + "px";
+  };
+  const up = () => {
+    window.removeEventListener("mousemove", move);
+    window.removeEventListener("mouseup", up);
+    scheduleDraftSave();
+  };
+  window.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
 }
 
 function startDrag(ev, a, el) {
@@ -3187,6 +3341,9 @@ async function flattenPage(pageNumber) {
       a.text.split("\n").forEach((line, i) =>
         ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + (a.offsetY ?? state.textOffsetY) + i * lineH)
       );
+    } else if (a.type === "redaction") {
+      ctx.fillStyle = a.color || "#000000";
+      ctx.fillRect(a.x, a.y + state.layerOffsetY, a.w, a.h);
     } else {
       const img = await loadImg(a.dataUrl);
       ctx.drawImage(img, a.x, a.y + state.layerOffsetY, a.w, a.h);

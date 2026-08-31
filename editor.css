@@ -283,6 +283,7 @@ body {
 .guide[hidden] { display: none !important; }
 
 .overlay { position: absolute; inset: 0; cursor: crosshair; }
+.overlay.redaction-mode { cursor: cell; }
 
 .docx-render-host {
   position: fixed;
@@ -338,7 +339,14 @@ body {
 .item-sig img { display: block; width: 100%; height: 100%; }
 .item-sig { border: 1px dashed transparent; }
 .item-sig:hover, .item-sig.selected { border-color: rgba(47, 124, 246, 0.8); }
-.item-sig .resize {
+.item-redaction {
+  border: 1px dashed rgba(47, 124, 246, 0);
+  min-width: 10px;
+  min-height: 8px;
+}
+.item-redaction:hover, .item-redaction.selected { border-color: rgba(47, 124, 246, 0.95); }
+.item-sig .resize,
+.item-redaction .resize {
   position: absolute;
   right: -7px;
   bottom: -7px;
@@ -349,7 +357,10 @@ body {
   cursor: nwse-resize;
   opacity: 0;
 }
-.item-sig:hover .resize, .item-sig.selected .resize { opacity: 1; }
+.item-sig:hover .resize,
+.item-sig.selected .resize,
+.item-redaction:hover .resize,
+.item-redaction.selected .resize { opacity: 1; }
 
 /* ---------- modal ---------- */
 .modal {
