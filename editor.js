@@ -1371,7 +1371,7 @@ const state = {
   layerOffsetY: 0,
   gridStepY: 20,
   guideY: 45,
-  textOffsetY: -6,
+  textOffsetY: 0,
   annots: {}, // { [pageNumber]: Array<annotation> }
 };
 
@@ -1879,7 +1879,7 @@ function resetDocumentAdjustments() {
   state.layerOffsetY = 0;
   state.gridStepY = 20;
   state.guideY = 45;
-  state.textOffsetY = -6;
+  state.textOffsetY = 0;
   $("rotateAngle").value = "0";
   $("layerOffsetY").value = "0";
   $("gridStepY").value = String(state.gridStepY);
@@ -1915,11 +1915,11 @@ function showHome(reset = false) {
   if (reset) {
     clearDraft();
     resetDocumentState();
-  state.rotation = 0;
-  state.layerOffsetY = 0;
+    state.rotation = 0;
+    state.layerOffsetY = 0;
     state.gridStepY = 20;
     state.guideY = 45;
-    state.textOffsetY = -6;
+    state.textOffsetY = 0;
     docCanvas.getContext("2d").clearRect(0, 0, docCanvas.width, docCanvas.height);
     $("fileInput").value = "";
     $("fileInput2").value = "";
@@ -2142,7 +2142,7 @@ const textStyle = {
   italic: false,
   color: "#111111",
   lineHeight: 1.15,
-  offsetY: -6,
+  offsetY: 0,
 };
 
 function activeAnnot() {
@@ -2333,7 +2333,6 @@ function baseNode(a, cls) {
 
 function textNode(a) {
   const el = baseNode(a, "item-text");
-  el.style.top = a.y + (a.offsetY ?? state.textOffsetY) + "px";
   const ta = document.createElement("textarea");
   ta.rows = 1;
   ta.value = a.text;
@@ -2341,6 +2340,7 @@ function textNode(a) {
   ta.style.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
   ta.style.lineHeight = String(a.lineHeight || 1.15);
   ta.style.color = a.color;
+  ta.style.transform = `translateY(${a.offsetY ?? state.textOffsetY}px)`;
   const autosize = () => {
     ta.style.width = "10px";
     ta.style.height = "10px";
