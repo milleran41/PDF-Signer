@@ -87,6 +87,9 @@
           <button id="zoomOut">−</button>
           <span id="zoomLabel">100%</span>
           <button id="zoomIn">+</button>
+          <input type="number" id="textOffsetY" min="-40" max="40" step="0.5" value="0" />
+          <input type="range" id="lineHeight" min="0.8" max="2" step="0.05" value="1.15" />
+          <span id="lineHeightLabel">1.15</span>
         </div>
         <div class="actions-stack">
           <button class="btn icon help-btn" id="helpBtn" title="Справка" data-i18n-title="helpTitle">?</button>
@@ -138,11 +141,6 @@
           <option value="#000000" data-i18n="redactionBlack">Чёрный</option>
           <option value="#ffffff" data-i18n="redactionWhite">Белый</option>
         </select>
-        <span class="label" data-i18n="lift">Подъём</span>
-        <input type="number" id="textOffsetY" class="input number small" min="-40" max="40" step="0.5" value="0" title="Смещение текста относительно строки" data-i18n-title="liftTitle" />
-        <span class="label" data-i18n="spacing">Интервал</span>
-        <input type="range" id="lineHeight" min="0.8" max="2" step="0.05" value="1.15" title="Межстрочный интервал текста" data-i18n-title="spacingTitle" />
-        <span id="lineHeightLabel" class="pageLabel">1.15</span>
         <span class="divider-v"></span>
         <span class="label" data-i18n="signatures">Подписи:</span>
         <div id="sigStrip" class="sig-strip"><span class="muted small" data-i18n="noSaved">нет сохранённых</span></div>
