@@ -17,6 +17,7 @@ const RATE_FIRST_PROMPT_AT = 5;
 const RATE_REPEAT_EVERY = 5;
 const HIDDEN_MARK = "CodeWerk Studio | BRINO";
 const HIDDEN_MARK_KEYWORDS = "CodeWerk Studio, BRINO, hidden origin mark";
+const SCANNER_NATIVE_HOST = "com.codewerk.brino.scanner";
 
 const $ = (id) => document.getElementById(id);
 
@@ -24,6 +25,8 @@ const i18n = {
   ru: {
     title: "BRINO — редактор бланка",
     addFiles: "Добавить файлы",
+    scanDocument: "Сканировать",
+    printDocument: "Печать",
     addTextField: "Добавить текстовое поле",
     clearDocs: "Очистить",
     prevPage: "Предыдущая страница",
@@ -45,6 +48,7 @@ const i18n = {
     helpStep4: "Нажмите «Добавить текстовое поле» или кликните по документу. Поле можно перетаскивать и менять шрифт и цвет.",
     helpStep5: "Создайте или выберите сохранённую подпись, вставьте её в документ и нажмите «Сохранить документ».",
     helpAddFiles: "Загружает один или несколько документов в редактор.",
+    helpScan: "Пытается получить страницу со сканера через Windows-компонент BRINO Scanner Bridge. Если компонент или сканер не найден, показывает сообщение.",
     helpAddTextField: "Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.",
     helpRedaction: "Добавляет видимый маркер поверх конфиденциальной записи. Это не меняет исходный документ и не предназначено для незаметной подмены текста.",
     helpClearDocs: "Удаляет все загруженные листы и возвращает главную страницу.",
@@ -55,6 +59,7 @@ const i18n = {
     helpCreateSignature: "Открывает окно создания подписи: можно нарисовать, загрузить файл или вставить из буфера.",
     helpMySignatures: "Открывает страницу с сохранёнными шаблонами подписей.",
     helpSignatureStrip: "Показывает сохранённые подписи для быстрой вставки в документ.",
+    helpPrint: "Печатает текущее состояние документа: страницы, текст, маркеры и подписи без сетки, ориентира и служебных рамок.",
     helpSave: "Сохраняет весь загруженный документ целиком в выбранном формате.",
     rateTitle: "Нравится BRINO?",
     rateText: "Если программа помогает вам заполнять документы и экономить бумагу, пожалуйста, поставьте оценку или оставьте отзыв в Microsoft Edge Add-ons.",
@@ -113,6 +118,13 @@ const i18n = {
     insertSavedSignature: "Вставить сохранённую подпись в документ",
     chooseDocumentFirst: "Сначала выберите документ",
     openDocumentFirst: "Сначала откройте документ",
+    scanUnavailable: "Прямое сканирование из браузерного расширения доступно только через установленный Windows-компонент BRINO Scanner Bridge. Сейчас он не найден или недоступен. Пока можно отсканировать документ стандартным приложением Windows Scan и добавить файл в BRINO.",
+    scanFailed: "Не удалось выполнить сканирование: ",
+    scanCanceled: "Сканирование отменено.",
+    scanPage: "Скан",
+    scanning: "Сканирую…",
+    printing: "Готовлю печать…",
+    printFailed: "Не удалось открыть печать: ",
     drawSignatureFirst: "Сначала нарисуйте подпись",
     signaturePreviewReady: "Так подпись будет сохранена в шаблоны.",
     signaturePreviewWholeFile: "Сейчас показан весь файл. Выделите рамкой только подпись, если нужно обрезать точнее.",
@@ -132,6 +144,8 @@ const i18n = {
   de: {
     title: "BRINO — Formular-Editor",
     addFiles: "Dateien hinzufügen",
+    scanDocument: "Scannen",
+    printDocument: "Drucken",
     addTextField: "Textfeld hinzufügen",
     clearDocs: "Leeren",
     prevPage: "Vorherige Seite",
@@ -153,6 +167,7 @@ const i18n = {
     helpStep4: "Klicke auf „Textfeld hinzufügen“ oder ins Dokument. Das Feld lässt sich verschieben und in Schrift und Farbe ändern.",
     helpStep5: "Erstelle oder wähle eine gespeicherte Signatur, füge sie in das Dokument ein und klicke auf „Dokument speichern“.",
     helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
+    helpScan: "Versucht, eine Seite über die Windows-Komponente BRINO Scanner Bridge vom Scanner zu holen. Wenn Komponente oder Scanner fehlen, erscheint eine Meldung.",
     helpAddTextField: "Fügt ein neues Feld in die Mitte des sichtbaren Dokumentbereichs ein. Du kannst es an die gewünschte Stelle ziehen.",
     helpRedaction: "Fügt einen sichtbaren Marker über vertrauliche Angaben. Das Originaldokument wird nicht geändert und der Marker ist nicht für unbemerkte Textersetzung gedacht.",
     helpClearDocs: "Entfernt alle geladenen Seiten und zeigt wieder die Startseite.",
@@ -163,6 +178,7 @@ const i18n = {
     helpCreateSignature: "Öffnet das Signaturfenster: zeichnen, Datei laden oder aus der Zwischenablage einfügen.",
     helpMySignatures: "Öffnet die Seite mit gespeicherten Signaturvorlagen.",
     helpSignatureStrip: "Zeigt gespeicherte Signaturen zum schnellen Einfügen.",
+    helpPrint: "Druckt den aktuellen Dokumentstand: Seiten, Text, Marker und Signaturen ohne Raster, Hilfslinie und Bearbeitungsrahmen.",
     helpSave: "Speichert das ganze geladene Dokument im gewählten Format.",
     rateTitle: "Gefällt dir BRINO?",
     rateText: "Wenn dir das Programm beim Ausfüllen von Dokumenten hilft und Papier spart, gib bitte eine Bewertung oder Rezension bei Microsoft Edge Add-ons ab.",
@@ -221,6 +237,13 @@ const i18n = {
     insertSavedSignature: "Gespeicherte Signatur ins Dokument einfügen",
     chooseDocumentFirst: "Bitte zuerst ein Dokument wählen",
     openDocumentFirst: "Bitte zuerst ein Dokument öffnen",
+    scanUnavailable: "Direktes Scannen aus der Browser-Erweiterung ist nur mit der installierten Windows-Komponente BRINO Scanner Bridge möglich. Sie wurde nicht gefunden oder ist nicht verfügbar. Scanne vorerst mit Windows Scan und füge die Datei in BRINO hinzu.",
+    scanFailed: "Scannen fehlgeschlagen: ",
+    scanCanceled: "Scan abgebrochen.",
+    scanPage: "Scan",
+    scanning: "Scannen…",
+    printing: "Druck vorbereiten…",
+    printFailed: "Drucken konnte nicht geöffnet werden: ",
     drawSignatureFirst: "Bitte zuerst eine Signatur zeichnen",
     signaturePreviewReady: "So wird die Signatur als Vorlage gespeichert.",
     signaturePreviewWholeFile: "Aktuell wird die ganze Datei gezeigt. Markiere nur die Signatur, falls genauer zugeschnitten werden soll.",
@@ -240,6 +263,8 @@ const i18n = {
   en: {
     title: "BRINO — form editor",
     addFiles: "Add files",
+    scanDocument: "Scan",
+    printDocument: "Print",
     addTextField: "Add text field",
     clearDocs: "Clear",
     prevPage: "Previous page",
@@ -261,6 +286,7 @@ const i18n = {
     helpStep4: "Click Add text field or click the document. The field can be dragged and edited with font and color controls.",
     helpStep5: "Create or choose a saved signature, insert it into the document, then click Save document.",
     helpAddFiles: "Loads one or more documents into the editor.",
+    helpScan: "Attempts to receive a page from a scanner through the Windows BRINO Scanner Bridge component. If the component or scanner is missing, BRINO shows a message.",
     helpAddTextField: "Adds a new field in the center of the visible document area. You can drag it to the exact place you need.",
     helpRedaction: "Adds a visible marker over confidential information. It does not change the original document and is not intended for hidden text replacement.",
     helpClearDocs: "Removes all loaded pages and returns to the home page.",
@@ -271,6 +297,7 @@ const i18n = {
     helpCreateSignature: "Opens the signature window: draw, load a file or paste from the clipboard.",
     helpMySignatures: "Opens the page with saved signature templates.",
     helpSignatureStrip: "Shows saved signatures for quick insertion.",
+    helpPrint: "Prints the current document state: pages, text, markers and signatures without grid, guide or editing handles.",
     helpSave: "Saves the entire loaded document in the selected format.",
     rateTitle: "Enjoying BRINO?",
     rateText: "If the app helps you fill documents and save paper, please leave a rating or review in Microsoft Edge Add-ons.",
@@ -329,6 +356,13 @@ const i18n = {
     insertSavedSignature: "Insert saved signature into document",
     chooseDocumentFirst: "Choose a document first",
     openDocumentFirst: "Open a document first",
+    scanUnavailable: "Direct scanning from a browser extension is available only through the installed Windows BRINO Scanner Bridge component. It was not found or is unavailable. For now, scan with Windows Scan and add the resulting file to BRINO.",
+    scanFailed: "Scan failed: ",
+    scanCanceled: "Scan canceled.",
+    scanPage: "Scan",
+    scanning: "Scanning…",
+    printing: "Preparing print…",
+    printFailed: "Could not open print: ",
     drawSignatureFirst: "Draw a signature first",
     signaturePreviewReady: "This is how the signature will be saved as a template.",
     signaturePreviewWholeFile: "The whole file is shown now. Select only the signature if you need a tighter crop.",
@@ -1477,6 +1511,75 @@ function isLegacyDocFile(file) {
   );
 }
 
+async function addScannedImagesToDocument(scans) {
+  const pages = Array.from(scans || []).filter(Boolean);
+  if (!pages.length) return;
+  if (!state.kind) {
+    resetDocumentState();
+    resetDocumentAdjustments();
+  }
+  const oldPages = state.pageSources.length;
+  for (const scan of pages) {
+    const dataUrl = scan.dataUrl || (scan.imageBase64 ? `data:${scan.mimeType || "image/png"};base64,${scan.imageBase64}` : "");
+    if (!dataUrl) continue;
+    const img = await loadImageElement(dataUrl);
+    state.pageSources.push({ type: "image", image: img, label: scan.label || `${t("scanPage")} ${state.pageSources.length + 1}` });
+  }
+  if (state.pageSources.length === oldPages) return;
+  state.kind = "document";
+  state.pages = state.pageSources.length;
+  state.page = oldPages + 1;
+  $("pageNav").hidden = state.pages < 2;
+  $("pageCount").textContent = String(state.pages);
+  await renderPage();
+  await renderThumbnails();
+  scheduleDraftSave();
+}
+
+function sendScannerNativeMessage(message) {
+  return new Promise((resolve, reject) => {
+    const runtime = typeof chrome !== "undefined" ? chrome.runtime : null;
+    if (!runtime?.sendNativeMessage) {
+      reject(new Error(t("scanUnavailable")));
+      return;
+    }
+    try {
+      const maybePromise = runtime.sendNativeMessage(SCANNER_NATIVE_HOST, message, (response) => {
+        if (runtime.lastError) reject(new Error(runtime.lastError.message));
+        else resolve(response);
+      });
+      if (maybePromise?.then) maybePromise.then(resolve, reject);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+async function scanDocument() {
+  const btn = $("scanBtn");
+  btn.disabled = true;
+  btn.textContent = t("scanning");
+  try {
+    const response = await sendScannerNativeMessage({
+      action: "scan",
+      preferredFormat: "png",
+      app: "BRINO",
+    });
+    if (!response || response.canceled || response.cancelled) {
+      console.info(t("scanCanceled"));
+      return;
+    }
+    if (response.error) throw new Error(response.error);
+    await addScannedImagesToDocument(response.pages || [response]);
+  } catch (err) {
+    console.error(err);
+    alert(err.message === t("scanUnavailable") ? err.message : t("scanFailed") + err.message + "\n\n" + t("scanUnavailable"));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t("scanDocument");
+  }
+}
+
 async function renderDocxFileToSources(file) {
   if (!window.docx?.renderAsync || !window.html2canvas || !window.JSZip) {
     throw new Error(t("docxModuleMissing"));
@@ -1816,6 +1919,7 @@ $("fileInput2").onchange = async (e) => {
   e.target.value = "";
 };
 $("clearDocsBtn").onclick = () => showHome(true);
+$("scanBtn").onclick = scanDocument;
 
 let fileDragDepth = 0;
 
@@ -3283,8 +3387,8 @@ $("cropSave").onclick = () => {
   setSignatureSaveEnabled(false);
 };
 
-/* ================= 4. Экспорт (сплющивание слоёв, без сетки) ================= */
-async function flattenPage(pageNumber) {
+/* ================= 4. Финальный рендер, экспорт и печать ================= */
+async function renderFinalPage(pageNumber) {
   const source = state.pageSources[pageNumber - 1];
   if (!source) throw new Error(`${t("pageNotFound")}: ${pageNumber}`);
   const sourceCanvas = await renderSourceCanvas(source, RENDER_SCALE);
@@ -3319,6 +3423,22 @@ async function flattenPage(pageNumber) {
     }
   }
   return out;
+}
+
+async function buildFinalPdf() {
+  const { jsPDF } = window.jspdf;
+  let pdf = null;
+  for (let p = 1; p <= state.pages; p++) {
+    const canvas = await renderFinalPage(p);
+    const w = canvas.width / RENDER_SCALE;
+    const h = canvas.height / RENDER_SCALE;
+    const orientation = w > h ? "landscape" : "portrait";
+    if (!pdf) pdf = new jsPDF({ unit: "pt", format: [w, h], orientation });
+    else pdf.addPage([w, h], orientation);
+    pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, w, h);
+  }
+  applyPdfHiddenMark(pdf);
+  return pdf;
 }
 
 function drawCanvasInto(target, source, degrees) {
@@ -3386,6 +3506,41 @@ function downloadDataUrl(dataUrl, filename) {
   a.click();
 }
 
+async function printCurrentDocument() {
+  if (!state.kind) return alert(t("openDocumentFirst"));
+  const btn = $("printBtn");
+  btn.disabled = true;
+  btn.textContent = t("printing");
+  let url = "";
+  let frame = null;
+  try {
+    const pdf = await buildFinalPdf();
+    url = URL.createObjectURL(pdf.output("blob"));
+    frame = document.createElement("iframe");
+    frame.className = "print-frame";
+    frame.src = url;
+    document.body.appendChild(frame);
+    await new Promise((resolve, reject) => {
+      frame.onload = resolve;
+      frame.onerror = () => reject(new Error(t("printFailed")));
+    });
+    frame.contentWindow?.focus();
+    frame.contentWindow?.print();
+    window.setTimeout(() => {
+      frame?.remove();
+      if (url) URL.revokeObjectURL(url);
+    }, 60000);
+  } catch (err) {
+    console.error(err);
+    frame?.remove();
+    if (url) URL.revokeObjectURL(url);
+    alert(t("printFailed") + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t("printDocument");
+  }
+}
+
 $("saveBtn").onclick = async () => {
   if (!state.kind) return alert(t("openDocumentFirst"));
   const btn = $("saveBtn");
@@ -3394,22 +3549,11 @@ $("saveBtn").onclick = async () => {
   try {
     const fmt = $("exportFormat").value;
     if (fmt === "png") {
-      const canvas = await flattenPage(state.page);
+      const canvas = await renderFinalPage(state.page);
       stampHiddenCanvasMark(canvas);
       downloadDataUrl(canvas.toDataURL("image/png"), `document-page-${state.page}.png`);
     } else {
-      const { jsPDF } = window.jspdf;
-      let pdf = null;
-      for (let p = 1; p <= state.pages; p++) {
-        const canvas = await flattenPage(p);
-        const w = canvas.width / RENDER_SCALE;
-        const h = canvas.height / RENDER_SCALE;
-        const orientation = w > h ? "landscape" : "portrait";
-        if (!pdf) pdf = new jsPDF({ unit: "pt", format: [w, h], orientation });
-        else pdf.addPage([w, h], orientation);
-        pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, w, h);
-      }
-      applyPdfHiddenMark(pdf);
+      const pdf = await buildFinalPdf();
       pdf.save("document-signed.pdf");
     }
   } catch (err) {
@@ -3420,6 +3564,8 @@ $("saveBtn").onclick = async () => {
     btn.textContent = t("saveDocument");
   }
 };
+
+$("printBtn").onclick = printCurrentDocument;
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveDraftNow().catch(() => {});

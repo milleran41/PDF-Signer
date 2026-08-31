@@ -47,6 +47,7 @@
           Добавить файлы
           <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
+        <button class="btn ghost" id="scanBtn" data-i18n="scanDocument">Сканировать</button>
 
         <button class="btn add-text-btn" id="addTextFieldBtn" data-i18n="addTextField">Добавить текстовое поле</button>
 
@@ -91,6 +92,7 @@
         </div>
         <div class="actions-stack">
           <button class="btn icon help-btn" id="helpBtn" title="Справка" data-i18n-title="helpTitle">?</button>
+          <button class="btn ghost" id="printBtn" data-i18n="printDocument">Печать</button>
           <select id="languageSelect" class="select small" title="Язык интерфейса" data-i18n-title="languageTitle">
             <option value="ru">RU</option>
             <option value="de">DE</option>
@@ -212,6 +214,7 @@
             <h3 data-i18n="helpButtonsTitle">Назначение кнопок</h3>
             <div class="help-grid">
               <div><strong data-i18n="addFiles">Добавить файлы</strong><p data-i18n="helpAddFiles">Загружает один или несколько документов в редактор.</p></div>
+              <div><strong data-i18n="scanDocument">Сканировать</strong><p data-i18n="helpScan">Пытается получить страницу со сканера через Windows-компонент BRINO Scanner Bridge. Если компонент или сканер не найден, показывает сообщение.</p></div>
               <div><strong data-i18n="addTextField">Добавить текстовое поле</strong><p data-i18n="helpAddTextField">Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.</p></div>
               <div><strong data-i18n="redactionTool">Скрыть данные</strong><p data-i18n="helpRedaction">Добавляет видимый маркер поверх конфиденциальной записи. Это не меняет исходный документ и не предназначено для незаметной подмены текста.</p></div>
               <div><strong data-i18n="clearDocs">Очистить</strong><p data-i18n="helpClearDocs">Удаляет все загруженные листы и возвращает главную страницу.</p></div>
@@ -222,6 +225,7 @@
               <div><strong data-i18n="createSignature">Создать подпись</strong><p data-i18n="helpCreateSignature">Открывает окно создания подписи: можно нарисовать, загрузить файл или вставить из буфера.</p></div>
               <div><strong data-i18n="mySignatures">Мои подписи</strong><p data-i18n="helpMySignatures">Открывает страницу с сохранёнными шаблонами подписей.</p></div>
               <div><strong data-i18n="signatures">Подписи:</strong><p data-i18n="helpSignatureStrip">Показывает сохранённые подписи для быстрой вставки в документ.</p></div>
+              <div><strong data-i18n="printDocument">Печать</strong><p data-i18n="helpPrint">Печатает текущее состояние документа: страницы, текст, маркеры и подписи без сетки, ориентира и служебных рамок.</p></div>
               <div><strong data-i18n="saveDocument">Сохранить документ</strong><p data-i18n="helpSave">Сохраняет весь загруженный документ целиком в выбранном формате.</p></div>
             </div>
           </section>
