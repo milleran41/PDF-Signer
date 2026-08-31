@@ -76,7 +76,7 @@ const i18n = {
     signatures: "Подписи:",
     noSaved: "нет сохранённых",
     homeTitle: "Главная страница",
-    homeText: "Выберите документ, который нужно заполнить, а затем добавьте текст и подпись.",
+    homeText: "Выберите документ, который нужно заполнить, или перетащите файлы в окно программы.",
     chooseDocument: "Выбрать документ",
     supportedFiles: "Поддерживаются PDF, DOCX и изображения. Всё обрабатывается локально в браузере.",
     signatureTitle: "Цифровая подпись",
@@ -184,7 +184,7 @@ const i18n = {
     signatures: "Signaturen:",
     noSaved: "keine gespeichert",
     homeTitle: "Startseite",
-    homeText: "Wähle das Dokument aus, das ausgefüllt werden soll, und füge dann Text und Signatur hinzu.",
+    homeText: "Wähle das Dokument aus, das ausgefüllt werden soll, oder ziehe Dateien in das Programmfenster.",
     chooseDocument: "Dokument wählen",
     supportedFiles: "PDF, DOCX und Bilder werden unterstützt. Alles wird lokal im Browser verarbeitet.",
     signatureTitle: "Digitale Signatur",
@@ -292,7 +292,7 @@ const i18n = {
     signatures: "Signatures:",
     noSaved: "none saved",
     homeTitle: "Home page",
-    homeText: "Choose the document you need to fill, then add text and a signature.",
+    homeText: "Choose the document you need to fill, or drag files into the app window.",
     chooseDocument: "Choose document",
     supportedFiles: "PDF, DOCX and images are supported. Everything is processed locally in the browser.",
     signatureTitle: "Digital signature",
@@ -1816,19 +1816,38 @@ $("fileInput2").onchange = async (e) => {
   e.target.value = "";
 };
 $("clearDocsBtn").onclick = () => showHome(true);
-["dragenter", "dragover"].forEach((eventName) => {
-  $("canvasArea").addEventListener(eventName, (e) => {
+
+let fileDragDepth = 0;
+
+function dragHasFiles(e) {
+  return Array.from(e.dataTransfer?.types || []).includes("Files");
+}
+
+function modalIsOpen() {
+  return !$("sigModal").hidden || !$("helpModal").hidden || !$("rateModal").hidden;
+}
+
+function setFileDragActive(active) {
+  $("canvasArea").classList.toggle("drag-over", active);
+}
+
+["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+  document.addEventListener(eventName, (e) => {
+    if (!dragHasFiles(e)) return;
     e.preventDefault();
-    $("canvasArea").classList.add("drag-over");
+    e.stopPropagation();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+
+    if (eventName === "dragenter") fileDragDepth++;
+    if (eventName === "dragleave") fileDragDepth = Math.max(0, fileDragDepth - 1);
+    if (eventName === "drop") fileDragDepth = 0;
+
+    setFileDragActive(fileDragDepth > 0 && !modalIsOpen());
   });
 });
-["dragleave", "drop"].forEach((eventName) => {
-  $("canvasArea").addEventListener(eventName, (e) => {
-    e.preventDefault();
-    $("canvasArea").classList.remove("drag-over");
-  });
-});
-$("canvasArea").addEventListener("drop", async (e) => {
+
+document.addEventListener("drop", async (e) => {
+  if (!dragHasFiles(e) || modalIsOpen()) return;
   const files = e.dataTransfer?.files;
   if (files?.length) await openFiles(files, { append: Boolean(state.kind) });
 });
