@@ -48,7 +48,7 @@
           <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
 
-        <button class="btn ghost" id="addTextFieldBtn" data-i18n="addTextField">Добавить текстовое поле</button>
+        <button class="btn add-text-btn" id="addTextFieldBtn" data-i18n="addTextField">Добавить текстовое поле</button>
 
         <div class="group" id="pageNav" hidden>
           <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
@@ -73,8 +73,6 @@
 
         <div class="spacer"></div>
 
-        <button class="btn ghost" id="signBtn" data-i18n="createSignature">Создать подпись</button>
-        <button class="btn ghost" id="savedSignaturesBtn" data-i18n="mySignatures">Мои подписи</button>
         <div hidden>
           <input type="checkbox" id="gridToggle" />
           <select id="gridMode"><option value="grid">grid</option><option value="lines">lines</option></select>
@@ -110,14 +108,6 @@
             <option value="ko">KO</option>
             <option value="hi">HI</option>
           </select>
-          <div class="actions-row">
-            <button class="btn ghost" id="clearDocsBtn" data-i18n="clearDocs">Очистить</button>
-            <select id="exportFormat" class="select small">
-              <option value="pdf">PDF</option>
-              <option value="png">PNG</option>
-            </select>
-            <button class="btn primary" id="saveBtn" data-i18n="saveDocument">Сохранить документ</button>
-          </div>
         </div>
       </header>
 
@@ -142,10 +132,17 @@
           <option value="#ffffff" data-i18n="redactionWhite">Белый</option>
         </select>
         <span class="divider-v"></span>
+        <button class="btn ghost" id="signBtn" data-i18n="createSignature">Создать подпись</button>
+        <button class="btn ghost" id="savedSignaturesBtn" data-i18n="mySignatures">Мои подписи</button>
         <span class="label" data-i18n="signatures">Подписи:</span>
         <div id="sigStrip" class="sig-strip"><span class="muted small" data-i18n="noSaved">нет сохранённых</span></div>
         <div class="spacer"></div>
-        <span class="hint" data-i18n="editorHint">Добавьте текстовое поле кнопкой сверху или кликом по документу. Каждое поле можно перетаскивать отдельно.</span>
+        <button class="btn ghost" id="clearDocsBtn" data-i18n="clearDocs">Очистить</button>
+        <select id="exportFormat" class="select small">
+          <option value="pdf">PDF</option>
+          <option value="png">PNG</option>
+        </select>
+        <button class="btn primary" id="saveBtn" data-i18n="saveDocument">Сохранить документ</button>
       </div>
       </div>
 
