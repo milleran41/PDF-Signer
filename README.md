@@ -1,12 +1,12 @@
-# PDF Signer
+# BRINO
 
-PDF Signer is a browser extension for filling forms and adding signatures without printing the document first.
+BRINO is a browser extension for filling forms and adding signatures without printing the document first.
 
-Important: PDF Signer is not a full PDF editor. It does not change the original text, images, structure, or fields inside the source document. The app renders the selected document as a background and lets you place a new editable layer on top of it: text notes, filled-in lines, and a saved signature. The result is exported as a new PDF or PNG file.
+Important: BRINO is not a full PDF editor. It does not change the original text, images, structure, or fields inside the source document. The app renders the selected document as a background and lets you place a new editable layer on top of it: text notes, filled-in lines, and a saved signature. The result is exported as a new PDF or PNG file.
 
 ## Why It Exists
 
-Many official forms still have to be filled by hand, printed, signed, scanned, and sent back. PDF Signer helps avoid that cycle:
+Many official forms still have to be filled by hand, printed, signed, scanned, and sent back. BRINO helps avoid that cycle:
 
 - fill PDF, DOCX, PNG, JPG, and scanned documents directly in the browser;
 - add text precisely over lines or cells with a helper grid;
@@ -47,7 +47,7 @@ Output:
 
 ## Supported Platforms
 
-PDF Signer is intended for desktop and laptop computers.
+BRINO is intended for desktop and laptop computers.
 
 Tested target:
 
@@ -60,11 +60,11 @@ Expected but not yet fully verified:
 - macOS 13+ with a Chromium-based browser
 - Linux with a Chromium-based browser
 
-If you install PDF Signer on macOS or Linux, feedback about installation, PDF rendering, clipboard paste, saving files, and signature handling is welcome.
+If you install BRINO on macOS or Linux, feedback about installation, PDF rendering, clipboard paste, saving files, and signature handling is welcome.
 
 ## Privacy
 
-PDF Signer is designed to work locally in the browser. Documents are processed on the user's device and are not intentionally uploaded to external servers by the extension.
+BRINO is designed to work locally in the browser. Documents are processed on the user's device and are not intentionally uploaded to external servers by the extension.
 
 The extension stores saved signatures and the current draft locally in the browser so work can be reused or restored after a refresh. Exported documents may contain a small technical origin mark identifying the app.
 
@@ -72,7 +72,7 @@ See [PRIVACY.md](PRIVACY.md) for details.
 
 ## How To Use
 
-1. Open PDF Signer from the browser extension icon.
+1. Open BRINO from the browser extension icon.
 2. Click **Add files** or choose a document on the home page.
 3. Select a page from the thumbnails on the left.
 4. Use rotation, document size, grid, row step, layer offset, and guide controls to align the document.
@@ -87,7 +87,7 @@ See [PRIVACY.md](PRIVACY.md) for details.
 1. Open `chrome://extensions` or `edge://extensions`.
 2. Enable developer mode.
 3. Choose **Load unpacked**.
-4. Select the `PDF Signer` project folder.
+4. Select this project folder.
 5. After each code update, click **Reload** on the extension page.
 
 ## Microsoft Edge Add-ons Preparation
@@ -109,3 +109,4 @@ After publication, the in-app rating prompt should open the Microsoft Edge Add-o
 ## Current Status
 
 The project is usable as a local unpacked extension and is close to store preparation, but it still needs final store assets, privacy-policy hosting, package review, and manual testing before public submission.
+

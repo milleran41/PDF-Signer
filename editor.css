@@ -116,7 +116,19 @@ body {
   flex-wrap: wrap;
 }
 .toolbar { background: var(--panel-2); }
-.brand { font-weight: 700; margin-right: 6px; }
+.brand {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-right: 6px;
+}
+.brand img {
+  display: block;
+  width: auto;
+  height: 34px;
+  max-width: 132px;
+  object-fit: contain;
+}
 .group { display: flex; align-items: center; gap: 6px; }
 .actions-stack {
   display: flex;

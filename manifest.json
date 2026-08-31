@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "PDF Signer — заполнение и подпись бланков",
+  "name": "BRINO — заполнение и подпись бланков",
   "version": "1.0.0",
   "description": "Заполняйте PDF, DOCX и изображения: добавляйте текст и подпись поверх документа без изменения исходного файла.",
   "permissions": ["storage", "activeTab", "downloads", "clipboardRead"],
   "action": {
+    "default_title": "BRINO",
     "default_icon": "icon.png"
   },
   "background": { "service_worker": "background.js" },
@@ -21,3 +22,4 @@
   ],
   "icons": { "48": "icon.png", "128": "icon.png" }
 }
+

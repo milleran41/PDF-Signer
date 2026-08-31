@@ -9,7 +9,7 @@ function openEditor(params = {}) {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("[PDF Signer] installed");
+  console.log("[BRINO] installed");
 });
 
 chrome.action.onClicked.addListener(() => {
@@ -27,3 +27,4 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
   return false;
 });
+

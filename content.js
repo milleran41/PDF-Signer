@@ -1,4 +1,4 @@
-// Content script: adds a small "Заполнить в PDF Signer" button when the page is a PDF.
+// Content script: adds a small "Заполнить в BRINO" button when the page is a PDF.
 (function () {
   const isPdf =
     location.pathname.toLowerCase().endsWith(".pdf") ||
@@ -7,7 +7,7 @@
   window.__pdfSignerInjected = true;
 
   const btn = document.createElement("button");
-  btn.textContent = "✍ Заполнить в PDF Signer";
+  btn.textContent = "✍ Заполнить в BRINO";
   Object.assign(btn.style, {
     position: "fixed",
     zIndex: "2147483647",
@@ -27,3 +27,4 @@
   });
   document.documentElement.appendChild(btn);
 })();
+

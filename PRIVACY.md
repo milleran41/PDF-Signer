@@ -1,12 +1,12 @@
-# Privacy Policy for PDF Signer
+# Privacy Policy for BRINO
 
 Last updated: 2026-08-30
 
-PDF Signer is a browser extension for filling documents and adding signatures locally in the browser.
+BRINO is a browser extension for filling documents and adding signatures locally in the browser.
 
 ## Data Processed By The Extension
 
-PDF Signer may process:
+BRINO may process:
 
 - documents selected by the user, including PDF, DOCX, and image files;
 - screenshots or images pasted from the clipboard;
@@ -16,7 +16,7 @@ PDF Signer may process:
 
 ## Local Processing
 
-PDF Signer is designed to process documents on the user's device. The extension does not intentionally upload selected documents, signatures, clipboard images, or draft data to external servers.
+BRINO is designed to process documents on the user's device. The extension does not intentionally upload selected documents, signatures, clipboard images, or draft data to external servers.
 
 ## Local Storage
 
@@ -30,20 +30,21 @@ The user can remove loaded document data by using the **Clear** button in the ed
 
 ## Clipboard Access
 
-PDF Signer uses clipboard access only when the user chooses to paste a signature source image or presses `Ctrl+V` in the signature window.
+BRINO uses clipboard access only when the user chooses to paste a signature source image or presses `Ctrl+V` in the signature window.
 
 ## Exported Files
 
-Exported files are created locally by the browser. Exported PDF or PNG files may include a technical origin mark identifying the app as `CodeWerk Studio | PDF Signer`.
+Exported files are created locally by the browser. Exported PDF or PNG files may include a technical origin mark identifying the app as `CodeWerk Studio | BRINO`.
 
 ## Remote Code
 
-PDF Signer is intended to run using files bundled with the extension. It does not intentionally load remote code.
+BRINO is intended to run using files bundled with the extension. It does not intentionally load remote code.
 
 ## Third-Party Libraries
 
-PDF Signer includes local JavaScript libraries for rendering and exporting documents. These libraries are bundled with the extension package.
+BRINO includes local JavaScript libraries for rendering and exporting documents. These libraries are bundled with the extension package.
 
 ## Contact
 
-For questions about this privacy policy, contact the publisher of PDF Signer.
+For questions about this privacy policy, contact the publisher of BRINO.
+

@@ -1,4 +1,4 @@
-/* PDF Signer — MVP editor
+/* BRINO — MVP editor
  * Слои: docCanvas (документ) -> #grid (вспомогательная сетка, НЕ экспортируется)
  *       -> #overlay (текст + подписи, экспортируется)
  */
@@ -15,14 +15,14 @@ const RATE_LAST_PROMPT_KEY = "pdfsigner.rate.lastPrompt";
 const RATE_DISMISSED_KEY = "pdfsigner.rate.dismissed";
 const RATE_FIRST_PROMPT_AT = 5;
 const RATE_REPEAT_EVERY = 5;
-const HIDDEN_MARK = "CodeWerk Studio | PDF Signer";
-const HIDDEN_MARK_KEYWORDS = "CodeWerk Studio, PDF Signer, hidden origin mark";
+const HIDDEN_MARK = "CodeWerk Studio | BRINO";
+const HIDDEN_MARK_KEYWORDS = "CodeWerk Studio, BRINO, hidden origin mark";
 
 const $ = (id) => document.getElementById(id);
 
 const i18n = {
   ru: {
-    title: "PDF Signer — редактор бланка",
+    title: "BRINO — редактор бланка",
     addFiles: "Добавить файлы",
     clearDocs: "Очистить",
     prevPage: "Предыдущая страница",
@@ -64,7 +64,7 @@ const i18n = {
     helpMySignatures: "Открывает страницу с сохранёнными шаблонами подписей.",
     helpSignatureStrip: "Показывает сохранённые подписи для быстрой вставки в документ.",
     helpSave: "Сохраняет весь загруженный документ целиком в выбранном формате.",
-    rateTitle: "Нравится PDF Signer?",
+    rateTitle: "Нравится BRINO?",
     rateText: "Если программа помогает вам заполнять документы и экономить бумагу, пожалуйста, поставьте оценку или оставьте отзыв в Microsoft Edge Add-ons.",
     rateNow: "Оценить",
     rateLater: "Позже",
@@ -139,7 +139,7 @@ const i18n = {
     page: "Страница",
   },
   de: {
-    title: "PDF Signer — Formular-Editor",
+    title: "BRINO — Formular-Editor",
     addFiles: "Dateien hinzufügen",
     clearDocs: "Leeren",
     prevPage: "Vorherige Seite",
@@ -181,7 +181,7 @@ const i18n = {
     helpMySignatures: "Öffnet die Seite mit gespeicherten Signaturvorlagen.",
     helpSignatureStrip: "Zeigt gespeicherte Signaturen zum schnellen Einfügen.",
     helpSave: "Speichert das ganze geladene Dokument im gewählten Format.",
-    rateTitle: "Gefällt dir PDF Signer?",
+    rateTitle: "Gefällt dir BRINO?",
     rateText: "Wenn dir das Programm beim Ausfüllen von Dokumenten hilft und Papier spart, gib bitte eine Bewertung oder Rezension bei Microsoft Edge Add-ons ab.",
     rateNow: "Bewerten",
     rateLater: "Später",
@@ -256,7 +256,7 @@ const i18n = {
     page: "Seite",
   },
   en: {
-    title: "PDF Signer — form editor",
+    title: "BRINO — form editor",
     addFiles: "Add files",
     clearDocs: "Clear",
     prevPage: "Previous page",
@@ -298,7 +298,7 @@ const i18n = {
     helpMySignatures: "Opens the page with saved signature templates.",
     helpSignatureStrip: "Shows saved signatures for quick insertion.",
     helpSave: "Saves the entire loaded document in the selected format.",
-    rateTitle: "Enjoying PDF Signer?",
+    rateTitle: "Enjoying BRINO?",
     rateText: "If the app helps you fill documents and save paper, please leave a rating or review in Microsoft Edge Add-ons.",
     rateNow: "Rate",
     rateLater: "Later",
@@ -376,7 +376,7 @@ const i18n = {
 
 const extraLocales = {
   es: {
-    title: "PDF Signer — editor de formularios",
+    title: "BRINO — editor de formularios",
     addFiles: "Añadir archivos",
     clearDocs: "Limpiar",
     prevPage: "Página anterior",
@@ -462,7 +462,7 @@ const extraLocales = {
     page: "Página",
   },
   fr: {
-    title: "PDF Signer — éditeur de formulaire",
+    title: "BRINO — éditeur de formulaire",
     addFiles: "Ajouter des fichiers",
     clearDocs: "Effacer",
     prevPage: "Page précédente",
@@ -548,7 +548,7 @@ const extraLocales = {
     page: "Page",
   },
   it: {
-    title: "PDF Signer — editor moduli",
+    title: "BRINO — editor moduli",
     addFiles: "Aggiungi file",
     clearDocs: "Cancella",
     grid: "Griglia",
@@ -615,7 +615,7 @@ const extraLocales = {
     page: "Pagina",
   },
   pt: {
-    title: "PDF Signer — editor de formulários",
+    title: "BRINO — editor de formulários",
     addFiles: "Adicionar arquivos",
     clearDocs: "Limpar",
     grid: "Grade",
@@ -682,7 +682,7 @@ const extraLocales = {
     page: "Página",
   },
   pl: {
-    title: "PDF Signer — edytor formularzy",
+    title: "BRINO — edytor formularzy",
     addFiles: "Dodaj pliki",
     clearDocs: "Wyczyść",
     grid: "Siatka",
@@ -748,7 +748,7 @@ const extraLocales = {
     page: "Strona",
   },
   uk: {
-    title: "PDF Signer — редактор бланків",
+    title: "BRINO — редактор бланків",
     addFiles: "Додати файли",
     clearDocs: "Очистити",
     grid: "Сітка",
@@ -814,7 +814,7 @@ const extraLocales = {
     page: "Сторінка",
   },
   tr: {
-    title: "PDF Signer — form düzenleyici",
+    title: "BRINO — form düzenleyici",
     addFiles: "Dosya ekle",
     clearDocs: "Temizle",
     grid: "Izgara",
@@ -880,7 +880,7 @@ const extraLocales = {
     page: "Sayfa",
   },
   ar: {
-    title: "PDF Signer — محرر النماذج",
+    title: "BRINO — محرر النماذج",
     addFiles: "إضافة ملفات",
     clearDocs: "مسح",
     grid: "الشبكة",
@@ -946,7 +946,7 @@ const extraLocales = {
     page: "صفحة",
   },
   zh: {
-    title: "PDF Signer — 表单编辑器",
+    title: "BRINO — 表单编辑器",
     addFiles: "添加文件",
     clearDocs: "清空",
     grid: "网格",
@@ -1012,7 +1012,7 @@ const extraLocales = {
     page: "页面",
   },
   ja: {
-    title: "PDF Signer — フォーム編集",
+    title: "BRINO — フォーム編集",
     addFiles: "ファイル追加",
     clearDocs: "クリア",
     grid: "グリッド",
@@ -1078,7 +1078,7 @@ const extraLocales = {
     page: "ページ",
   },
   ko: {
-    title: "PDF Signer — 양식 편집기",
+    title: "BRINO — 양식 편집기",
     addFiles: "파일 추가",
     clearDocs: "비우기",
     grid: "격자",
@@ -1144,7 +1144,7 @@ const extraLocales = {
     page: "페이지",
   },
   hi: {
-    title: "PDF Signer — फ़ॉर्म संपादक",
+    title: "BRINO — फ़ॉर्म संपादक",
     addFiles: "फ़ाइलें जोड़ें",
     clearDocs: "साफ़ करें",
     grid: "ग्रिड",
@@ -3159,9 +3159,9 @@ function stampHiddenCanvasMark(canvas) {
 
 function applyPdfHiddenMark(pdf) {
   pdf.setProperties({
-    title: "PDF Signer document",
+    title: "BRINO document",
     subject: HIDDEN_MARK,
-    author: "PDF Signer",
+    author: "BRINO",
     creator: HIDDEN_MARK,
     keywords: HIDDEN_MARK_KEYWORDS,
   });
@@ -3238,3 +3238,4 @@ window.addEventListener("beforeunload", () => {
   }
   maybeShowRatePrompt();
 })();
+
