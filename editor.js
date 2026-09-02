@@ -2128,7 +2128,7 @@ $("gridStepY").onchange = applyGrid;
 /* ================= 2. Текстовый слой ================= */
 const textStyle = {
   family: "sans-serif",
-  size: 16,
+  size: 12,
   bold: false,
   italic: false,
   color: "#111111",
