@@ -3,10 +3,15 @@
   "name": "BRINO — заполнение и подпись бланков",
   "version": "1.0.0",
   "description": "Заполняйте PDF, DOCX и изображения: добавляйте текст и подпись поверх документа без изменения исходного файла.",
-  "permissions": ["storage", "activeTab", "downloads", "clipboardRead"],
+  "permissions": ["clipboardRead"],
   "action": {
     "default_title": "BRINO",
-    "default_icon": "icon.png"
+    "default_icon": {
+      "16": "icon-16.png",
+      "32": "icon-32.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
   },
   "background": { "service_worker": "background.js" },
   "options_page": "options.html",
@@ -20,6 +25,11 @@
   "web_accessible_resources": [
     { "resources": ["editor.html"], "matches": ["<all_urls>"] }
   ],
-  "icons": { "48": "icon.png", "128": "icon.png" }
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
 }
 

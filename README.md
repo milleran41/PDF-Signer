@@ -9,7 +9,7 @@ Important: BRINO is not a full PDF editor. It does not change the original text,
 Many official forms still have to be filled by hand, printed, signed, scanned, and sent back. BRINO helps avoid that cycle:
 
 - fill PDF, DOCX, PNG, JPG, and scanned documents directly in the browser;
-- add text precisely over lines or cells with a helper grid;
+- add movable text fields over the document;
 - create a reusable signature template from a drawing, file, screenshot, or clipboard image;
 - save the finished document without using paper or printer ink;
 - keep document processing local in the browser.
@@ -19,13 +19,15 @@ Many official forms still have to be filled by hand, printed, signed, scanned, a
 - Local document editor for PDF, DOCX, and image files.
 - Multiple pages with thumbnails in the left panel.
 - Page removal and full document clearing.
-- Helper grid with cell mode and ruled-line mode.
-- Row step, layer offset, text lift, line spacing, document scale, zoom, and slight scan rotation.
+- Movable text fields with font, size, color, bold, and italic controls.
+- Document scaling and slight scan rotation.
 - Red alignment guide for straightening scanned pages.
-- Text fields placed by clicking on the document.
+- Canva-like alignment guides for matching text fields, signatures, and redaction markers.
 - Reusable saved signatures.
 - Signature extraction from files, PDFs, images, screenshots, and clipboard paste.
 - Signature cleanup: background removal, darkness, sharpness, thickness, and color.
+- Visible redaction markers for covering confidential information.
+- Print the current edited document through the browser/system print dialog.
 - Local draft restore after page refresh.
 - Multilingual interface.
 - Export to PDF or PNG.
@@ -75,12 +77,13 @@ See [PRIVACY.md](PRIVACY.md) for details.
 1. Open BRINO from the browser extension icon.
 2. Click **Add files** or choose a document on the home page.
 3. Select a page from the thumbnails on the left.
-4. Use rotation, document size, grid, row step, layer offset, and guide controls to align the document.
-5. Click the document to add a text field.
-6. Select a text field to change its font, size, color, lift, and line spacing.
+4. Use rotation, document size, and the red guide to align the document if needed.
+5. Click **Add text field** or click the document to add a text field.
+6. Select a text field to change its font, size, color, bold, or italic style.
 7. Open **Create signature** to draw a signature or extract one from a file, screenshot, or clipboard image.
-8. Insert a saved signature into the document.
-9. Choose PDF or PNG and click **Save document**.
+8. Use **Hide data** to place a visible black or white marker over confidential information if needed.
+9. Insert a saved signature into the document.
+10. Choose PDF or PNG and click **Save document**, or use the print icon to print the edited document.
 
 ## Local Installation For Testing
 
@@ -99,7 +102,7 @@ Before submitting to Microsoft Edge Add-ons, prepare:
 - icon and required store images;
 - clear screenshots showing the editor, signature workflow, and saved result;
 - privacy information and a public privacy policy URL;
-- permission justifications for `storage`, `downloads`, `clipboardRead`, `activeTab`, and page matching used by the content script;
+- permission justification for `clipboardRead` and page matching used by the content script;
 - certification testing notes explaining how reviewers can open the editor, load a sample document, add text/signature, and export the result.
 
 The listing should clearly say that this is a form filling and signing tool, not an editor for changing the original PDF content.
@@ -108,5 +111,5 @@ After publication, the in-app rating prompt should open the Microsoft Edge Add-o
 
 ## Current Status
 
-The project is usable as a local unpacked extension and is close to store preparation, but it still needs final store assets, privacy-policy hosting, package review, and manual testing before public submission.
+The project is prepared for Microsoft Edge Add-ons 1.0 release packaging. Scanner experiments are kept out of the release UI and should not be included in the release ZIP.
 
