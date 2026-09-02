@@ -1159,12 +1159,10 @@ function t(key) {
 }
 
 function setElementText(el, text) {
-  const textNode = Array.from(el.childNodes).find((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
-  if (textNode) {
-    textNode.textContent = text;
-  } else {
-    el.insertBefore(document.createTextNode(text), el.firstChild);
-  }
+  Array.from(el.childNodes)
+    .filter((node) => node.nodeType === Node.TEXT_NODE)
+    .forEach((node) => node.remove());
+  el.insertBefore(document.createTextNode(text), el.firstChild);
 }
 
 function applyLanguage(lang = currentLang) {
