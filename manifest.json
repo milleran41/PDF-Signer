@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "BRINO — заполнение и подпись бланков",
+  "name": "BRINO",
   "version": "1.0.0",
-  "description": "Заполняйте PDF, DOCX и изображения: добавляйте текст и подпись поверх документа без изменения исходного файла.",
+  "description": "Fill PDF, DOCX and image forms in your browser. Add text, hide sensitive data, insert signatures, print and save as PDF.",
   "permissions": ["clipboardRead"],
   "action": {
     "default_title": "BRINO",
