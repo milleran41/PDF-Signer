@@ -2140,7 +2140,25 @@ function activeAnnot() {
   return annotsForPage().find((a) => a.id === activeAnnotId) || null;
 }
 
+function isEmptyTextAnnot(a) {
+  return a?.type === "text" && !String(a.text || "").trim();
+}
+
+function cleanupEmptyTextAnnots(keepId = null, rerender = true) {
+  const list = annotsForPage();
+  const next = list.filter((a) => !(isEmptyTextAnnot(a) && a.id !== keepId));
+  if (next.length === list.length) return false;
+  state.annots[state.page] = next;
+  if (activeAnnotId && !next.some((a) => a.id === activeAnnotId)) activeAnnotId = null;
+  if (rerender) renderAnnots();
+  scheduleDraftSave();
+  return true;
+}
+
 function selectAnnot(a) {
+  if (activeAnnotId && activeAnnotId !== a?.id) {
+    cleanupEmptyTextAnnots(a?.id || null, true);
+  }
   activeAnnotId = a?.id || null;
   if (a?.type === "redaction") {
     $("redactColor").value = a.color || "#000000";
@@ -2239,6 +2257,7 @@ $("redactColor").onchange = () => {
 };
 
 function createTextAnnotation(x, y) {
+  cleanupEmptyTextAnnots(null, false);
   const size = textStyle.size * RENDER_SCALE;
   const a = {
     id: crypto.randomUUID(),
@@ -2264,6 +2283,7 @@ function createTextAnnotation(x, y) {
 }
 
 function createRedactionAnnotation(x, y) {
+  cleanupEmptyTextAnnots(null, false);
   const height = Math.max(12, Math.round(textStyle.size * RENDER_SCALE * 1.25));
   const width = Math.max(80, height * 5);
   const a = {
