@@ -4,6 +4,8 @@
 
 BRINO is a flexible **Document Processor and Overlay Engine**. It allows you to combine, edit, anonymize, and sign multi-page documents directly in your browser without sacrificing document integrity or sending data to external servers.
 
+![BRINO document workflow](BRINO_Dokument_to_PDF_1280x720.png)
+
 ---
 
 ## 🌟 Why It Exists
