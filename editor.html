@@ -48,6 +48,7 @@
           <input type="file" id="fileInput" accept="application/pdf,image/*,.doc,.docx" multiple hidden />
         </label>
         <button class="btn add-text-btn" id="addTextFieldBtn" data-i18n="addTextField">Добавить текстовое поле</button>
+        <button class="btn toggle patch-tool-btn" id="textReplacementBtn" data-i18n="textReplacement">Замена текста</button>
 
         <div class="group" id="pageNav" hidden>
           <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
@@ -115,17 +116,41 @@
       <div class="toolbar">
         <span class="label" data-i18n="text">Текст:</span>
         <select id="fontFamily" class="select">
+          <option value="Times New Roman, Times, serif">Times New Roman (Serif)</option>
+          <option value="Arial, sans-serif" selected>Arial (Sans-serif)</option>
+          <option value="Calibri, Carlito, 'Segoe UI', sans-serif">Calibri (Modern Office)</option>
+          <option value="Helvetica, Arial, 'Nimbus Sans', sans-serif">Helvetica (European Clean)</option>
+          <option value="Aptos, 'Aptos Display', 'Segoe UI', sans-serif">Aptos (New Default Office)</option>
           <option value="sans-serif">Sans-serif</option>
           <option value="serif">Serif</option>
           <option value="monospace">Monospace</option>
+          <option value="Verdana, sans-serif">Verdana</option>
+          <option value="Tahoma, sans-serif">Tahoma</option>
+          <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+          <option value="Georgia, serif">Georgia</option>
+          <option value="Courier New, monospace">Courier New</option>
         </select>
         <select id="fontSize" class="select small">
-          <option>10</option><option selected>12</option><option>16</option>
-          <option>20</option><option>24</option><option>32</option><option>48</option>
+          <option>8</option><option>9</option><option>10</option><option>11</option>
+          <option selected>12</option><option>13</option><option>14</option><option>15</option>
+          <option>16</option><option>18</option><option>20</option><option>22</option>
+          <option>24</option><option>26</option><option>28</option><option>32</option>
+          <option>36</option><option>40</option><option>48</option><option>56</option><option>64</option>
         </select>
         <input type="color" id="textColor" value="#111111" class="color" title="Цвет текста" data-i18n-title="textColor" />
         <button class="btn toggle" id="boldBtn" title="Жирный" data-i18n-title="bold"><b>B</b></button>
         <button class="btn toggle" id="italicBtn" title="Курсив" data-i18n-title="italic"><i>I</i></button>
+        <label class="label" data-i18n="patchSizing">Размер подложки</label>
+        <select id="patchSizing" class="select small">
+          <option value="fixed" data-i18n="patchFixed">Фиксированный</option>
+          <option value="auto" data-i18n="patchAuto">Авто</option>
+        </select>
+        <label class="label" data-i18n="patchAlign">Выравнивание</label>
+        <select id="patchAlign" class="select small">
+          <option value="left" data-i18n="patchStart">Начало</option>
+          <option value="center" data-i18n="patchCenter">По центру</option>
+        </select>
+        <input type="color" id="patchBackground" value="#ffffff" class="color" title="Цвет подложки" data-i18n-title="patchBackground" />
         <button class="btn toggle" id="redactBtn" title="Скрыть данные" data-i18n-title="redactionTool" data-i18n="redactionTool">Скрыть данные</button>
         <select id="redactColor" class="select small" title="Цвет маркера" data-i18n-title="redactionColor">
           <option value="#000000" data-i18n="redactionBlack">Чёрный</option>
@@ -213,6 +238,7 @@
             <div class="help-grid">
               <div><strong data-i18n="addFiles">Добавить файлы</strong><p data-i18n="helpAddFiles">Загружает один или несколько документов в редактор.</p></div>
               <div><strong data-i18n="addTextField">Добавить текстовое поле</strong><p data-i18n="helpAddTextField">Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.</p></div>
+              <div><strong data-i18n="textReplacement">Замена текста</strong><p data-i18n="helpTextReplacement">Создаёт непрозрачную плашку с новым текстом поверх выбранной области. При сохранении плашка и текст сводятся в изображение страницы.</p></div>
               <div><strong data-i18n="redactionTool">Скрыть данные</strong><p data-i18n="helpRedaction">Добавляет видимый маркер поверх конфиденциальной записи. Это не меняет исходный документ и не предназначено для незаметной подмены текста.</p></div>
               <div><strong data-i18n="clearDocs">Очистить</strong><p data-i18n="helpClearDocs">Удаляет все загруженные листы и возвращает главную страницу.</p></div>
               <div><strong data-i18n="docSize">Размер документа</strong><p data-i18n="helpDocSize">Увеличивает или уменьшает сам документ для удобной работы и сохранения.</p></div>

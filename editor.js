@@ -28,6 +28,14 @@ const i18n = {
     scanDocument: "Сканировать",
     printDocument: "Печать",
     addTextField: "Добавить текстовое поле",
+    textReplacement: "Замена текста",
+    patchSizing: "Размер подложки",
+    patchAuto: "Авто",
+    patchFixed: "Фиксированный",
+    patchAlign: "Выравнивание",
+    patchStart: "Начало",
+    patchCenter: "По центру",
+    patchBackground: "Цвет подложки",
     clearDocs: "Очистить",
     prevPage: "Предыдущая страница",
     nextPage: "Следующая страница",
@@ -50,6 +58,7 @@ const i18n = {
     helpAddFiles: "Загружает один или несколько документов в редактор.",
     helpScan: "Пытается получить страницу со сканера через Windows-компонент BRINO Scanner Bridge. Если компонент или сканер не найден, показывает сообщение.",
     helpAddTextField: "Добавляет новое поле в центр видимой части документа. Его можно перетащить в нужное место.",
+    helpTextReplacement: "Создаёт непрозрачную плашку с новым текстом поверх выбранной области. При сохранении плашка и текст сводятся в изображение страницы.",
     helpRedaction: "Добавляет видимый маркер поверх конфиденциальной записи. Это не меняет исходный документ и не предназначено для незаметной подмены текста.",
     helpClearDocs: "Удаляет все загруженные листы и возвращает главную страницу.",
     helpDocSize: "Увеличивает или уменьшает сам документ для удобной работы и сохранения.",
@@ -147,6 +156,14 @@ const i18n = {
     scanDocument: "Scannen",
     printDocument: "Drucken",
     addTextField: "Textfeld hinzufügen",
+    textReplacement: "Textersetzung",
+    patchSizing: "Pflastergröße",
+    patchAuto: "Automatisch",
+    patchFixed: "Fest",
+    patchAlign: "Ausrichtung",
+    patchStart: "Anfang",
+    patchCenter: "Zentriert",
+    patchBackground: "Pflasterfarbe",
     clearDocs: "Leeren",
     prevPage: "Vorherige Seite",
     nextPage: "Nächste Seite",
@@ -169,6 +186,7 @@ const i18n = {
     helpAddFiles: "Lädt ein oder mehrere Dokumente in den Editor.",
     helpScan: "Versucht, eine Seite über die Windows-Komponente BRINO Scanner Bridge vom Scanner zu holen. Wenn Komponente oder Scanner fehlen, erscheint eine Meldung.",
     helpAddTextField: "Fügt ein neues Feld in die Mitte des sichtbaren Dokumentbereichs ein. Du kannst es an die gewünschte Stelle ziehen.",
+    helpTextReplacement: "Erstellt ein undurchsichtiges Pflaster mit neuem Text über dem gewählten Bereich. Beim Speichern werden Pflaster und Text in das Seitenbild eingebettet.",
     helpRedaction: "Fügt einen sichtbaren Marker über vertrauliche Angaben. Das Originaldokument wird nicht geändert und der Marker ist nicht für unbemerkte Textersetzung gedacht.",
     helpClearDocs: "Entfernt alle geladenen Seiten und zeigt wieder die Startseite.",
     helpDocSize: "Vergrößert oder verkleinert das Dokument zum Bearbeiten und Speichern.",
@@ -266,6 +284,14 @@ const i18n = {
     scanDocument: "Scan",
     printDocument: "Print",
     addTextField: "Add text field",
+    textReplacement: "Text replacement",
+    patchSizing: "Patch size",
+    patchAuto: "Auto",
+    patchFixed: "Fixed",
+    patchAlign: "Alignment",
+    patchStart: "Start",
+    patchCenter: "Center",
+    patchBackground: "Patch color",
     clearDocs: "Clear",
     prevPage: "Previous page",
     nextPage: "Next page",
@@ -288,6 +314,7 @@ const i18n = {
     helpAddFiles: "Loads one or more documents into the editor.",
     helpScan: "Attempts to receive a page from a scanner through the Windows BRINO Scanner Bridge component. If the component or scanner is missing, BRINO shows a message.",
     helpAddTextField: "Adds a new field in the center of the visible document area. You can drag it to the exact place you need.",
+    helpTextReplacement: "Creates an opaque patch with new text over the selected area. When saved, the patch and text are flattened into the page image.",
     helpRedaction: "Adds a visible marker over confidential information. It does not change the original document and is not intended for hidden text replacement.",
     helpClearDocs: "Removes all loaded pages and returns to the home page.",
     helpDocSize: "Scales the document for editing and saving.",
@@ -386,6 +413,7 @@ const extraLocales = {
     title: "BRINO — editor de formularios",
     addFiles: "Añadir archivos",
     addTextField: "Añadir campo de texto",
+    textReplacement: "Reemplazo de texto",
     clearDocs: "Limpiar",
     prevPage: "Página anterior",
     nextPage: "Página siguiente",
@@ -406,6 +434,7 @@ const extraLocales = {
     helpStep5: "Crea o elige una firma guardada, insértala en el documento y haz clic en Guardar documento.",
     helpAddFiles: "Carga uno o varios documentos en el editor.",
     helpAddTextField: "Añade un nuevo campo en el centro de la parte visible del documento. Puedes arrastrarlo al lugar exacto.",
+    helpTextReplacement: "Crea un parche opaco con texto nuevo sobre el área seleccionada. Al guardar, el parche y el texto se integran en la imagen de la página.",
     helpRedaction: "Añade un marcador visible sobre datos confidenciales. No cambia el documento original ni sirve para sustituir texto de forma oculta.",
     helpClearDocs: "Elimina todas las páginas cargadas y vuelve a la página principal.",
     helpDocSize: "Escala el documento para editarlo y guardarlo.",
@@ -461,6 +490,7 @@ const extraLocales = {
     title: "BRINO — éditeur de formulaire",
     addFiles: "Ajouter des fichiers",
     addTextField: "Ajouter un champ texte",
+    textReplacement: "Remplacement de texte",
     clearDocs: "Effacer",
     prevPage: "Page précédente",
     nextPage: "Page suivante",
@@ -481,6 +511,7 @@ const extraLocales = {
     helpStep5: "Créez ou choisissez une signature enregistrée, insérez-la dans le document, puis cliquez sur Enregistrer le document.",
     helpAddFiles: "Charge un ou plusieurs documents dans l’éditeur.",
     helpAddTextField: "Ajoute un nouveau champ au centre de la zone visible du document. Vous pouvez le faire glisser à l’endroit voulu.",
+    helpTextReplacement: "Crée un patch opaque avec un nouveau texte sur la zone sélectionnée. Lors de l’enregistrement, le patch et le texte sont intégrés à l’image de la page.",
     helpRedaction: "Ajoute un marqueur visible sur les informations confidentielles. Cela ne modifie pas le document original et ne sert pas à remplacer du texte discrètement.",
     helpClearDocs: "Supprime toutes les pages chargées et revient à la page d’accueil.",
     helpDocSize: "Agrandit ou réduit le document pour l’édition et l’enregistrement.",
@@ -536,6 +567,7 @@ const extraLocales = {
     title: "BRINO — editor moduli",
     addFiles: "Aggiungi file",
     addTextField: "Aggiungi campo testo",
+    textReplacement: "Sostituzione testo",
     clearDocs: "Cancella",
     docSize: "Dimensione documento",
     rotation: "Rotazione",
@@ -551,6 +583,7 @@ const extraLocales = {
     helpStep5: "Crea o scegli una firma salvata, inseriscila nel documento e fai clic su Salva documento.",
     helpAddFiles: "Carica uno o più documenti nell’editor.",
     helpAddTextField: "Aggiunge un nuovo campo al centro dell’area visibile del documento. Puoi trascinarlo nel punto esatto.",
+    helpTextReplacement: "Crea un rettangolo opaco con testo nuovo sulla zona selezionata. Al salvataggio, il rettangolo e il testo vengono uniti all’immagine della pagina.",
     helpRedaction: "Aggiunge un marcatore visibile sopra dati riservati. Non modifica il documento originale e non serve a sostituire testo di nascosto.",
     helpClearDocs: "Rimuove tutte le pagine caricate e torna alla pagina principale.",
     helpDocSize: "Ridimensiona il documento per modifica e salvataggio.",
@@ -598,6 +631,7 @@ const extraLocales = {
     title: "BRINO — editor de formulários",
     addFiles: "Adicionar arquivos",
     addTextField: "Adicionar campo de texto",
+    textReplacement: "Substituição de texto",
     clearDocs: "Limpar",
     docSize: "Tamanho do documento",
     rotation: "Rotação",
@@ -613,6 +647,7 @@ const extraLocales = {
     helpStep5: "Crie ou escolha uma assinatura salva, insira no documento e clique em Salvar documento.",
     helpAddFiles: "Carrega um ou mais documentos no editor.",
     helpAddTextField: "Adiciona um novo campo no centro da parte visível do documento. Você pode arrastá-lo para o lugar certo.",
+    helpTextReplacement: "Cria um bloco opaco com texto novo sobre a área selecionada. Ao salvar, o bloco e o texto são incorporados à imagem da página.",
     helpRedaction: "Adiciona um marcador visível sobre dados confidenciais. Não altera o documento original nem serve para substituir texto de forma oculta.",
     helpClearDocs: "Remove todas as páginas carregadas e volta para a página inicial.",
     helpDocSize: "Redimensiona o documento para edição e salvamento.",
@@ -660,6 +695,7 @@ const extraLocales = {
     title: "BRINO — edytor formularzy",
     addFiles: "Dodaj pliki",
     addTextField: "Dodaj pole tekstowe",
+    textReplacement: "Zamiana tekstu",
     clearDocs: "Wyczyść",
     docSize: "Rozmiar dokumentu",
     rotation: "Obrót",
@@ -675,6 +711,7 @@ const extraLocales = {
     helpStep5: "Utwórz lub wybierz zapisaną podpis, wstaw go do dokumentu i kliknij Zapisz dokument.",
     helpAddFiles: "Wczytuje jeden lub kilka dokumentów do edytora.",
     helpAddTextField: "Dodaje nowe pole na środku widocznej części dokumentu. Można je przeciągnąć w dokładne miejsce.",
+    helpTextReplacement: "Tworzy nieprzezroczystą warstwę z nowym tekstem nad zaznaczonym obszarem. Po zapisaniu warstwa i tekst zostają scalone z obrazem strony.",
     helpRedaction: "Dodaje widoczny marker nad poufnymi danymi. Nie zmienia oryginalnego dokumentu i nie służy do ukrytej zamiany tekstu.",
     helpClearDocs: "Usuwa wszystkie wczytane strony i wraca do strony głównej.",
     helpDocSize: "Skaluje dokument do edycji i zapisu.",
@@ -721,6 +758,7 @@ const extraLocales = {
     title: "BRINO — редактор бланків",
     addFiles: "Додати файли",
     addTextField: "Додати текстове поле",
+    textReplacement: "Заміна тексту",
     clearDocs: "Очистити",
     docSize: "Розмір документа",
     rotation: "Поворот",
@@ -736,6 +774,7 @@ const extraLocales = {
     helpStep5: "Створіть або виберіть збережений підпис, вставте його в документ і натисніть Зберегти документ.",
     helpAddFiles: "Завантажує один або кілька документів у редактор.",
     helpAddTextField: "Додає нове поле в центр видимої частини документа. Його можна перетягнути в потрібне місце.",
+    helpTextReplacement: "Створює непрозорий блок із новим текстом поверх вибраної області. Під час збереження блок і текст зводяться в зображення сторінки.",
     helpRedaction: "Додає видимий маркер поверх конфіденційних даних. Це не змінює вихідний документ і не призначено для непомітної заміни тексту.",
     helpClearDocs: "Видаляє всі завантажені аркуші й повертає головну сторінку.",
     helpDocSize: "Масштабує документ для редагування і збереження.",
@@ -782,6 +821,7 @@ const extraLocales = {
     title: "BRINO — form düzenleyici",
     addFiles: "Dosya ekle",
     addTextField: "Metin alanı ekle",
+    textReplacement: "Metin değiştirme",
     clearDocs: "Temizle",
     docSize: "Belge boyutu",
     rotation: "Döndürme",
@@ -797,6 +837,7 @@ const extraLocales = {
     helpStep5: "Kaydedilmiş bir imza oluşturun veya seçin, belgeye ekleyin ve Belgeyi kaydet’e tıklayın.",
     helpAddFiles: "Düzenleyiciye bir veya birkaç belge yükler.",
     helpAddTextField: "Belgenin görünen bölümünün ortasına yeni bir alan ekler. İstediğiniz yere sürükleyebilirsiniz.",
+    helpTextReplacement: "Seçili alanın üzerine yeni metin içeren opak bir blok oluşturur. Kaydedildiğinde blok ve metin sayfa görseline birleştirilir.",
     helpRedaction: "Gizli bilgiler üzerine görünür bir işaretleyici ekler. Orijinal belgeyi değiştirmez ve gizli metin değiştirme amacı taşımaz.",
     helpClearDocs: "Yüklenen tüm sayfaları kaldırır ve ana sayfaya döner.",
     helpDocSize: "Düzenleme ve kaydetme için belgeyi ölçekler.",
@@ -843,6 +884,7 @@ const extraLocales = {
     title: "BRINO — محرر النماذج",
     addFiles: "إضافة ملفات",
     addTextField: "إضافة حقل نص",
+    textReplacement: "استبدال النص",
     clearDocs: "مسح",
     docSize: "حجم المستند",
     rotation: "تدوير",
@@ -858,6 +900,7 @@ const extraLocales = {
     helpStep5: "أنشئ توقيعاً أو اختر توقيعاً محفوظاً، أدخله في المستند ثم اضغط حفظ المستند.",
     helpAddFiles: "يحمّل مستنداً واحداً أو عدة مستندات في المحرر.",
     helpAddTextField: "يضيف حقلاً جديداً في وسط الجزء المرئي من المستند. يمكنك سحبه إلى المكان المطلوب.",
+    helpTextReplacement: "ينشئ طبقة غير شفافة بنص جديد فوق المنطقة المحددة. عند الحفظ، تُدمج الطبقة والنص في صورة الصفحة.",
     helpRedaction: "يضيف علامة مرئية فوق البيانات السرية. لا يغيّر المستند الأصلي ولا يُقصد به استبدال النص بشكل مخفي.",
     helpClearDocs: "يزيل كل الصفحات المحملة ويعود إلى الصفحة الرئيسية.",
     helpDocSize: "يكبّر أو يصغّر المستند للتحرير والحفظ.",
@@ -904,6 +947,7 @@ const extraLocales = {
     title: "BRINO — 表单编辑器",
     addFiles: "添加文件",
     addTextField: "添加文本框",
+    textReplacement: "替换文本",
     clearDocs: "清空",
     docSize: "文档大小",
     rotation: "旋转",
@@ -919,6 +963,7 @@ const extraLocales = {
     helpStep5: "创建或选择已保存的签名，插入到文档中，然后点击“保存文档”。",
     helpAddFiles: "将一个或多个文档加载到编辑器。",
     helpAddTextField: "在文档可见区域中央添加一个新文本框。你可以把它拖到需要的位置。",
+    helpTextReplacement: "在所选区域上创建带有新文本的不透明遮罩。保存时，遮罩和文本会合并到页面图片中。",
     helpRedaction: "在机密信息上添加可见标记。它不会修改原始文档，也不用于隐蔽替换文字。",
     helpClearDocs: "移除所有已加载页面并返回主页。",
     helpDocSize: "缩放文档以便编辑和保存。",
@@ -1734,17 +1779,67 @@ async function renderSourceCanvas(source, scale = RENDER_SCALE) {
   return canvas;
 }
 
+function remapAnnotationsAfterPageReorder(oldOrder, newOrder) {
+  const oldPageNumberByItem = new Map();
+  for (let i = 0; i < oldOrder.length; i++) {
+    oldPageNumberByItem.set(oldOrder[i], i + 1);
+  }
+  const nextAnnots = {};
+  for (const [pageNumber, items] of Object.entries(state.annots)) {
+    const oldPageNumber = Number(pageNumber);
+    if (!Number.isFinite(oldPageNumber)) continue;
+    const newIndex = newOrder.indexOf(oldOrder[oldPageNumber - 1]);
+    if (newIndex < 0) continue;
+    nextAnnots[String(newIndex + 1)] = items;
+  }
+  state.annots = nextAnnots;
+}
+
+function reorderDocumentPages(fromIndex, toIndex) {
+  if (
+    !Number.isInteger(fromIndex) ||
+    !Number.isInteger(toIndex) ||
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    fromIndex >= state.pageSources.length ||
+    toIndex >= state.pageSources.length ||
+    fromIndex === toIndex
+  ) {
+    return false;
+  }
+
+  const oldOrder = state.pageSources.slice();
+  const moved = state.pageSources.splice(fromIndex, 1)[0];
+  const insertIndex = fromIndex < toIndex ? toIndex : toIndex;
+  state.pageSources.splice(insertIndex, 0, moved);
+
+  const oldCurrentPage = state.page;
+  const currentSource = oldOrder[oldCurrentPage - 1];
+  const newCurrentPage = state.pageSources.indexOf(currentSource) + 1;
+  state.page = Number.isInteger(newCurrentPage) && newCurrentPage > 0 ? newCurrentPage : 1;
+
+  const newOrder = state.pageSources.slice();
+  remapAnnotationsAfterPageReorder(oldOrder, newOrder);
+  return true;
+}
+
 async function renderThumbnails() {
   const pane = $("thumbPane");
   pane.innerHTML = "";
   pane.hidden = !state.kind || state.pages < 1;
   $("canvasArea").classList.toggle("with-thumbs", !pane.hidden);
   if (pane.hidden) return;
+
+  let dragSourceIndex = null;
+
   for (let i = 0; i < state.pageSources.length; i++) {
     const card = document.createElement("div");
     card.className = "thumb-card";
     card.dataset.page = String(i + 1);
+    card.dataset.pageIndex = String(i);
     card.tabIndex = 0;
+    card.draggable = true;
+
     const canvas = document.createElement("canvas");
     const title = document.createElement("span");
     title.className = "thumb-title";
@@ -1754,10 +1849,12 @@ async function renderThumbnails() {
     remove.type = "button";
     remove.title = t("removePage");
     remove.textContent = "×";
+
     const openPage = async () => {
       state.page = i + 1;
       await renderPage();
     };
+
     card.onclick = openPage;
     card.onkeydown = (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -1765,10 +1862,54 @@ async function renderThumbnails() {
         openPage();
       }
     };
+
     remove.onclick = async (e) => {
       e.stopPropagation();
       await removeDocumentPage(i);
     };
+
+    card.addEventListener("dragstart", (e) => {
+      dragSourceIndex = i;
+      card.classList.add("dragging");
+      e.dataTransfer?.setData("text/plain", String(i));
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    card.addEventListener("dragover", (e) => {
+      if (dragSourceIndex === null) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      card.classList.add("drop-target");
+    });
+
+    card.addEventListener("dragleave", () => {
+      card.classList.remove("drop-target");
+    });
+
+    card.addEventListener("drop", async (e) => {
+      e.preventDefault();
+      card.classList.remove("drop-target");
+      if (dragSourceIndex === null) return;
+      const targetIndex = Number(card.dataset.pageIndex);
+      if (Number.isInteger(targetIndex)) {
+        const reordered = reorderDocumentPages(dragSourceIndex, targetIndex);
+        if (reordered) {
+          dragSourceIndex = null;
+          await renderPage();
+          await renderThumbnails();
+          scheduleDraftSave();
+        }
+      }
+    });
+
+    card.addEventListener("dragend", () => {
+      dragSourceIndex = null;
+      card.classList.remove("dragging", "drop-target");
+      document.querySelectorAll(".thumb-card").forEach((thumb) => {
+        thumb.classList.remove("drop-target", "dragging");
+      });
+    });
+
     card.append(canvas, title, remove);
     pane.append(card);
     renderThumbnailCanvas(state.pageSources[i], canvas).catch(console.error);
@@ -2125,7 +2266,7 @@ $("gridStepY").onchange = applyGrid;
 
 /* ================= 2. Текстовый слой ================= */
 const textStyle = {
-  family: "sans-serif",
+  family: "Arial, sans-serif",
   size: 12,
   bold: false,
   italic: false,
@@ -2133,6 +2274,23 @@ const textStyle = {
   lineHeight: 1.15,
   offsetY: 0,
 };
+
+const FONT_FALLBACKS = {
+  times: "Times New Roman, Times, serif",
+  arial: "Arial, sans-serif",
+  calibri: "Calibri, Carlito, 'Segoe UI', sans-serif",
+  helvetica: "Helvetica, Arial, 'Nimbus Sans', sans-serif",
+  aptos: "Aptos, 'Aptos Display', 'Segoe UI', sans-serif",
+};
+
+function fontOptionForFamily(family) {
+  const value = String(family || "").toLowerCase();
+  if (value.includes("times") || value === "serif") return FONT_FALLBACKS.times;
+  if (value.includes("calibri") || value.includes("carlito")) return FONT_FALLBACKS.calibri;
+  if (value.includes("helvetica") || value.includes("nimbus")) return FONT_FALLBACKS.helvetica;
+  if (value.includes("aptos")) return FONT_FALLBACKS.aptos;
+  return FONT_FALLBACKS.arial;
+}
 
 function activeAnnot() {
   return annotsForPage().find((a) => a.id === activeAnnotId) || null;
@@ -2169,12 +2327,27 @@ function selectAnnot(a) {
     textStyle.italic = a.italic;
     textStyle.lineHeight = a.lineHeight || 1.15;
     textStyle.offsetY = a.offsetY ?? state.textOffsetY;
-    $("fontFamily").value = a.family;
+    $("fontFamily").value = fontOptionForFamily(a.family);
     $("fontSize").value = String(textStyle.size);
     $("textColor").value = a.color;
     $("textOffsetY").value = String(textStyle.offsetY);
     $("lineHeight").value = String(textStyle.lineHeight);
     updateLineHeightLabel();
+    $("boldBtn").classList.toggle("active", a.bold);
+    $("italicBtn").classList.toggle("active", a.italic);
+  }
+  if (a?.type === "text-replacement") {
+    textStyle.family = a.family;
+    textStyle.size = Math.round(a.size / RENDER_SCALE);
+    textStyle.color = a.color;
+    textStyle.bold = a.bold;
+    textStyle.italic = a.italic;
+    $("fontFamily").value = fontOptionForFamily(a.family);
+    $("fontSize").value = String(textStyle.size);
+    $("textColor").value = a.color;
+    $("patchSizing").value = a.sizing;
+    $("patchAlign").value = a.align;
+    $("patchBackground").value = a.background;
     $("boldBtn").classList.toggle("active", a.bold);
     $("italicBtn").classList.toggle("active", a.italic);
   }
@@ -2190,7 +2363,7 @@ function updateSelectedItems() {
 function applyTextStyleToActive(change) {
   const a = activeAnnot();
   Object.assign(textStyle, change);
-  if (a?.type !== "text") return;
+  if (a?.type !== "text" && a?.type !== "text-replacement") return;
   if (change.family) a.family = change.family;
   if (change.size) a.size = change.size * RENDER_SCALE;
   if (Object.prototype.hasOwnProperty.call(change, "bold")) a.bold = change.bold;
@@ -2234,6 +2407,28 @@ $("italicBtn").onclick = (e) => {
   applyTextStyleToActive({ italic: next });
 };
 
+$("patchSizing").onchange = (e) => {
+  const a = activeAnnot();
+  if (a?.type !== "text-replacement") return;
+  a.sizing = e.target.value;
+  renderAnnots();
+  scheduleDraftSave();
+};
+$("patchAlign").onchange = (e) => {
+  const a = activeAnnot();
+  if (a?.type !== "text-replacement") return;
+  a.align = e.target.value;
+  renderAnnots();
+  scheduleDraftSave();
+};
+$("patchBackground").oninput = (e) => {
+  const a = activeAnnot();
+  if (a?.type !== "text-replacement") return;
+  a.background = e.target.value;
+  renderAnnots();
+  scheduleDraftSave();
+};
+
 function updateLineHeightLabel(value = Number($("lineHeight").value)) {
   $("lineHeightLabel").textContent = value.toFixed(2).replace(/0$/, "");
 }
@@ -2241,10 +2436,13 @@ function updateLineHeightLabel(value = Number($("lineHeight").value)) {
 function setActiveTool(tool) {
   state.tool = tool;
   $("redactBtn").classList.toggle("active", tool === "redaction");
+  $("textReplacementBtn").classList.toggle("active", tool === "text-replacement");
   overlay.classList.toggle("redaction-mode", tool === "redaction");
+  overlay.classList.toggle("patch-mode", tool === "text-replacement");
 }
 
 $("redactBtn").onclick = () => setActiveTool(state.tool === "redaction" ? "text" : "redaction");
+$("textReplacementBtn").onclick = () => setActiveTool(state.tool === "text-replacement" ? "text" : "text-replacement");
 $("redactColor").onchange = () => {
   const a = activeAnnot();
   if (a?.type === "redaction") {
@@ -2300,6 +2498,32 @@ function createRedactionAnnotation(x, y) {
   return a;
 }
 
+function createTextReplacementAnnotation(x, y, w = 120, h = 30) {
+  cleanupEmptyTextAnnots(null, false);
+  const a = {
+    id: crypto.randomUUID(),
+    type: "text-replacement",
+    x: clamp(x, 0, Math.max(0, docCanvas.width - w)),
+    y: clamp(y, 0, Math.max(0, docCanvas.height - h)),
+    w: Math.max(24, w),
+    h: Math.max(18, h),
+    text: "",
+    family: textStyle.family,
+    size: textStyle.size * RENDER_SCALE,
+    bold: textStyle.bold,
+    italic: textStyle.italic,
+    color: textStyle.color,
+    background: $("patchBackground").value,
+    sizing: $("patchSizing").value,
+    align: $("patchAlign").value,
+  };
+  annotsForPage().push(a);
+  activeAnnotId = a.id;
+  renderAnnots();
+  scheduleDraftSave();
+  return a;
+}
+
 function visibleDocumentCenter() {
   const rect = overlay.getBoundingClientRect();
   const viewport = $("canvasArea").getBoundingClientRect();
@@ -2334,8 +2558,44 @@ overlay.addEventListener("mousedown", (e) => {
   const x = (e.clientX - rect.left) / state.zoom;
   const y = (e.clientY - rect.top) / state.zoom;
   if (state.tool === "redaction") createRedactionAnnotation(x, y);
+  else if (state.tool === "text-replacement") startTextReplacementDraw(e, x, y);
   else createTextAnnotation(x, y);
 });
+
+function startTextReplacementDraw(ev, x, y) {
+  ev.preventDefault();
+  const a = createTextReplacementAnnotation(x, y, 120, Math.max(24, textStyle.size * RENDER_SCALE * 1.4));
+  const node = overlay.querySelector(`[data-id="${a.id}"]`);
+  const startX = x;
+  const startY = y;
+  const move = (event) => {
+    const rect = overlay.getBoundingClientRect();
+    const currentX = (event.clientX - rect.left) / state.zoom;
+    const currentY = (event.clientY - rect.top) / state.zoom;
+    const box = {
+      x: Math.min(startX, currentX),
+      y: Math.min(startY, currentY),
+      w: Math.max(24, Math.abs(currentX - startX)),
+      h: Math.max(18, Math.abs(currentY - startY)),
+    };
+    const clamped = clampToDocumentBox(box);
+    Object.assign(a, clamped);
+    if (node) {
+      node.style.left = `${a.x}px`;
+      node.style.top = `${a.y}px`;
+      node.style.width = `${a.w}px`;
+      node.style.height = `${a.h}px`;
+    }
+  };
+  const up = () => {
+    window.removeEventListener("mousemove", move);
+    window.removeEventListener("mouseup", up);
+    scheduleDraftSave();
+    node?.querySelector("textarea")?.focus();
+  };
+  window.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
+}
 
 function snap(v) {
   return v;
@@ -2349,7 +2609,7 @@ function renderAnnots() {
   clearAlignmentGuides();
   overlay.innerHTML = "";
   annotsForPage().forEach((a) => {
-    const node = a.type === "text" ? textNode(a) : a.type === "redaction" ? redactionNode(a) : sigNode(a);
+    const node = a.type === "text" ? textNode(a) : a.type === "text-replacement" ? textReplacementNode(a) : a.type === "redaction" ? redactionNode(a) : sigNode(a);
     overlay.appendChild(node);
   });
 }
@@ -2408,6 +2668,42 @@ function textNode(a) {
   ta.addEventListener("focus", () => selectAnnot(a));
   el.appendChild(ta);
   requestAnimationFrame(autosize);
+  return el;
+}
+
+function textReplacementNode(a) {
+  const el = baseNode(a, "item-patch");
+  el.style.width = `${a.w}px`;
+  el.style.height = `${a.h}px`;
+  el.style.background = a.background || "#ffffff";
+  const ta = document.createElement("textarea");
+  ta.rows = 1;
+  ta.value = a.text;
+  ta.spellcheck = false;
+  ta.style.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
+  ta.style.color = a.color;
+  ta.style.textAlign = a.align || "left";
+  ta.addEventListener("input", () => {
+    a.text = ta.value;
+    if (a.sizing === "auto") {
+      ta.style.width = "max-content";
+      ta.style.height = "auto";
+      a.w = Math.max(24, Math.ceil(ta.scrollWidth + 8));
+      a.h = Math.max(18, Math.ceil(ta.scrollHeight + 4));
+      el.style.width = `${a.w}px`;
+      el.style.height = `${a.h}px`;
+    }
+    scheduleDraftSave();
+  });
+  ta.addEventListener("focus", () => selectAnnot(a));
+  el.appendChild(ta);
+  const rz = document.createElement("div");
+  rz.className = "resize";
+  rz.addEventListener("mousedown", (ev) => startResizeBox(ev, a, el));
+  el.appendChild(rz);
+  requestAnimationFrame(() => {
+    if (a.sizing === "auto") ta.dispatchEvent(new Event("input"));
+  });
   return el;
 }
 
@@ -3424,7 +3720,20 @@ async function renderFinalPage(pageNumber) {
 
   const items = state.annots[pageNumber] || [];
   for (const a of items) {
-    if (a.type === "text") {
+    if (a.type === "text-replacement") {
+      ctx.fillStyle = a.background || "#ffffff";
+      ctx.fillRect(a.x, a.y + state.layerOffsetY, a.w, a.h);
+      if (!a.text.trim()) continue;
+      ctx.fillStyle = a.color;
+      ctx.textBaseline = "top";
+      ctx.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
+      const lineH = a.size * 1.15;
+      a.text.split("\n").forEach((line, i) => {
+        const lineWidth = ctx.measureText(line).width;
+        const textX = a.align === "center" ? a.x + Math.max(0, (a.w - lineWidth) / 2) : a.x + 3;
+        ctx.fillText(line, textX, a.y + state.layerOffsetY + 2 + i * lineH);
+      });
+    } else if (a.type === "text") {
       if (!a.text.trim()) continue;
       ctx.fillStyle = a.color;
       ctx.textBaseline = "top";

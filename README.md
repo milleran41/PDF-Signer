@@ -1,115 +1,100 @@
-# BRINO
+# BRINO — Document Processor & Overlay Engine
 
-BRINO is a browser extension for filling forms and adding signatures without printing the document first.
+**BRINO** (by **Codewerk Studio**) is a lightweight, 100% local browser extension designed to eliminate paper-and-scanner bureaucratic hassle. It transforms incoming paperwork, forms, and multi-format documents into clean, professional, filled-in, and signed PDFs.
 
-Important: BRINO is not a full PDF editor. It does not change the original text, images, structure, or fields inside the source document. The app renders the selected document as a background and lets you place a new editable layer on top of it: text notes, filled-in lines, and a saved signature. The result is exported as a new PDF or PNG file.
+BRINO is a flexible **Document Processor and Overlay Engine**. It allows you to combine, edit, anonymize, and sign multi-page documents directly in your browser without sacrificing document integrity or sending data to external servers.
 
-## Why It Exists
+---
 
-Many official forms still have to be filled by hand, printed, signed, scanned, and sent back. BRINO helps avoid that cycle:
+## 🌟 Why It Exists
 
-- fill PDF, DOCX, PNG, JPG, and scanned documents directly in the browser;
-- add movable text fields over the document;
-- create a reusable signature template from a drawing, file, screenshot, or clipboard image;
-- save the finished document without using paper or printer ink;
-- keep document processing local in the browser.
+Many official forms (Jobcenter, housing cooperatives/SWG, banks, insurance) still require filling, signing, and returning. BRINO bypasses the "print-sign-scan" cycle:
 
-## Main Features
+- **Unified Format Support:** Process PDF, DOCX, PNG, JPG, and scanned documents in a single workspace.
+- **No Printer Needed:** Fill out forms and place transparent handwritten signatures electronically.
+- **Smart Text Replacement:** Replace text or fix errors seamlessly directly on top of the document canvas.
+- **Complete Data Privacy:** All processing, rendering, and flattening happens 100% locally on your machine.
 
-- Local document editor for PDF, DOCX, and image files.
-- Multiple pages with thumbnails in the left panel.
-- Page removal and full document clearing.
-- Movable text fields with font, size, color, bold, and italic controls.
-- Document scaling and slight scan rotation.
-- Red alignment guide for straightening scanned pages.
-- Canva-like alignment guides for matching text fields, signatures, and redaction markers.
-- Reusable saved signatures.
-- Signature extraction from files, PDFs, images, screenshots, and clipboard paste.
-- Signature cleanup: background removal, darkness, sharpness, thickness, and color.
-- Visible redaction markers for covering confidential information.
-- Print the current edited document through the browser/system print dialog.
-- Local draft restore after page refresh.
-- Multilingual interface.
-- Export to PDF or PNG.
+---
 
-## Supported Formats
+## 🚀 Key Features
 
-Input:
+### 1. Multi-Format Input & Drag-and-Drop Management
+- **Combine Multiple Files:** Load PDF, DOCX, and image files simultaneously into a unified multi-page document.
+- **Thumbnail Sidebar with Drag & Drop:** Easily reorder pages, mix DOCX pages with PDF scans, or remove unnecessary pages using intuitive drag-and-drop.
 
-- PDF
-- DOCX
-- PNG, JPG, JPEG, WEBP, GIF, BMP
+### 2. Precision Text & Overlay Editing
+- **Smart Alignment Grid:** Overlay canvas with a subtle alignment grid (notebook-style) to precisely place text over form lines.
+- **Rich Font Selection:** Complete support for standard European/German document fonts, including **Times New Roman**, **Arial**, **Calibri**, **Helvetica**, and **Aptos**.
+- **Movable Text Fields:** Full control over font style, size, color, bold, and italic formatting.
+- **Smart Text Replacement (White Patch):** Select an incorrect word or phrase to cover it with an opaque background patch and immediately type replacement text over it.
 
-Legacy `.doc` files are not reliably rendered directly in the browser. Save old Word files as `.docx`, PDF, or an image before adding them.
+### 3. Redaction & Anonymization
+- **Visible Redaction Markers:** Apply **Blackout** (black bars) or **Whiteout** (white patches) to obscure sensitive data (IBANs, card numbers, addresses) prior to sharing or recording demonstrations.
+- **Secure Flattening:** Redaction layers and replaced text are permanently rasterized/flattened into the document canvas upon export, preventing hidden underlying text extraction.
 
-Output:
+### 4. Advanced Session-Only Signatures
+- **Background Removal:** Extract signatures from images, screenshots, or clipboard paste with auto-background cleanup (transparency, sharpness, and line thickness adjustment).
+- **Session-Only Memory (Maximum Privacy):** For absolute security, imported signatures reside exclusively in volatile operating memory (In-Memory) during the active session. Once the tab or document is closed, the signature is permanently purged.
 
-- PDF
-- PNG
+### 5. Multi-Page Export & Metadata
+- **Export Formats:** Save consolidated documents as flattened multi-page **PDF** or high-resolution **PNG**.
+- **Embedded Metadata:** Exported PDFs include non-intrusive internal technical metadata (`Creator: Codewerk Studio`) to ensure origin tracing without placing ugly visual watermarks on official forms.
+- **Direct Printing:** Print the edited canvas directly using the native browser print dialog.
 
-## Supported Platforms
+---
 
-BRINO is intended for desktop and laptop computers.
+## 📑 Supported Formats
 
-Tested target:
+### Input Formats
+- **PDF** (`.pdf`)
+- **Word Documents** (`.docx` — rendered locally for overlay)
+- **Images** (`.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.bmp`)
 
-- Windows 10 and Windows 11
-- Google Chrome
-- Microsoft Edge
+> *Note: Legacy `.doc` files (Word 97-2003) should be converted or saved as `.docx` or PDF prior to loading.*
 
-Expected but not yet fully verified:
+### Output Formats
+- **PDF** (Flattened, multi-page)
+- **PNG** (High-resolution image)
 
-- macOS 13+ with a Chromium-based browser
-- Linux with a Chromium-based browser
+---
 
-If you install BRINO on macOS or Linux, feedback about installation, PDF rendering, clipboard paste, saving files, and signature handling is welcome.
+## 🔒 Privacy & Security
 
-## Privacy
+BRINO is engineered around strict data minimization and client-side processing:
 
-BRINO is designed to work locally in the browser. Documents are processed on the user's device and are not intentionally uploaded to external servers by the extension.
+1. **Zero External Server Uploads:** Your files, forms, personal data, and images never leave your browser environment.
+2. **No Persistent Signature Storage:** Signatures are held only in RAM during your session, eliminating risks of local browser storage compromise.
+3. **GDPR / Privacy Compliant:** Ideal for handling sensitive correspondence (Jobcenter, Krankenkasse, leases) safely.
 
-The extension stores saved signatures and the current draft locally in the browser so work can be reused or restored after a refresh. Exported documents may contain a small technical origin mark identifying the app.
+---
 
-See [PRIVACY.md](PRIVACY.md) for details.
+## 🛠️ How To Use
 
-## How To Use
+1. Open **BRINO** from your browser extension bar.
+2. Click **Add Files** or drag documents into the app workspace.
+3. Use the left **Thumbnail Sidebar** to arrange or reorder pages via **Drag & Drop**.
+4. Click anywhere on the document or select **Add Text Field** to type data. Select your preferred font (**Arial**, **Times New Roman**, **Calibri**, etc.).
+5. Use **Smart Text Replacement** or **Redact** (Blackout/Whiteout) to cover or replace specific areas.
+6. Open **Signature**, upload or paste your handwritten signature image (background is removed automatically), and place it on the signature line.
+7. Click **Save Document** to export your finalized multi-page **PDF** or **PNG**.
 
-1. Open BRINO from the browser extension icon.
-2. Click **Add files** or choose a document on the home page.
-3. Select a page from the thumbnails on the left.
-4. Use rotation, document size, and the red guide to align the document if needed.
-5. Click **Add text field** or click the document to add a text field.
-6. Select a text field to change its font, size, color, bold, or italic style.
-7. Open **Create signature** to draw a signature or extract one from a file, screenshot, or clipboard image.
-8. Use **Hide data** to place a visible black or white marker over confidential information if needed.
-9. Insert a saved signature into the document.
-10. Choose PDF or PNG and click **Save document**, or use the print icon to print the edited document.
+---
 
-## Local Installation For Testing
+## 💻 Local Installation (Developer / Testing Mode)
 
 1. Open `chrome://extensions` or `edge://extensions`.
-2. Enable developer mode.
-3. Choose **Load unpacked**.
-4. Select this project folder.
-5. After each code update, click **Reload** on the extension page.
+2. Enable **Developer mode** (toggle in top right corner).
+3. Click **Load unpacked**.
+4. Select the project root folder.
+5. After updating code in Visual Studio Code, click **Reload** on the extension card.
 
-## Microsoft Edge Add-ons Preparation
+---
 
-Before submitting to Microsoft Edge Add-ons, prepare:
+## 🏢 Brand & Publisher Information
 
-- a production ZIP package of the extension files;
-- final extension name, short description, and long description;
-- icon and required store images;
-- clear screenshots showing the editor, signature workflow, and saved result;
-- privacy information and a public privacy policy URL;
-- permission justification for `clipboardRead` and page matching used by the content script;
-- certification testing notes explaining how reviewers can open the editor, load a sample document, add text/signature, and export the result.
+- **Engine:** Codewerk Studio Document Overlay Engine
+- **Developer:** Codewerk Studio
+- **Target Platforms:** Windows 10/11, macOS, Linux (Chromium-based browsers: Microsoft Edge, Google Chrome).
 
-The listing should clearly say that this is a form filling and signing tool, not an editor for changing the original PDF content.
-
-After publication, the in-app rating prompt should open the Microsoft Edge Add-ons listing page, where users can leave a rating and written review.
-
-## Current Status
-
-The project is prepared for Microsoft Edge Add-ons 1.0 release packaging. Scanner experiments are kept out of the release UI and should not be included in the release ZIP.
-
+*Codewerk Studio — Secure, Local, Serverless Document Tools.*
