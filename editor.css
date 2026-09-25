@@ -167,6 +167,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 3px;
+  flex: 0 0 auto;
 }
 .page-input {
   width: 5ch;

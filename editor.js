@@ -1763,9 +1763,13 @@ async function renderPage() {
 }
 
 function updatePageNavControls() {
-  $("prevPage").disabled = !state.kind || state.page <= 1;
-  $("nextPage").disabled = !state.kind || state.page >= state.pages;
-  $("pageNum").disabled = !state.kind || state.pages < 2;
+  const hasDocument = Boolean(state.kind);
+  const hasMultiplePages = hasDocument && state.pages > 1;
+  $("pageNav").hidden = !hasMultiplePages;
+  $("pageJump").hidden = !hasDocument;
+  $("prevPage").disabled = !hasMultiplePages || state.page <= 1;
+  $("nextPage").disabled = !hasMultiplePages || state.page >= state.pages;
+  $("pageNum").disabled = !hasMultiplePages;
 }
 
 async function renderSourceCanvas(source, scale = RENDER_SCALE) {
@@ -2056,6 +2060,7 @@ function showHome(reset = false) {
   $("empty").hidden = false;
   $("stageWrap").hidden = true;
   $("pageNav").hidden = true;
+  $("pageJump").hidden = true;
   $("thumbPane").hidden = true;
   $("canvasArea").classList.remove("with-thumbs");
 }
@@ -2136,6 +2141,36 @@ $("pageNum").addEventListener("keydown", async (e) => {
 $("pageNum").addEventListener("blur", (e) => {
   e.currentTarget.value = String(state.page);
 });
+
+let pageWheelDelta = 0;
+let pageWheelBusy = false;
+
+$("canvasArea").addEventListener("wheel", async (e) => {
+  if (!state.kind || state.pages < 2 || modalIsOpen() || e.ctrlKey) return;
+  const target = e.target instanceof Element ? e.target : null;
+  if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+
+  e.preventDefault();
+  if (pageWheelBusy) return;
+
+  pageWheelDelta += e.deltaY;
+  if (Math.abs(pageWheelDelta) < 30) return;
+
+  const direction = pageWheelDelta > 0 ? 1 : -1;
+  pageWheelDelta = 0;
+
+  const nextPage = state.page + direction;
+  if (nextPage < 1 || nextPage > state.pages) return;
+
+  pageWheelBusy = true;
+  try {
+    await goToPage(nextPage);
+  } finally {
+    setTimeout(() => {
+      pageWheelBusy = false;
+    }, 180);
+  }
+}, { passive: false });
 
 function updateRotationLabel() {
   $("rotateLabel").textContent = `${Number(state.rotation).toFixed(1).replace(".0", "")}°`;
