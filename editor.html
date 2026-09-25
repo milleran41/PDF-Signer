@@ -128,13 +128,17 @@
             <option value="Courier New, monospace">Courier New</option>
           </select>
         </div>
-        <select id="fontSize" class="select small">
-          <option>8</option><option>9</option><option>10</option><option>11</option>
-          <option selected>12</option><option>13</option><option>14</option><option>15</option>
-          <option>16</option><option>18</option><option>20</option><option>22</option>
-          <option>24</option><option>26</option><option>28</option><option>32</option>
-          <option>36</option><option>40</option><option>48</option><option>56</option><option>64</option>
-        </select>
+        <div class="font-picker size-picker" id="fontSizePicker">
+          <button type="button" class="select font-button size-button" id="fontSizeButton">12</button>
+          <div class="font-menu size-menu" id="fontSizeMenu" hidden></div>
+          <select id="fontSize" class="select small" hidden>
+            <option>8</option><option>9</option><option>10</option><option>11</option>
+            <option selected>12</option><option>13</option><option>14</option><option>15</option>
+            <option>16</option><option>18</option><option>20</option><option>22</option>
+            <option>24</option><option>26</option><option>28</option><option>32</option>
+            <option>36</option><option>40</option><option>48</option><option>56</option><option>64</option>
+          </select>
+        </div>
         <input type="color" id="textColor" value="#111111" class="color" title="Цвет текста" data-i18n-title="textColor" />
         <button class="btn toggle" id="boldBtn" title="Жирный" data-i18n-title="bold"><b>B</b></button>
         <button class="btn toggle" id="italicBtn" title="Курсив" data-i18n-title="italic"><i>I</i></button>

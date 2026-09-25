@@ -2372,6 +2372,16 @@ function setFontFamilyControl(value) {
   updateFontPickerButton(value);
 }
 
+function updateFontSizeButton(value = $("fontSize").value) {
+  const button = $("fontSizeButton");
+  if (button) button.textContent = String(value);
+}
+
+function setFontSizeControl(value) {
+  $("fontSize").value = String(value);
+  updateFontSizeButton(value);
+}
+
 function activeTextLikeAnnot() {
   const a = activeAnnot();
   return a?.type === "text" || a?.type === "text-replacement" ? a : null;
@@ -2383,6 +2393,7 @@ function activeTextAreaFor(a) {
 }
 
 let fontPreviewSession = null;
+let sizePreviewSession = null;
 
 function beginFontPreviewSession() {
   const a = activeTextLikeAnnot();
@@ -2425,6 +2436,7 @@ function closeFontMenu(commit = false) {
 function openFontMenu() {
   const menu = $("fontFamilyMenu");
   if (!menu) return;
+  closeSizeMenu(false);
   beginFontPreviewSession();
   menu.hidden = false;
   menu.querySelectorAll(".font-option").forEach((button) => {
@@ -2487,6 +2499,105 @@ function initFontPicker() {
   updateFontPickerButton();
 }
 
+function beginSizePreviewSession() {
+  const a = activeTextLikeAnnot();
+  sizePreviewSession = {
+    id: a?.id || null,
+    originalSize: a ? Math.round(a.size / RENDER_SCALE) : Number($("fontSize").value),
+    committed: false,
+  };
+}
+
+function previewFontSize(size) {
+  updateFontSizeButton(size);
+  const a = activeTextLikeAnnot();
+  if (!a || !sizePreviewSession || a.id !== sizePreviewSession.id) return;
+  const textarea = activeTextAreaFor(a);
+  if (textarea) textarea.style.fontSize = `${Number(size) * RENDER_SCALE}px`;
+}
+
+function restoreSizePreviewIfNeeded() {
+  if (!sizePreviewSession || sizePreviewSession.committed) return;
+  const { id, originalSize } = sizePreviewSession;
+  const a = activeTextLikeAnnot();
+  if (a && a.id === id) {
+    const textarea = activeTextAreaFor(a);
+    if (textarea) textarea.style.fontSize = `${a.size}px`;
+  }
+  setFontSizeControl(originalSize);
+}
+
+function closeSizeMenu(commit = false) {
+  const menu = $("fontSizeMenu");
+  if (!menu || menu.hidden) return;
+  if (sizePreviewSession) sizePreviewSession.committed ||= commit;
+  restoreSizePreviewIfNeeded();
+  menu.hidden = true;
+  sizePreviewSession = null;
+  updateFontSizeButton();
+}
+
+function openSizeMenu() {
+  const menu = $("fontSizeMenu");
+  if (!menu) return;
+  closeFontMenu(false);
+  beginSizePreviewSession();
+  menu.hidden = false;
+  menu.querySelectorAll(".font-option").forEach((button) => {
+    const active = button.dataset.value === $("fontSize").value;
+    button.classList.toggle("active", active);
+    if (active) requestAnimationFrame(() => button.scrollIntoView({ block: "nearest" }));
+  });
+}
+
+function commitFontSize(value) {
+  const size = Number(value);
+  if (!Number.isFinite(size)) return closeSizeMenu(false);
+  if (sizePreviewSession) sizePreviewSession.committed = true;
+  setFontSizeControl(size);
+  applyTextStyleToActive({ size });
+  closeSizeMenu(true);
+}
+
+function initSizePicker() {
+  const select = $("fontSize");
+  const button = $("fontSizeButton");
+  const menu = $("fontSizeMenu");
+  if (!select || !button || !menu) return;
+  menu.innerHTML = "";
+  Array.from(select.options).forEach((option) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "font-option";
+    item.dataset.value = option.value;
+    item.textContent = option.textContent;
+    item.addEventListener("mouseenter", () => previewFontSize(option.value));
+    item.addEventListener("focus", () => previewFontSize(option.value));
+    item.addEventListener("mousedown", (event) => event.preventDefault());
+    item.addEventListener("click", () => commitFontSize(option.value));
+    menu.appendChild(item);
+  });
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (menu.hidden) openSizeMenu();
+    else closeSizeMenu(false);
+  });
+  button.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openSizeMenu();
+      menu.querySelector(".font-option.active, .font-option")?.focus();
+    }
+  });
+  document.addEventListener("mousedown", (event) => {
+    if (!$("fontSizePicker")?.contains(event.target)) closeSizeMenu(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeSizeMenu(false);
+  });
+  updateFontSizeButton();
+}
+
 function activeAnnot() {
   return annotsForPage().find((a) => a.id === activeAnnotId) || null;
 }
@@ -2523,7 +2634,7 @@ function selectAnnot(a) {
     textStyle.lineHeight = a.lineHeight || 1.15;
     textStyle.offsetY = a.offsetY ?? state.textOffsetY;
     setFontFamilyControl(fontOptionForFamily(a.family));
-    $("fontSize").value = String(textStyle.size);
+    setFontSizeControl(textStyle.size);
     $("textColor").value = a.color;
     $("textOffsetY").value = String(textStyle.offsetY);
     $("lineHeight").value = String(textStyle.lineHeight);
@@ -2538,7 +2649,7 @@ function selectAnnot(a) {
     textStyle.bold = a.bold;
     textStyle.italic = a.italic;
     setFontFamilyControl(fontOptionForFamily(a.family));
-    $("fontSize").value = String(textStyle.size);
+    setFontSizeControl(textStyle.size);
     $("textColor").value = a.color;
     $("patchSizing").value = a.sizing;
     $("patchAlign").value = a.align;
@@ -2571,7 +2682,7 @@ function applyTextStyleToActive(change) {
 }
 
 $("fontFamily").onchange = (e) => commitFontFamily(e.target.value);
-$("fontSize").onchange = (e) => applyTextStyleToActive({ size: Number(e.target.value) });
+$("fontSize").onchange = (e) => commitFontSize(e.target.value);
 $("textColor").oninput = (e) => applyTextStyleToActive({ color: e.target.value });
 $("textOffsetY").oninput = (e) => {
   const value = Math.max(-40, Math.min(40, Number(e.target.value) || 0));
@@ -2602,6 +2713,7 @@ $("italicBtn").onclick = (e) => {
   applyTextStyleToActive({ italic: next });
 };
 initFontPicker();
+initSizePicker();
 
 $("patchSizing").onchange = (e) => {
   const a = activeAnnot();

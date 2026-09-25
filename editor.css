@@ -206,6 +206,11 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.size-button {
+  min-width: 58px;
+  max-width: 70px;
+  text-align: center;
+}
 .font-menu {
   position: absolute;
   top: calc(100% + 6px);
@@ -220,6 +225,9 @@ body {
   background: var(--panel);
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.34);
 }
+.size-menu {
+  width: 76px;
+}
 .font-option {
   display: block;
   width: 100%;
@@ -230,6 +238,9 @@ body {
   text-align: left;
   padding: 7px 9px;
   cursor: pointer;
+}
+.size-menu .font-option {
+  text-align: center;
 }
 .font-option:hover,
 .font-option.active {
