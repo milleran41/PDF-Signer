@@ -1865,8 +1865,7 @@ async function renderThumbnails() {
     remove.textContent = "×";
 
     const openPage = async () => {
-      state.page = i + 1;
-      await renderPage();
+      await goToPage(i + 1);
     };
 
     card.onclick = openPage;
@@ -2120,6 +2119,7 @@ async function goToPage(page) {
   if (nextPage === state.page) return;
   state.page = nextPage;
   await renderPage();
+  $("canvasArea").scrollTo({ top: 0, behavior: "auto" });
   scheduleDraftSave();
 }
 
