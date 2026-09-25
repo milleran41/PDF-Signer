@@ -109,21 +109,25 @@
       <!-- 2. Панель настроек текста -->
       <div class="toolbar">
         <span class="label" data-i18n="text">Текст:</span>
-        <select id="fontFamily" class="select">
-          <option value="Times New Roman, Times, serif">Times New Roman (Serif)</option>
-          <option value="Arial, sans-serif" selected>Arial (Sans-serif)</option>
-          <option value="Calibri, Carlito, 'Segoe UI', sans-serif">Calibri (Modern Office)</option>
-          <option value="Helvetica, Arial, 'Nimbus Sans', sans-serif">Helvetica (European Clean)</option>
-          <option value="Aptos, 'Aptos Display', 'Segoe UI', sans-serif">Aptos (New Default Office)</option>
-          <option value="sans-serif">Sans-serif</option>
-          <option value="serif">Serif</option>
-          <option value="monospace">Monospace</option>
-          <option value="Verdana, sans-serif">Verdana</option>
-          <option value="Tahoma, sans-serif">Tahoma</option>
-          <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
-          <option value="Georgia, serif">Georgia</option>
-          <option value="Courier New, monospace">Courier New</option>
-        </select>
+        <div class="font-picker" id="fontPicker">
+          <button type="button" class="select font-button" id="fontFamilyButton">Arial (Sans-serif)</button>
+          <div class="font-menu" id="fontFamilyMenu" hidden></div>
+          <select id="fontFamily" class="select font-native" hidden>
+            <option value="Times New Roman, Times, serif">Times New Roman (Serif)</option>
+            <option value="Arial, sans-serif" selected>Arial (Sans-serif)</option>
+            <option value="Calibri, Carlito, 'Segoe UI', sans-serif">Calibri (Modern Office)</option>
+            <option value="Helvetica, Arial, 'Nimbus Sans', sans-serif">Helvetica (European Clean)</option>
+            <option value="Aptos, 'Aptos Display', 'Segoe UI', sans-serif">Aptos (New Default Office)</option>
+            <option value="sans-serif">Sans-serif</option>
+            <option value="serif">Serif</option>
+            <option value="monospace">Monospace</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+            <option value="Tahoma, sans-serif">Tahoma</option>
+            <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Courier New, monospace">Courier New</option>
+          </select>
+        </div>
         <select id="fontSize" class="select small">
           <option>8</option><option>9</option><option>10</option><option>11</option>
           <option selected>12</option><option>13</option><option>14</option><option>15</option>

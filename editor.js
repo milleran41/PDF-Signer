@@ -2342,6 +2342,9 @@ const FONT_FALLBACKS = {
   helvetica: "Helvetica, Arial, 'Nimbus Sans', sans-serif",
   aptos: "Aptos, 'Aptos Display', 'Segoe UI', sans-serif",
 };
+const TEXT_MIN_W = 40;
+const TEXT_MIN_H = 20;
+const TEXT_DEFAULT_W = 160;
 
 function fontOptionForFamily(family) {
   const value = String(family || "").toLowerCase();
@@ -2350,6 +2353,138 @@ function fontOptionForFamily(family) {
   if (value.includes("helvetica") || value.includes("nimbus")) return FONT_FALLBACKS.helvetica;
   if (value.includes("aptos")) return FONT_FALLBACKS.aptos;
   return FONT_FALLBACKS.arial;
+}
+
+function fontOptionByValue(value) {
+  return Array.from($("fontFamily").options).find((option) => option.value === value) || $("fontFamily").options[0];
+}
+
+function updateFontPickerButton(value = $("fontFamily").value) {
+  const button = $("fontFamilyButton");
+  if (!button) return;
+  const option = fontOptionByValue(value);
+  button.textContent = option?.textContent || value;
+  button.style.fontFamily = value;
+}
+
+function setFontFamilyControl(value) {
+  $("fontFamily").value = value;
+  updateFontPickerButton(value);
+}
+
+function activeTextLikeAnnot() {
+  const a = activeAnnot();
+  return a?.type === "text" || a?.type === "text-replacement" ? a : null;
+}
+
+function activeTextAreaFor(a) {
+  if (!a?.id) return null;
+  return overlay.querySelector(`[data-id="${a.id}"] textarea`);
+}
+
+let fontPreviewSession = null;
+
+function beginFontPreviewSession() {
+  const a = activeTextLikeAnnot();
+  fontPreviewSession = {
+    id: a?.id || null,
+    originalFamily: a?.family || $("fontFamily").value,
+    committed: false,
+  };
+}
+
+function previewFontFamily(family) {
+  updateFontPickerButton(family);
+  const a = activeTextLikeAnnot();
+  if (!a || !fontPreviewSession || a.id !== fontPreviewSession.id) return;
+  const textarea = activeTextAreaFor(a);
+  if (textarea) textarea.style.fontFamily = family;
+}
+
+function restoreFontPreviewIfNeeded() {
+  if (!fontPreviewSession || fontPreviewSession.committed) return;
+  const { id, originalFamily } = fontPreviewSession;
+  const a = activeTextLikeAnnot();
+  if (a && a.id === id) {
+    const textarea = activeTextAreaFor(a);
+    if (textarea) textarea.style.fontFamily = originalFamily;
+  }
+  setFontFamilyControl(originalFamily);
+}
+
+function closeFontMenu(commit = false) {
+  const menu = $("fontFamilyMenu");
+  if (!menu || menu.hidden) return;
+  if (fontPreviewSession) fontPreviewSession.committed ||= commit;
+  restoreFontPreviewIfNeeded();
+  menu.hidden = true;
+  fontPreviewSession = null;
+  updateFontPickerButton();
+}
+
+function openFontMenu() {
+  const menu = $("fontFamilyMenu");
+  if (!menu) return;
+  beginFontPreviewSession();
+  menu.hidden = false;
+  menu.querySelectorAll(".font-option").forEach((button) => {
+    const active = button.dataset.value === $("fontFamily").value;
+    button.classList.toggle("active", active);
+    if (active) requestAnimationFrame(() => button.scrollIntoView({ block: "nearest" }));
+  });
+}
+
+function commitFontFamily(value) {
+  if (fontPreviewSession) fontPreviewSession.committed = true;
+  setFontFamilyControl(value);
+  const a = activeTextLikeAnnot();
+  if (a) applyTextStyleToActive({ family: value });
+  else {
+    textStyle.family = value;
+    scheduleDraftSave();
+  }
+  closeFontMenu(true);
+}
+
+function initFontPicker() {
+  const select = $("fontFamily");
+  const button = $("fontFamilyButton");
+  const menu = $("fontFamilyMenu");
+  if (!select || !button || !menu) return;
+  menu.innerHTML = "";
+  Array.from(select.options).forEach((option) => {
+    option.style.fontFamily = option.value;
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "font-option";
+    item.dataset.value = option.value;
+    item.textContent = option.textContent;
+    item.style.fontFamily = option.value;
+    item.addEventListener("mouseenter", () => previewFontFamily(option.value));
+    item.addEventListener("focus", () => previewFontFamily(option.value));
+    item.addEventListener("mousedown", (event) => event.preventDefault());
+    item.addEventListener("click", () => commitFontFamily(option.value));
+    menu.appendChild(item);
+  });
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (menu.hidden) openFontMenu();
+    else closeFontMenu(false);
+  });
+  button.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openFontMenu();
+      menu.querySelector(".font-option.active, .font-option")?.focus();
+    }
+  });
+  document.addEventListener("mousedown", (event) => {
+    if (!$("fontPicker")?.contains(event.target)) closeFontMenu(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeFontMenu(false);
+  });
+  updateFontPickerButton();
 }
 
 function activeAnnot() {
@@ -2387,7 +2522,7 @@ function selectAnnot(a) {
     textStyle.italic = a.italic;
     textStyle.lineHeight = a.lineHeight || 1.15;
     textStyle.offsetY = a.offsetY ?? state.textOffsetY;
-    $("fontFamily").value = fontOptionForFamily(a.family);
+    setFontFamilyControl(fontOptionForFamily(a.family));
     $("fontSize").value = String(textStyle.size);
     $("textColor").value = a.color;
     $("textOffsetY").value = String(textStyle.offsetY);
@@ -2402,7 +2537,7 @@ function selectAnnot(a) {
     textStyle.color = a.color;
     textStyle.bold = a.bold;
     textStyle.italic = a.italic;
-    $("fontFamily").value = fontOptionForFamily(a.family);
+    setFontFamilyControl(fontOptionForFamily(a.family));
     $("fontSize").value = String(textStyle.size);
     $("textColor").value = a.color;
     $("patchSizing").value = a.sizing;
@@ -2435,7 +2570,7 @@ function applyTextStyleToActive(change) {
   scheduleDraftSave();
 }
 
-$("fontFamily").onchange = (e) => applyTextStyleToActive({ family: e.target.value });
+$("fontFamily").onchange = (e) => commitFontFamily(e.target.value);
 $("fontSize").onchange = (e) => applyTextStyleToActive({ size: Number(e.target.value) });
 $("textColor").oninput = (e) => applyTextStyleToActive({ color: e.target.value });
 $("textOffsetY").oninput = (e) => {
@@ -2466,6 +2601,7 @@ $("italicBtn").onclick = (e) => {
   e.currentTarget.classList.toggle("active", next);
   applyTextStyleToActive({ italic: next });
 };
+initFontPicker();
 
 $("patchSizing").onchange = (e) => {
   const a = activeAnnot();
@@ -2520,6 +2656,8 @@ function createTextAnnotation(x, y) {
     type: "text",
     x: Math.max(0, Math.min(docCanvas.width - 40, x)),
     y: Math.max(0, Math.min(docCanvas.height - 24, y)),
+    w: TEXT_DEFAULT_W,
+    h: Math.max(TEXT_MIN_H, Math.round(size * (textStyle.lineHeight || 1.15) + 8)),
     text: "",
     family: textStyle.family,
     size,
@@ -2706,6 +2844,12 @@ function baseNode(a, cls) {
 
 function textNode(a) {
   const el = baseNode(a, "item-text");
+  if (!Number.isFinite(a.w)) a.w = TEXT_DEFAULT_W;
+  if (!Number.isFinite(a.h)) a.h = Math.max(TEXT_MIN_H, Math.round((a.size || textStyle.size * RENDER_SCALE) * (a.lineHeight || 1.15) + 8));
+  a.w = Math.max(TEXT_MIN_W, a.w);
+  a.h = Math.max(TEXT_MIN_H, a.h);
+  el.style.width = `${a.w}px`;
+  el.style.height = `${a.h}px`;
   const ta = document.createElement("textarea");
   ta.rows = 1;
   ta.value = a.text;
@@ -2714,20 +2858,16 @@ function textNode(a) {
   ta.style.lineHeight = String(a.lineHeight || 1.15);
   ta.style.color = a.color;
   ta.style.transform = `translateY(${a.offsetY ?? state.textOffsetY}px)`;
-  const autosize = () => {
-    ta.style.width = "10px";
-    ta.style.height = "10px";
-    ta.style.width = ta.scrollWidth + 6 + "px";
-    ta.style.height = ta.scrollHeight + "px";
-  };
   ta.addEventListener("input", () => {
     a.text = ta.value;
-    autosize();
     scheduleDraftSave();
   });
   ta.addEventListener("focus", () => selectAnnot(a));
   el.appendChild(ta);
-  requestAnimationFrame(autosize);
+  const rz = document.createElement("div");
+  rz.className = "resize";
+  rz.addEventListener("mousedown", (ev) => startResizeBox(ev, a, el));
+  el.appendChild(rz);
   return el;
 }
 
@@ -2803,16 +2943,18 @@ function startResizeBox(ev, a, el) {
   ev.stopPropagation();
   const sx = ev.clientX;
   const sy = ev.clientY;
-  const w0 = a.w;
-  const h0 = a.h;
+  const minW = a.type === "text" ? TEXT_MIN_W : 10;
+  const minH = a.type === "text" ? TEXT_MIN_H : 8;
+  const w0 = Number(a.w) || minW;
+  const h0 = Number(a.h) || minH;
   const move = (m) => {
     const nextBox = {
       x: a.x,
       y: a.y,
-      w: Math.max(10, w0 + (m.clientX - sx) / state.zoom),
-      h: Math.max(8, h0 + (m.clientY - sy) / state.zoom),
+      w: Math.max(minW, w0 + (m.clientX - sx) / state.zoom),
+      h: Math.max(minH, h0 + (m.clientY - sy) / state.zoom),
     };
-    const snapped = applyResizeSnap(a, nextBox, { minW: 10, minH: 8 });
+    const snapped = applyResizeSnap(a, nextBox, { minW, minH });
     a.w = snapped.box.w;
     a.h = snapped.box.h;
     el.style.width = a.w + "px";
@@ -3763,6 +3905,30 @@ $("cropSave").onclick = () => {
 };
 
 /* ================= 4. Финальный рендер, экспорт и печать ================= */
+function wrapCanvasText(ctx, text, maxWidth) {
+  if (!Number.isFinite(maxWidth) || maxWidth <= 0) return String(text || "").split("\n");
+  const lines = [];
+  String(text || "").split("\n").forEach((paragraph) => {
+    if (!paragraph) {
+      lines.push("");
+      return;
+    }
+    const words = paragraph.split(/(\s+)/);
+    let line = "";
+    words.forEach((part) => {
+      const next = line + part;
+      if (line && ctx.measureText(next).width > maxWidth) {
+        lines.push(line.trimEnd());
+        line = part.trimStart();
+      } else {
+        line = next;
+      }
+    });
+    lines.push(line);
+  });
+  return lines;
+}
+
 async function renderFinalPage(pageNumber) {
   const source = state.pageSources[pageNumber - 1];
   if (!source) throw new Error(`${t("pageNotFound")}: ${pageNumber}`);
@@ -3799,9 +3965,18 @@ async function renderFinalPage(pageNumber) {
       ctx.textBaseline = "top";
       ctx.font = `${a.italic ? "italic " : ""}${a.bold ? "700 " : "400 "}${a.size}px ${a.family}`;
       const lineH = a.size * (a.lineHeight || 1.15);
-      a.text.split("\n").forEach((line, i) =>
-        ctx.fillText(line, a.x + 2, a.y + state.layerOffsetY + (a.offsetY ?? state.textOffsetY) + i * lineH)
-      );
+      const textX = a.x + 2;
+      const textY = a.y + state.layerOffsetY + (a.offsetY ?? state.textOffsetY);
+      const width = Math.max(1, (a.w || ctx.measureText(a.text).width + 4) - 4);
+      const height = Math.max(lineH, a.h || lineH);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(a.x, a.y + state.layerOffsetY, Math.max(1, a.w || width + 4), height);
+      ctx.clip();
+      wrapCanvasText(ctx, a.text, width).forEach((line, i) => {
+        if (i * lineH < height) ctx.fillText(line, textX, textY + i * lineH);
+      });
+      ctx.restore();
     } else if (a.type === "redaction") {
       ctx.fillStyle = a.color || "#000000";
       ctx.fillRect(a.x, a.y + state.layerOffsetY, a.w, a.h);

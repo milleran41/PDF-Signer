@@ -194,6 +194,47 @@ body {
 #guideY { width: 90px; }
 .divider-v { width: 1px; height: 22px; background: var(--line); }
 .hint { font-size: 12px; color: var(--muted); }
+.font-picker {
+  position: relative;
+  flex: 0 0 auto;
+}
+.font-button {
+  min-width: 150px;
+  max-width: 210px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.font-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 80;
+  width: 240px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.34);
+}
+.font-option {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  padding: 7px 9px;
+  cursor: pointer;
+}
+.font-option:hover,
+.font-option.active {
+  background: rgba(47, 124, 246, 0.22);
+}
 
 .canvas-area {
   height: calc(100vh - 114px);
@@ -417,7 +458,15 @@ body {
 .item .del { right: -11px; background: #d24b4b; cursor: pointer; }
 .item:hover .handle, .item:hover .del, .item.selected .handle, .item.selected .del { opacity: 1; }
 
+.item-text {
+  border: 1px dashed transparent;
+  overflow: visible;
+}
+.item-text:hover, .item-text.selected { border-color: rgba(47, 124, 246, 0.95); }
 .item-text textarea {
+  display: block;
+  width: 100%;
+  height: 100%;
   border: 1px dashed transparent;
   background: transparent;
   color: inherit;
@@ -426,12 +475,30 @@ body {
   padding: 0 2px;
   margin: 0;
   min-width: 40px;
-  white-space: pre;
+  min-height: 20px;
+  white-space: pre-wrap;
   outline: none;
   font: inherit;
   line-height: 1.15;
+  box-sizing: border-box;
 }
 .item-text:hover textarea, .item-text textarea:focus { border-color: rgba(47, 124, 246, 0.8); }
+.item-text .resize,
+.item-patch .resize {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 3px;
+  cursor: nwse-resize;
+  opacity: 0;
+}
+.item-text:hover .resize,
+.item-text.selected .resize,
+.item-patch:hover .resize,
+.item-patch.selected .resize { opacity: 1; }
 
 .item-patch {
   border: 1px dashed transparent;
@@ -455,18 +522,6 @@ body {
   font: inherit;
 }
 .item-patch textarea:focus { outline: 1px dashed rgba(47, 124, 246, 0.8); }
-.item-patch .resize {
-  position: absolute;
-  right: -7px;
-  bottom: -7px;
-  width: 14px;
-  height: 14px;
-  background: var(--accent);
-  border-radius: 3px;
-  cursor: nwse-resize;
-  opacity: 0;
-}
-.item-patch:hover .resize, .item-patch.selected .resize { opacity: 1; }
 .patch-tool-btn.active { background: #f0bd4c; color: #241700; }
 
 .item-sig img { display: block; width: 100%; height: 100%; }
