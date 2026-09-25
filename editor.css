@@ -162,6 +162,30 @@ body {
   font-weight: 800;
 }
 .pageLabel { font-size: 12px; color: var(--muted); min-width: 44px; text-align: center; }
+.page-jump {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.page-input {
+  width: 5ch;
+  min-width: 34px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  padding: 2px 3px;
+}
+.page-input:hover,
+.page-input:focus {
+  border-color: var(--line);
+  background: rgba(255,255,255,0.06);
+  outline: none;
+}
 #lineHeight, #sigDarkness, #sigSharpness, #sigThickness { width: 100px; }
 #docScale { width: 110px; }
 #layerOffsetY { width: 110px; }

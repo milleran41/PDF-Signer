@@ -52,7 +52,10 @@
 
         <div class="group" id="pageNav" hidden>
           <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
-          <span class="pageLabel"><b id="pageNum">1</b>/<span id="pageCount">1</span></span>
+          <span class="pageLabel page-jump">
+            <input id="pageNum" class="page-input" type="text" inputmode="numeric" value="1" title="Текущая страница" data-i18n-title="currentPage" aria-label="Current page" />
+            <span>/</span><span id="pageCount">1</span>
+          </span>
           <button class="btn icon" id="nextPage" title="Следующая страница" data-i18n-title="nextPage">›</button>
         </div>
 

@@ -28,6 +28,7 @@ const i18n = {
     scanDocument: "Сканировать",
     printDocument: "Печать",
     addTextField: "Добавить текстовое поле",
+    currentPage: "Текущая страница",
     textReplacement: "Замена текста",
     patchSizing: "Размер подложки",
     patchAuto: "Авто",
@@ -156,6 +157,7 @@ const i18n = {
     scanDocument: "Scannen",
     printDocument: "Drucken",
     addTextField: "Textfeld hinzufügen",
+    currentPage: "Aktuelle Seite",
     textReplacement: "Textersetzung",
     patchSizing: "Pflastergröße",
     patchAuto: "Automatisch",
@@ -284,6 +286,7 @@ const i18n = {
     scanDocument: "Scan",
     printDocument: "Print",
     addTextField: "Add text field",
+    currentPage: "Current page",
     textReplacement: "Text replacement",
     patchSizing: "Patch size",
     patchAuto: "Auto",
@@ -1752,10 +1755,17 @@ async function renderPage() {
   if (!source) return;
   const pageCanvas = await renderSourceCanvas(source, RENDER_SCALE);
   drawRotatedDocument(pageCanvas);
-  $("pageNum").textContent = String(state.page);
+  $("pageNum").value = String(state.page);
   $("pageCount").textContent = String(state.pages);
+  updatePageNavControls();
   updateThumbSelection();
   afterRender();
+}
+
+function updatePageNavControls() {
+  $("prevPage").disabled = !state.kind || state.page <= 1;
+  $("nextPage").disabled = !state.kind || state.page >= state.pages;
+  $("pageNum").disabled = !state.kind || state.pages < 2;
 }
 
 async function renderSourceCanvas(source, scale = RENDER_SCALE) {
@@ -2097,20 +2107,35 @@ document.addEventListener("drop", async (e) => {
 });
 $("savedSignaturesBtn").onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL("options.html") });
 $("homeCreateSignatureBtn").onclick = () => openSignatureModal();
-$("prevPage").onclick = async () => {
-  if (state.page > 1) {
-    state.page--;
-    await renderPage();
-    scheduleDraftSave();
+
+async function goToPage(page) {
+  if (!state.kind) return;
+  const nextPage = Math.max(1, Math.min(state.pages, Number(page) || state.page));
+  $("pageNum").value = String(nextPage);
+  if (nextPage === state.page) return;
+  state.page = nextPage;
+  await renderPage();
+  scheduleDraftSave();
+}
+
+$("prevPage").onclick = () => goToPage(state.page - 1);
+$("nextPage").onclick = () => goToPage(state.page + 1);
+$("pageNum").addEventListener("focus", (e) => e.currentTarget.select());
+$("pageNum").addEventListener("keydown", async (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    await goToPage(e.currentTarget.value);
+    e.currentTarget.blur();
   }
-};
-$("nextPage").onclick = async () => {
-  if (state.page < state.pages) {
-    state.page++;
-    await renderPage();
-    scheduleDraftSave();
+  if (e.key === "Escape") {
+    e.preventDefault();
+    e.currentTarget.value = String(state.page);
+    e.currentTarget.blur();
   }
-};
+});
+$("pageNum").addEventListener("blur", (e) => {
+  e.currentTarget.value = String(state.page);
+});
 
 function updateRotationLabel() {
   $("rotateLabel").textContent = `${Number(state.rotation).toFixed(1).replace(".0", "")}°`;
@@ -3926,4 +3951,3 @@ window.addEventListener("beforeunload", () => {
   }
   maybeShowRatePrompt();
 })();
-
