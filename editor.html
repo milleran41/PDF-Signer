@@ -50,11 +50,6 @@
         <button class="btn add-text-btn" id="addTextFieldBtn" data-i18n="addTextField">Добавить текстовое поле</button>
         <button class="btn toggle patch-tool-btn" id="textReplacementBtn" data-i18n="textReplacement">Замена текста</button>
 
-        <div class="group" id="pageNav" hidden>
-          <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
-          <button class="btn icon" id="nextPage" title="Следующая страница" data-i18n-title="nextPage">›</button>
-        </div>
-
         <div class="group">
           <span class="label" data-i18n="docSize">Размер документа</span>
           <input type="range" id="docScale" min="50" max="200" step="5" value="100" title="Реальный размер документа при редактировании и сохранении" data-i18n-title="docSizeTitle" />
@@ -161,10 +156,14 @@
         <span class="label" data-i18n="signatures">Подписи:</span>
         <div id="sigStrip" class="sig-strip"><span class="muted small" data-i18n="noSaved">нет сохранённых</span></div>
         <div class="spacer"></div>
-        <span id="pageJump" class="pageLabel page-jump" hidden>
-          <input id="pageNum" class="page-input" type="text" inputmode="numeric" value="1" title="Текущая страница" data-i18n-title="currentPage" aria-label="Current page" />
-          <span>/</span><span id="pageCount">1</span>
-        </span>
+        <div class="group" id="pageNav" hidden>
+          <button class="btn icon" id="prevPage" title="Предыдущая страница" data-i18n-title="prevPage">‹</button>
+          <span id="pageJump" class="pageLabel page-jump">
+            <input id="pageNum" class="page-input" type="text" inputmode="numeric" value="1" title="Текущая страница" data-i18n-title="currentPage" aria-label="Current page" />
+            <span>/</span><span id="pageCount">1</span>
+          </span>
+          <button class="btn icon" id="nextPage" title="Следующая страница" data-i18n-title="nextPage">›</button>
+        </div>
         <button class="btn ghost" id="clearDocsBtn" data-i18n="clearDocs">Очистить</button>
         <select id="exportFormat" class="select small">
           <option value="pdf">PDF</option>

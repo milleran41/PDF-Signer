@@ -1765,7 +1765,7 @@ async function renderPage() {
 function updatePageNavControls() {
   const hasDocument = Boolean(state.kind);
   const hasMultiplePages = hasDocument && state.pages > 1;
-  $("pageNav").hidden = !hasMultiplePages;
+  $("pageNav").hidden = !hasDocument;
   $("pageJump").hidden = !hasDocument;
   $("prevPage").disabled = !hasMultiplePages || state.page <= 1;
   $("nextPage").disabled = !hasMultiplePages || state.page >= state.pages;
